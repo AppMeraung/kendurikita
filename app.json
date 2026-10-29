@@ -2,30 +2,30 @@
   "expo": {
     "name": "KenduriKita",
     "slug": "kenduri-kita",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Aplikasi perancangan majlis dan kenduri untuk Malaysia.",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/kendurikita-rings-v2.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.appmeraung.kendurikita",
-      "buildNumber": "1"
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#FFF8EC",
-        "foregroundImage": "./assets/android-icon-foreground.png"
+        "foregroundImage": "./assets/kendurikita-rings-v2.png"
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.appmeraung.kendurikita",
-      "versionCode": 2,
+      "versionCode": 3,
       "permissions": []
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "primaryColor": "#6F1833",
+    "primaryColor": "#9C123C",
     "extra": {
       "eas": {
         "projectId": "0c5fa76b-550b-431e-b31c-60afe9a5b9fc"
