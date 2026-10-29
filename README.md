@@ -26,6 +26,8 @@ npm run build:android:bundle
 - Version: `1.0.0` (`versionCode` 1)
 - Ikon 512×512: `assets/play-store-icon.png`
 - Polisi privasi awam: https://appmeraung.github.io/kendurikita/
+- Draf Play Console: https://play.google.com/console/u/0/developers/7680662168598881448/app/4973037187554225501/app-dashboard
+- Projek EAS: https://expo.dev/accounts/meraungstudio/projects/kenduri-kita
 - Profil EAS production menghasilkan Android App Bundle (`.aab`).
 
 Build production bertandatangan memerlukan akaun Expo/EAS dan keystore Android milik penerbit. Penerbitan Google Play juga memerlukan akaun Play Console aktif, deklarasi Data Safety, polisi privasi awam dan pengisian maklumat kandungan oleh pemilik akaun.

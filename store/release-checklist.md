@@ -15,14 +15,14 @@
 
 ## Perlu diselesaikan dalam Play Console
 - [x] Tetapkan URL polisi privasi awam: https://appmeraung.github.io/kendurikita/
-- [ ] Nyatakan aplikasi tidak memerlukan log masuk
-- [ ] Deklarasi iklan: tiada iklan
+- [x] Nyatakan aplikasi tidak memerlukan log masuk
+- [x] Deklarasi iklan: tiada iklan
 - [ ] Soal selidik penilaian kandungan
-- [ ] Sasaran umur: dewasa / 18+ sebagai tetapan konservatif
-- [ ] Data Safety: tiada data dikumpul atau dikongsi oleh versi ini
-- [ ] Deklarasi bukan aplikasi kerajaan, kewangan atau kesihatan
+- [x] Sasaran umur: dewasa / 18+ sebagai tetapan konservatif
+- [x] Data Safety: tiada data dikumpul atau dikongsi oleh versi ini
+- [x] Deklarasi bukan aplikasi kerajaan, kewangan atau kesihatan
 - [ ] Kategori Lifestyle dan butiran hubungan rasmi
-- [ ] Muat naik store listing dan semua aset
+- [x] Muat naik store listing dan semua aset
 - [ ] Muat naik AAB bertandatangan
 - [ ] Jalankan internal testing pada peranti fizikal
 - [ ] Semak pre-launch report dan selesaikan isu
