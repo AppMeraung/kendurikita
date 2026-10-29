@@ -25,6 +25,7 @@ npm run build:android:bundle
 - Package ID: `com.appmeraung.kendurikita`
 - Version: `1.0.0` (`versionCode` 1)
 - Ikon 512×512: `assets/play-store-icon.png`
+- Polisi privasi awam: https://appmeraung.github.io/kendurikita/
 - Profil EAS production menghasilkan Android App Bundle (`.aab`).
 
 Build production bertandatangan memerlukan akaun Expo/EAS dan keystore Android milik penerbit. Penerbitan Google Play juga memerlukan akaun Play Console aktif, deklarasi Data Safety, polisi privasi awam dan pengisian maklumat kandungan oleh pemilik akaun.

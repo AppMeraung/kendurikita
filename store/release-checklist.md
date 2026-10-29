@@ -14,7 +14,7 @@
 - [x] Profil binaan AAB production
 
 ## Perlu diselesaikan dalam Play Console
-- [ ] Tetapkan URL polisi privasi awam
+- [x] Tetapkan URL polisi privasi awam: https://appmeraung.github.io/kendurikita/
 - [ ] Nyatakan aplikasi tidak memerlukan log masuk
 - [ ] Deklarasi iklan: tiada iklan
 - [ ] Soal selidik penilaian kandungan

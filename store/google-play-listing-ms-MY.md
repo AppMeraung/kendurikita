@@ -33,6 +33,8 @@ wedding planner, event planner, budget, checklist, RSVP
 ## Maklumat yang masih perlu pemilik isi
 - E-mel sokongan rasmi
 - Laman web rasmi
-- URL polisi privasi awam
 - Negara dan harga
 - Pengisytiharan Data Safety dan content rating
+
+## URL polisi privasi
+https://appmeraung.github.io/kendurikita/
