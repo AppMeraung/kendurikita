@@ -1,0 +1,7 @@
+Versi pertama KenduriKita:
+- Dashboard persiapan majlis
+- Checklist dan bajet
+- Tetamu serta RSVP
+- Kad jemputan digital
+- Direktori vendor Malaysia
+- Pelan meja, jadual, pasukan dan laporan
