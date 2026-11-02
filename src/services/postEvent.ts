@@ -1,4 +1,5 @@
 import { supabase } from "./supabase";
+import { compressUploadImage } from "./images";
 
 export type GalleryPhoto = {
   id: string;
@@ -65,7 +66,8 @@ export async function uploadGuestPhoto(
   const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
   const key = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) throw new Error("Supabase belum dikonfigurasi.");
-  const source = await fetch(uri);
+  const compressed = await compressUploadImage(uri);
+  const source = await fetch(compressed.uri);
   if (!source.ok) throw new Error("Foto tidak dapat dibaca.");
   const response = await fetch(`${url}/functions/v1/guest-gallery-upload`, {
     method: "POST",
@@ -73,7 +75,7 @@ export async function uploadGuestPhoto(
       apikey: key,
       Authorization: `Bearer ${key}`,
       "x-invitation-token": token,
-      "content-type": mimeType,
+      "content-type": "image/jpeg",
     },
     body: await source.arrayBuffer(),
   });

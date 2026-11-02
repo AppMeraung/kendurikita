@@ -1,5 +1,6 @@
 import * as Crypto from "expo-crypto";
 import { supabase } from "./supabase";
+import { compressUploadImage } from "./images";
 
 async function ownedVendor() {
   const {
@@ -44,13 +45,15 @@ export async function uploadPortfolioImage(
   caption: string,
   eventName: string,
 ) {
-  const source = await fetch(file.uri);
+  const compressed = await compressUploadImage(file.uri);
+  const source = await fetch(compressed.uri);
   if (!source.ok) throw new Error("Imej tidak dapat dibaca.");
-  const path = `${vendorId}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]+/g, "-")}`;
+  const safeBase = file.name.replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9_-]+/g, "-");
+  const path = `${vendorId}/${Date.now()}-${safeBase}.jpg`;
   const upload = await supabase.storage
     .from("vendor-media")
     .upload(path, await source.arrayBuffer(), {
-      contentType: file.mimeType || "image/jpeg",
+      contentType: "image/jpeg",
     });
   if (upload.error) throw upload.error;
   const url = supabase.storage.from("vendor-media").getPublicUrl(path)
@@ -115,12 +118,14 @@ export async function createVendorReview(
   const photoPaths: string[] = [];
   try {
     for (const photo of photos.slice(0, 3)) {
-      const source = await fetch(photo.uri);
+      const compressed = await compressUploadImage(photo.uri);
+      const source = await fetch(compressed.uri);
       if (!source.ok) throw new Error("review_photo_unreadable");
       const bytes = await source.arrayBuffer();
       if (bytes.byteLength > 10 * 1024 * 1024) throw new Error("review_photo_too_large");
-      const path = `${user.id}/${Crypto.randomUUID()}-${photo.name.replace(/[^a-zA-Z0-9._-]+/g, "-")}`;
-      const uploaded = await supabase.storage.from("review-media").upload(path, bytes, { contentType: photo.mimeType || "image/jpeg" });
+      const safeBase = photo.name.replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9_-]+/g, "-");
+      const path = `${user.id}/${Crypto.randomUUID()}-${safeBase}.jpg`;
+      const uploaded = await supabase.storage.from("review-media").upload(path, bytes, { contentType: "image/jpeg" });
       if (uploaded.error) throw uploaded.error;
       photoPaths.push(path);
     }

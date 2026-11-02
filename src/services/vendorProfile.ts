@@ -1,6 +1,7 @@
 import { VendorProfileDraft } from "../domain/vendorProfile";
 import { supabase } from "./supabase";
 import { PlaceLocation } from "./places";
+import { compressUploadImage } from "./images";
 
 export const vendorCategories = [
   "venue",
@@ -124,12 +125,13 @@ export async function uploadVendorBrandImage(
   kind: "logo" | "cover",
   file: { uri: string; name: string; mimeType?: string },
 ) {
-  const source = await fetch(file.uri);
+  const compressed = await compressUploadImage(file.uri);
+  const source = await fetch(compressed.uri);
   if (!source.ok) throw new Error("brand_image_unreadable");
   const bytes = await source.arrayBuffer();
   if (bytes.byteLength > 10 * 1024 * 1024) throw new Error("brand_image_too_large");
-  const path = `${vendorId}/${kind}-${file.name.replace(/[^a-zA-Z0-9._-]+/g, "-")}`;
-  const uploaded = await supabase.storage.from("vendor-media").upload(path, bytes, { contentType: file.mimeType || "image/jpeg", upsert: true });
+  const path = `${vendorId}/${kind}.jpg`;
+  const uploaded = await supabase.storage.from("vendor-media").upload(path, bytes, { contentType: "image/jpeg", upsert: true });
   if (uploaded.error) throw uploaded.error;
   const url = supabase.storage.from("vendor-media").getPublicUrl(path).data.publicUrl;
   const updated = await supabase.from("vendors").update({ [kind === "logo" ? "logo_url" : "cover_url"]: url }).eq("id", vendorId);

@@ -1,6 +1,7 @@
 import { EventData } from "../state/AppState";
 import { invitationUrl } from "../domain/invitation";
 import { supabase } from "./supabase";
+import { compressUploadImage } from "./images";
 
 export type GuestInvitation = {
   guestId: string;
@@ -12,14 +13,14 @@ export type GuestInvitation = {
 export async function publishInvitations(event: EventData, eventId: string) {
   let photoUrl = event.invitation.photoUri || null;
   if (photoUrl && !/^https?:\/\//.test(photoUrl)) {
-    const response = await fetch(photoUrl);
+    const compressed = await compressUploadImage(photoUrl);
+    const response = await fetch(compressed.uri);
     if (!response.ok) throw new Error("Foto jemputan tidak dapat dibaca.");
-    const extension = photoUrl.split(".").pop()?.split("?")[0] || "jpg";
-    const path = `${eventId}/cover.${extension}`;
+    const path = `${eventId}/cover.jpg`;
     const upload = await supabase.storage
       .from("invitation-media")
       .upload(path, await response.arrayBuffer(), {
-        contentType: response.headers.get("content-type") || "image/jpeg",
+        contentType: "image/jpeg",
         upsert: true,
       });
     if (upload.error) throw upload.error;
@@ -28,11 +29,11 @@ export async function publishInvitations(event: EventData, eventId: string) {
   }
   let duitNowQrUrl = event.invitation.duitNowQrUri || null;
   if (duitNowQrUrl && !/^https?:\/\//.test(duitNowQrUrl)) {
-    const response = await fetch(duitNowQrUrl);
+    const compressed = await compressUploadImage(duitNowQrUrl, 1200);
+    const response = await fetch(compressed.uri);
     if (!response.ok) throw new Error("Kod QR DuitNow tidak dapat dibaca.");
-    const extension = duitNowQrUrl.split(".").pop()?.split("?")[0] || "jpg";
-    const path = `${eventId}/duitnow.${extension}`;
-    const upload = await supabase.storage.from("invitation-media").upload(path, await response.arrayBuffer(), { contentType: response.headers.get("content-type") || "image/jpeg", upsert: true });
+    const path = `${eventId}/duitnow.jpg`;
+    const upload = await supabase.storage.from("invitation-media").upload(path, await response.arrayBuffer(), { contentType: "image/jpeg", upsert: true });
     if (upload.error) throw upload.error;
     duitNowQrUrl = supabase.storage.from("invitation-media").getPublicUrl(path).data.publicUrl;
   }
