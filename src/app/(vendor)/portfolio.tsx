@@ -20,6 +20,7 @@ type PortfolioItem = {
   media_url: string;
   media_type: "image" | "video";
   caption?: string;
+  event_name?: string;
 };
 type Review = {
   id: string;
@@ -36,6 +37,7 @@ export default function VendorPortfolio() {
   const [items, setItems] = useState<PortfolioItem[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [caption, setCaption] = useState("");
+  const [eventName, setEventName] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [replies, setReplies] = useState<Record<string, string>>({});
   const load = async () => {
@@ -82,8 +84,10 @@ export default function VendorPortfolio() {
           mimeType: image.mimeType,
         },
         caption,
+        eventName,
       );
       setCaption("");
+      setEventName("");
       await load();
     } catch (error) {
       Alert.alert(
@@ -98,8 +102,9 @@ export default function VendorPortfolio() {
     if (!validPortfolioVideo(videoUrl))
       return Alert.alert(t("portfolioVideoInvalid"));
     try {
-      await addPortfolioVideo(vendorId, videoUrl, caption);
+      await addPortfolioVideo(vendorId, videoUrl, caption, eventName);
       setCaption("");
+      setEventName("");
       setVideoUrl("");
       await load();
     } catch (error) {
@@ -124,6 +129,11 @@ export default function VendorPortfolio() {
     <Screen>
       <Title>{t("vendorPortfolio")}</Title>
       <Field
+        value={eventName}
+        onChangeText={setEventName}
+        placeholder={t("portfolioEventName")}
+      />
+      <Field
         value={caption}
         onChangeText={setCaption}
         placeholder={t("portfolioCaption")}
@@ -142,6 +152,7 @@ export default function VendorPortfolio() {
       />
       {items.map((item) => (
         <Card key={item.id}>
+          {item.event_name ? <Text style={styles.label}>{item.event_name}</Text> : null}
           {item.media_type === "image" ? (
             <Image
               source={{ uri: item.media_url }}

@@ -27,6 +27,7 @@ type PortfolioItem = {
   media_url: string;
   media_type: "image" | "video";
   caption?: string;
+  event_name?: string;
 };
 type Package = {
   id: string;
@@ -75,7 +76,7 @@ export default function VendorProfile() {
     const [media, offers, feedback, dates] = await Promise.all([
       supabase
         .from("vendor_portfolio")
-        .select("id,media_url,media_type,caption")
+        .select("id,media_url,media_type,caption,event_name")
         .eq("vendor_id", profile.data.id)
         .eq("moderation_status", "approved")
         .order("sort_order"),
@@ -189,6 +190,7 @@ export default function VendorProfile() {
       <Title>{t("vendorPortfolio")}</Title>
       {portfolio.map((item) => (
         <Card key={item.id}>
+          {item.event_name ? <Text style={styles.label}>{item.event_name}</Text> : null}
           {item.media_type === "image" ? (
             <Image
               source={{ uri: item.media_url }}

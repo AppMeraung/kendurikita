@@ -67,6 +67,7 @@
 - Preserved pending event-invite tokens through OAuth, magic-link and phone-OTP sign-in, clearing them only after successful membership acceptance.
 - Added plan-aware creation of additional cloud events, dashboard upcoming balances/recent vendor messages, a five-step vendor onboarding and cached vendor call/WhatsApp contacts with live attendance in Day Mode.
 - Seeded verified Selangor, Pahang and Negeri Sembilan mas kahwin rates with official source URLs and check dates, modelled unmarried/previously-married differences, and restricted rate maintenance to admins.
+- Added event/album names and storage-path cleanup to vendor portfolios so public media can be organised by the wedding or event it represents.
 
 ### Bugs found and fixed
 
