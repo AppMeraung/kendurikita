@@ -1,0 +1,9 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "KenduriKita",
+    "NSCameraUsageDescription": "விருந்தினர் QR குறியீடுகளை ஸ்கேன் செய்யவும் ரசீதுகளைப் படம் எடுக்கவும் KenduriKita-வை அனுமதிக்கவும்.",
+    "NSContactsUsageDescription": "விருந்தினர்களாக நீங்கள் தேர்ந்தெடுக்கும் தொடர்புகளை மட்டும் இறக்குமதி செய்ய KenduriKita-வை அனுமதிக்கவும்.",
+    "NSPhotoLibraryUsageDescription": "நிகழ்வு, ரசீது, அழைப்பிதழ் மற்றும் போர்ட்ஃபோலியோ படங்களைத் தேர்ந்தெடுக்க KenduriKita-வை அனுமதிக்கவும்."
+  },
+  "android": { "app_name": "KenduriKita" }
+}

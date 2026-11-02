@@ -1,0 +1,9 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "KenduriKita",
+    "NSCameraUsageDescription": "允许 KenduriKita 扫描宾客二维码并拍摄收据。",
+    "NSContactsUsageDescription": "允许 KenduriKita 仅导入您选择为宾客的联系人。",
+    "NSPhotoLibraryUsageDescription": "允许 KenduriKita 选择活动、收据、邀请函和作品集照片。"
+  },
+  "android": { "app_name": "KenduriKita" }
+}

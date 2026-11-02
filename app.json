@@ -11,7 +11,10 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.appmeraung.kendurikita",
       "buildNumber": "5",
-      "usesAppleSignIn": true
+      "usesAppleSignIn": true,
+      "infoPlist": {
+        "CFBundleAllowMixedLocalizations": true
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -45,9 +48,24 @@
       }
     },
     "owner": "meraungstudio",
+    "locales": {
+      "ms": "./locales/ms.json",
+      "en": "./locales/en.json",
+      "zh": "./locales/zh.json",
+      "ta": "./locales/ta.json",
+      "id": "./locales/id.json"
+    },
     "plugins": [
       "expo-router",
-      "expo-localization",
+      [
+        "expo-localization",
+        {
+          "supportedLocales": {
+            "ios": ["ms", "en", "zh", "ta", "id"],
+            "android": ["ms", "en", "zh", "ta", "id"]
+          }
+        }
+      ],
       "expo-font",
       [
         "expo-camera",

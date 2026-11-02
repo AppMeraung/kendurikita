@@ -1,0 +1,9 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "KenduriKita",
+    "NSCameraUsageDescription": "Izinkan KenduriKita memindai kode QR tamu dan memotret kuitansi.",
+    "NSContactsUsageDescription": "Izinkan KenduriKita mengimpor hanya kontak yang Anda pilih sebagai tamu.",
+    "NSPhotoLibraryUsageDescription": "Izinkan KenduriKita memilih foto acara, kuitansi, undangan, dan portofolio."
+  },
+  "android": { "app_name": "KenduriKita" }
+}

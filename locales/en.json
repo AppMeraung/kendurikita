@@ -1,0 +1,9 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "KenduriKita",
+    "NSCameraUsageDescription": "Allow KenduriKita to scan guest QR codes and photograph receipts.",
+    "NSContactsUsageDescription": "Allow KenduriKita to import only the contacts you choose as guests.",
+    "NSPhotoLibraryUsageDescription": "Allow KenduriKita to select event, receipt, invitation and portfolio photos."
+  },
+  "android": { "app_name": "KenduriKita" }
+}

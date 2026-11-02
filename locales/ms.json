@@ -1,0 +1,9 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "KenduriKita",
+    "NSCameraUsageDescription": "Benarkan KenduriKita mengimbas kod QR tetamu dan mengambil foto resit.",
+    "NSContactsUsageDescription": "Benarkan KenduriKita mengimport hanya kenalan yang anda pilih sebagai tetamu.",
+    "NSPhotoLibraryUsageDescription": "Benarkan KenduriKita memilih foto majlis, resit, jemputan dan portfolio."
+  },
+  "android": { "app_name": "KenduriKita" }
+}
