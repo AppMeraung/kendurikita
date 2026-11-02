@@ -24,7 +24,7 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.appmeraung.kendurikita",
-      "versionCode": 7,
+      "versionCode": 8,
       "permissions": [
         "android.permission.POST_NOTIFICATIONS"
       ],
@@ -61,8 +61,20 @@
         "expo-localization",
         {
           "supportedLocales": {
-            "ios": ["ms", "en", "zh", "ta", "id"],
-            "android": ["ms", "en", "zh", "ta", "id"]
+            "ios": [
+              "ms",
+              "en",
+              "zh",
+              "ta",
+              "id"
+            ],
+            "android": [
+              "ms",
+              "en",
+              "zh",
+              "ta",
+              "id"
+            ]
           }
         }
       ],
