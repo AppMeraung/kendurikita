@@ -83,11 +83,29 @@ export async function moderatePortfolio(id: string, publish: boolean) {
 }
 
 export async function setVendorBadges(id: string, badges: string[]) {
+  if (badges.includes("halal")) {
+    const vendor = await supabase
+      .from("vendors")
+      .select("verification_documents")
+      .eq("id", id)
+      .single();
+    if (vendor.error) throw vendor.error;
+    if (!vendor.data.verification_documents?.halal)
+      throw new Error("halal_certificate_required");
+  }
   const { error } = await supabase.rpc("set_vendor_badges", {
     target: id,
     values: badges,
   });
   if (error) throw error;
+}
+
+export async function openVendorVerificationDocument(path: string) {
+  const result = await supabase.storage
+    .from("vendor-verification")
+    .createSignedUrl(path, 60);
+  if (result.error) throw result.error;
+  return result.data.signedUrl;
 }
 
 export async function saveCategory(key: string, label: string, active = true) {

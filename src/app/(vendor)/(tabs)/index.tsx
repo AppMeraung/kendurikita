@@ -69,9 +69,10 @@ export default function VendorHome() {
   const [categories, setCategories] = useState<string[]>([]);
   const [ssmFile, setSsmFile] = useState<FileAsset>();
   const [icFile, setIcFile] = useState<FileAsset>();
+  const [halalFile, setHalalFile] = useState<FileAsset>();
   const [logoFile, setLogoFile] = useState<FileAsset>();
   const [coverFile, setCoverFile] = useState<FileAsset>();
-  const [existingDocs, setExistingDocs] = useState({ ssm: false, ic: false });
+  const [existingDocs, setExistingDocs] = useState({ ssm: false, ic: false, halal: false });
   const [status, setStatus] = useState("pending");
   const [location, setLocation] = useState<PlaceLocation>();
   const change = (key: keyof VendorProfileDraft, value: string) =>
@@ -119,6 +120,7 @@ export default function VendorHome() {
       setExistingDocs({
         ssm: !!row.verification_documents?.ssm,
         ic: !!row.verification_documents?.ic,
+        halal: !!row.verification_documents?.halal,
       });
       setStatus(row.verification_status || "pending");
       if (row.address?.place_id && Number.isFinite(row.address?.latitude) && Number.isFinite(row.address?.longitude)) setLocation({ placeId: row.address.place_id, name: row.address.line || "", latitude: row.address.latitude, longitude: row.address.longitude });
@@ -134,7 +136,7 @@ export default function VendorHome() {
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const pick = async (kind: "ssm" | "ic") => {
+  const pick = async (kind: "ssm" | "ic" | "halal") => {
     const result = await DocumentPicker.getDocumentAsync({
       type: ["application/pdf", "image/*"],
       copyToCacheDirectory: true,
@@ -150,7 +152,8 @@ export default function VendorHome() {
       size: file.size,
     };
     if (kind === "ssm") setSsmFile(value);
-    else setIcFile(value);
+    else if (kind === "ic") setIcFile(value);
+    else setHalalFile(value);
   };
   const save = async () => {
     if (
@@ -180,9 +183,11 @@ export default function VendorHome() {
       if (coverFile) await uploadVendorBrandImage(id, "cover", coverFile);
       if (ssmFile) await uploadVerificationDocument(id, "ssm", ssmFile);
       if (icFile) await uploadVerificationDocument(id, "ic", icFile);
+      if (halalFile) await uploadVerificationDocument(id, "halal", halalFile);
       setExistingDocs({
         ssm: existingDocs.ssm || !!ssmFile,
         ic: existingDocs.ic || !!icFile,
+        halal: existingDocs.halal || !!halalFile,
       });
       setStatus("pending");
       Alert.alert(t("vendorSaved"));
@@ -355,6 +360,13 @@ export default function VendorHome() {
         onPress={() => void pick("ic")}
         secondary
       />
+      {categories.includes("catering") ? (
+        <Button
+          label={halalFile || existingDocs.halal ? t("halalAttached") : t("uploadHalal")}
+          onPress={() => void pick("halal")}
+          secondary
+        />
+      ) : null}
       <Button label={t("saveProfile")} onPress={() => void save()} />
       <Button
         label={t("managePortfolio")}

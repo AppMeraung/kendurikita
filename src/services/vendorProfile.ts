@@ -141,7 +141,7 @@ export async function uploadVendorBrandImage(
 
 export async function uploadVerificationDocument(
   vendorId: string,
-  kind: "ssm" | "ic",
+  kind: "ssm" | "ic" | "halal",
   file: { uri: string; name: string; mimeType?: string },
 ) {
   const source = await fetch(file.uri);

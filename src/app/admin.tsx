@@ -13,6 +13,7 @@ import {
   setVendorBadges,
   setCategoryActive,
   updateSubscription,
+  openVendorVerificationDocument,
 } from "../services/admin";
 import { Button, Card, Field, Screen, styles, Title } from "../ui";
 
@@ -47,8 +48,17 @@ export default function AdminPanel() {
     } catch (cause) {
       Alert.alert(
         t("actionFailed"),
-        cause instanceof Error ? cause.message : t("unknownError"),
+        cause instanceof Error && cause.message === "halal_certificate_required"
+          ? t("halalCertificateRequired")
+          : cause instanceof Error ? cause.message : t("unknownError"),
       );
+    }
+  };
+  const openDocument = async (path: string) => {
+    try {
+      await Linking.openURL(await openVendorVerificationDocument(path));
+    } catch (cause) {
+      Alert.alert(t("actionFailed"), cause instanceof Error ? cause.message : t("unknownError"));
     }
   };
   if (error)
@@ -105,6 +115,18 @@ export default function AdminPanel() {
           <Text style={styles.muted}>
             {t("badges")}: {(vendor.badges || []).join(", ") || "—"}
           </Text>
+          <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
+            {(["ssm", "ic", "halal"] as const).map((kind) =>
+              vendor.verification_documents?.[kind] ? (
+                <Button
+                  key={kind}
+                  label={t("openVerificationDocument", { kind: kind.toUpperCase() })}
+                  onPress={() => void openDocument(vendor.verification_documents[kind])}
+                  secondary
+                />
+              ) : null,
+            )}
+          </View>
           <Button
             label={t("approve")}
             onPress={() =>
@@ -126,6 +148,7 @@ export default function AdminPanel() {
                   key={badge}
                   label={badge}
                   secondary={!selected}
+                  disabled={badge === "halal" && !selected && !vendor.verification_documents?.halal}
                   onPress={() =>
                     void run(() =>
                       setVendorBadges(
