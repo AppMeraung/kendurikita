@@ -39,6 +39,10 @@ const dayNotesMigration = readFileSync(
   resolve("supabase/migrations/202611020037_shared_day_notes.sql"),
   "utf8",
 );
+const masKahwinRatesMigration = readFileSync(
+  resolve("supabase/migrations/202611030038_verified_mas_kahwin_rates.sql"),
+  "utf8",
+);
 
 describe("vendor RLS hardening migration", () => {
   it("requires message senders to belong to the lead", () => {
@@ -122,5 +126,15 @@ describe("shared day notes boundary", () => {
     expect(dayNotesMigration.match(/kendurikita\.event_plan\(event_id\) <> 'basic'/g)?.length).toBeGreaterThanOrEqual(3);
     expect(dayNotesMigration).toContain("unique(event_id, local_key)");
     expect(dayNotesMigration).toContain("supabase_realtime add table kendurikita.day_notes");
+  });
+});
+
+describe("verified mas kahwin rates", () => {
+  it("seeds sourced rates and keeps writes admin-only", () => {
+    expect(masKahwinRatesMigration).toContain("'Selangor',300,300,300");
+    expect(masKahwinRatesMigration).toContain("'Pahang',100,100,100");
+    expect(masKahwinRatesMigration).toContain("'Negeri Sembilan',200,200,100");
+    expect(masKahwinRatesMigration.match(/kendurikita\.is_admin\(\)/g)).toHaveLength(4);
+    expect(masKahwinRatesMigration).toContain("on conflict(state) do update");
   });
 });

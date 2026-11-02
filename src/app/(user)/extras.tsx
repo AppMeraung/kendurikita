@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Alert, Linking, Share, Text } from "react-native";
+import { Alert, Linking, Share, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import {
   cateringQuantities,
@@ -96,17 +96,18 @@ export default function Extras() {
       <Title>{t("planningTools")}</Title>
       <Card>
         <Text style={styles.label}>{t("masKahwinCalculator")}</Text>
-        <Field value={state} onChangeText={setState} placeholder={t("state")} />
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+          {rates.map((rate) => (
+            <Button key={rate.state} label={rate.state} onPress={() => setState(rate.state)} secondary={state !== rate.state} />
+          ))}
+        </View>
         {selectedRate ? (
           <>
-            <Text style={styles.metric}>
-              RM {Number(selectedRate.amount).toFixed(2)}
-            </Text>
-            <Text style={styles.muted}>
-              {t("typicalHantaran")}: RM{" "}
-              {Number(selectedRate.typical_hantaran_min || 0).toFixed(2)} – RM{" "}
-              {Number(selectedRate.typical_hantaran_max || 0).toFixed(2)}
-            </Text>
+            <Text style={styles.metric}>{t("unmarriedRate")}: RM {Number(selectedRate.unmarried_amount ?? selectedRate.amount).toFixed(2)}</Text>
+            <Text style={styles.metric}>{t("previouslyMarriedRate")}: RM {Number(selectedRate.previously_married_amount ?? selectedRate.amount).toFixed(2)}</Text>
+            {selectedRate.typical_hantaran_min != null && selectedRate.typical_hantaran_max != null ? <Text style={styles.muted}>
+              {t("typicalHantaran")}: RM {Number(selectedRate.typical_hantaran_min).toFixed(2)} – RM {Number(selectedRate.typical_hantaran_max).toFixed(2)}
+            </Text> : <Text style={styles.muted}>{t("hantaranRangeUnavailable")}</Text>}
             <Text style={styles.muted}>
               {t("checkedOn")}: {selectedRate.checked_at}
             </Text>

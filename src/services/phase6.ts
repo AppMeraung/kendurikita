@@ -3,6 +3,8 @@ import { supabase } from "./supabase";
 export type MasKahwinRate = {
   state: string;
   amount: number;
+  unmarried_amount: number | null;
+  previously_married_amount: number | null;
   typical_hantaran_min: number | null;
   typical_hantaran_max: number | null;
   source_url: string;
@@ -13,7 +15,7 @@ export async function loadMasKahwinRates() {
   const { data, error } = await supabase
     .from("mas_kahwin_rates")
     .select(
-      "state,amount,typical_hantaran_min,typical_hantaran_max,source_url,checked_at",
+      "state,amount,unmarried_amount,previously_married_amount,typical_hantaran_min,typical_hantaran_max,source_url,checked_at",
     )
     .order("state");
   if (error) throw error;
