@@ -1,10 +1,11 @@
 import { Image } from "expo-image";
+import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, Linking, Modal, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { validReview } from "../../domain/vendorMedia";
-import { createVendorReview } from "../../services/vendorMedia";
+import { createVendorReview, reviewPhotoUrls } from "../../services/vendorMedia";
 import { recordVendorViews } from "../../services/vendorAnalytics";
 import { cloudConfigured, supabase } from "../../services/supabase";
 import { useAppState } from "../../state/AppState";
@@ -42,6 +43,7 @@ type Review = {
   rating: number;
   body?: string;
   reply?: string;
+  photo_paths?: string[];
 };
 
 export default function VendorProfile() {
@@ -55,6 +57,7 @@ export default function VendorProfile() {
   const [availability, setAvailability] = useState<string[]>([]);
   const [rating, setRating] = useState(5);
   const [reviewBody, setReviewBody] = useState("");
+  const [reviewPhotos, setReviewPhotos] = useState<ImagePicker.ImagePickerAsset[]>([]);
   const [reportTarget, setReportTarget] = useState<{ type: ReportTarget; id: string } | null>(null);
   const [reportReason, setReportReason] = useState("");
   const [reportDetails, setReportDetails] = useState("");
@@ -87,7 +90,7 @@ export default function VendorProfile() {
         .eq("active", true),
       supabase
         .from("vendor_reviews")
-        .select("id,rating,body,reply")
+        .select("id,rating,body,reply,photo_paths")
         .eq("vendor_id", profile.data.id)
         .eq("verified", true)
         .order("created_at", { ascending: false }),
@@ -125,8 +128,9 @@ export default function VendorProfile() {
     if (!validReview(rating, reviewBody))
       return Alert.alert(t("reviewInvalid"));
     try {
-      await createVendorReview(vendor.id, event.cloudId, rating, reviewBody);
+      await createVendorReview(vendor.id, event.cloudId, rating, reviewBody, reviewPhotos.map((photo) => ({ uri: photo.uri, name: photo.fileName || `review-${Date.now()}.jpg`, mimeType: photo.mimeType })));
       setReviewBody("");
+      setReviewPhotos([]);
       Alert.alert(t("reviewSubmitted"));
       await load();
     } catch (error) {
@@ -241,6 +245,7 @@ export default function VendorProfile() {
         <Card key={review.id}>
           <Text style={styles.label}>{"★".repeat(review.rating)}</Text>
           <Text style={styles.muted}>{review.body}</Text>
+          {reviewPhotoUrls(review.photo_paths).map((url) => <Image key={url} source={{ uri: url }} style={{ width: "100%", height: 180, borderRadius: 12 }} contentFit="cover" />)}
           {review.reply ? (
             <Text style={styles.muted}>
               {t("vendorReply")}: {review.reply}
@@ -266,6 +271,11 @@ export default function VendorProfile() {
           onChangeText={setReviewBody}
           placeholder={t("reviewBody")}
           multiline
+        />
+        <Button
+          label={t("reviewAddPhotos", { count: reviewPhotos.length })}
+          onPress={() => void ImagePicker.launchImageLibraryAsync({ mediaTypes: ["images"], allowsMultipleSelection: true, selectionLimit: 3, quality: 0.85 }).then((result) => { if (!result.canceled) setReviewPhotos(result.assets.slice(0, 3)); })}
+          secondary
         />
         <Button label={t("submitReview")} onPress={() => void submitReview()} />
       </Card>

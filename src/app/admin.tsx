@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Alert, Linking, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useTranslation } from "react-i18next";
+import { reviewPhotoUrls } from "../services/vendorMedia";
 import {
   loadAdminDashboard,
   moderateReview,
@@ -148,6 +149,7 @@ export default function AdminPanel() {
         <Card key={review.id}>
           <Text style={styles.label}>{"★".repeat(review.rating)}</Text>
           <Text style={styles.muted}>{review.body}</Text>
+          {reviewPhotoUrls(review.photo_paths).map((url) => <Image key={url} source={{ uri: url }} style={{ width: "100%", height: 180, borderRadius: 12 }} contentFit="cover" />)}
           <Text style={styles.muted}>
             {review.verified ? t("published") : t("pending")}
           </Text>

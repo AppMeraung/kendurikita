@@ -608,6 +608,7 @@
   "writeReview": "Write a review",
   "reviewBody": "Share your experience",
   "submitReview": "Submit review",
+  "reviewAddPhotos": "Add photos ({{count}}/3)",
   "reviewNeedsBooking": "Reviews are limited to confirmed bookings.",
   "reviewInvalid": "Choose 1 to 5 stars and write at least 3 characters.",
   "reviewSubmitted": "Your review was submitted for moderation.",

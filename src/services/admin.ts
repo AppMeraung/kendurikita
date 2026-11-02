@@ -22,7 +22,7 @@ export async function loadAdminDashboard() {
         .order("created_at", { ascending: false }),
       supabase
         .from("vendor_reviews")
-        .select("id,rating,body,verified,created_at,vendors(company_name)")
+        .select("id,rating,body,photo_paths,verified,created_at,vendors(company_name)")
         .order("created_at", { ascending: false }),
       supabase
         .from("vendor_portfolio")

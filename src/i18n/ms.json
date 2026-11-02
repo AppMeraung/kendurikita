@@ -608,6 +608,7 @@
   "writeReview": "Tulis ulasan",
   "reviewBody": "Kongsi pengalaman anda",
   "submitReview": "Hantar ulasan",
+  "reviewAddPhotos": "Tambah foto ({{count}}/3)",
   "reviewNeedsBooking": "Ulasan hanya untuk tempahan yang telah disahkan.",
   "reviewInvalid": "Pilih 1 hingga 5 bintang dan tulis sekurang-kurangnya 3 aksara.",
   "reviewSubmitted": "Ulasan dihantar untuk semakan.",

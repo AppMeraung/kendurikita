@@ -1,3 +1,4 @@
+import * as Crypto from "expo-crypto";
 import { supabase } from "./supabase";
 
 async function ownedVendor() {
@@ -24,7 +25,7 @@ export async function loadPortfolio() {
       .order("sort_order"),
     supabase
       .from("vendor_reviews")
-      .select("id,rating,body,reply,verified,created_at")
+      .select("id,rating,body,reply,verified,photo_paths,created_at")
       .eq("vendor_id", vendorId)
       .order("created_at", { ascending: false }),
   ]);
@@ -105,19 +106,44 @@ export async function createVendorReview(
   eventId: string,
   rating: number,
   body: string,
+  photos: { uri: string; name: string; mimeType?: string }[] = [],
 ) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) throw new Error("Log masuk diperlukan.");
+  const photoPaths: string[] = [];
+  try {
+    for (const photo of photos.slice(0, 3)) {
+      const source = await fetch(photo.uri);
+      if (!source.ok) throw new Error("review_photo_unreadable");
+      const bytes = await source.arrayBuffer();
+      if (bytes.byteLength > 10 * 1024 * 1024) throw new Error("review_photo_too_large");
+      const path = `${user.id}/${Crypto.randomUUID()}-${photo.name.replace(/[^a-zA-Z0-9._-]+/g, "-")}`;
+      const uploaded = await supabase.storage.from("review-media").upload(path, bytes, { contentType: photo.mimeType || "image/jpeg" });
+      if (uploaded.error) throw uploaded.error;
+      photoPaths.push(path);
+    }
+  } catch (error) {
+    if (photoPaths.length) await supabase.storage.from("review-media").remove(photoPaths);
+    throw error;
+  }
   const { error } = await supabase.from("vendor_reviews").insert({
     vendor_id: vendorId,
     event_id: eventId,
     author_id: user.id,
     rating,
     body: body.trim(),
+    photo_paths: photoPaths,
   });
-  if (error) throw error;
+  if (error) {
+    if (photoPaths.length) await supabase.storage.from("review-media").remove(photoPaths);
+    throw error;
+  }
+}
+
+export function reviewPhotoUrls(paths: string[] | null | undefined) {
+  return (paths || []).map((path) => supabase.storage.from("review-media").getPublicUrl(path).data.publicUrl);
 }
 
 export async function replyToReview(id: string, response: string) {

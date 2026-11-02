@@ -43,6 +43,10 @@ const masKahwinRatesMigration = readFileSync(
   resolve("supabase/migrations/202611030038_verified_mas_kahwin_rates.sql"),
   "utf8",
 );
+const reviewPhotosMigration = readFileSync(
+  resolve("supabase/migrations/202611030040_review_photos.sql"),
+  "utf8",
+);
 
 describe("vendor RLS hardening migration", () => {
   it("requires message senders to belong to the lead", () => {
@@ -136,5 +140,15 @@ describe("verified mas kahwin rates", () => {
     expect(masKahwinRatesMigration).toContain("'Negeri Sembilan',200,200,100");
     expect(masKahwinRatesMigration.match(/kendurikita\.is_admin\(\)/g)).toHaveLength(4);
     expect(masKahwinRatesMigration).toContain("on conflict(state) do update");
+  });
+});
+
+describe("review photo boundary", () => {
+  it("limits reviews to three images and storage writes to the signed-in owner's folder", () => {
+    expect(reviewPhotosMigration).toContain("cardinality(photo_paths)<=3");
+    expect(reviewPhotosMigration).toContain("file_size_limit=10485760");
+    expect(reviewPhotosMigration).toContain("array['image/jpeg','image/png','image/webp']");
+    expect(reviewPhotosMigration).toContain("(storage.foldername(name))[1]=auth.uid()::text");
+    expect(reviewPhotosMigration).toContain("owner_id=auth.uid()::text");
   });
 });

@@ -608,6 +608,7 @@
   "writeReview": "撰写评价",
   "reviewBody": "分享您的体验",
   "submitReview": "提交评价",
+  "reviewAddPhotos": "添加照片（{{count}}/3）",
   "reviewNeedsBooking": "只有已确认的预订可以评价。",
   "reviewInvalid": "请选择 1 至 5 星并输入至少 3 个字符。",
   "reviewSubmitted": "评价已提交审核。",

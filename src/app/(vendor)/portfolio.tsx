@@ -11,6 +11,7 @@ import {
   loadPortfolio,
   replyToReview,
   uploadPortfolioImage,
+  reviewPhotoUrls,
 } from "../../services/vendorMedia";
 import { Button, Card, Field, Screen, styles, Title } from "../../ui";
 import { useVendorPlan } from "../../state/usePlan";
@@ -28,6 +29,7 @@ type Review = {
   body?: string;
   reply?: string;
   verified: boolean;
+  photo_paths?: string[];
 };
 
 export default function VendorPortfolio() {
@@ -191,6 +193,7 @@ export default function VendorPortfolio() {
               {review.verified ? t("reviewVerified") : t("reviewPending")}
             </Text>
             <Text style={styles.muted}>{review.body}</Text>
+            {reviewPhotoUrls(review.photo_paths).map((url) => <Image key={url} source={{ uri: url }} style={{ width: "100%", height: 180, borderRadius: 12 }} contentFit="cover" />)}
             <Field
               value={replies[review.id] ?? review.reply ?? ""}
               onChangeText={(value) =>
