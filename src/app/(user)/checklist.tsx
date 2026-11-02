@@ -252,7 +252,7 @@ export default function Checklist() {
             onChangeText={setTitle}
             placeholder={t("task")}
           />
-          <Field value={due} onChangeText={setDue} placeholder="YYYY-MM-DD" />
+          <Field value={due} onChangeText={setDue} placeholder={t("dateFormatPlaceholder")} />
           <Text style={styles.label}>{t("priority")}</Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
             {(

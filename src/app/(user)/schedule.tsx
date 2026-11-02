@@ -144,11 +144,11 @@ export default function Schedule() {
             onChangeText={setTitle}
             placeholder={t("task")}
           />
-          <Field value={date} onChangeText={setDate} placeholder="YYYY-MM-DD" />
+          <Field value={date} onChangeText={setDate} placeholder={t("dateFormatPlaceholder")} />
           <Text style={styles.label}>{t("startTime")}</Text>
-          <Field value={start} onChangeText={setStart} placeholder="HH:mm" />
+          <Field value={start} onChangeText={setStart} placeholder={t("timeFormatPlaceholder")} />
           <Text style={styles.label}>{t("endTime")}</Text>
-          <Field value={end} onChangeText={setEnd} placeholder="HH:mm" />
+          <Field value={end} onChangeText={setEnd} placeholder={t("timeFormatPlaceholder")} />
           <Field value={pic} onChangeText={setPic} placeholder={t("pic")} />
           <Field
             value={note}

@@ -300,9 +300,9 @@ export default function VendorHome() {
       <Field value={profile.descriptionZh} onChangeText={(v) => change("descriptionZh", v)} placeholder={t("vendorDescriptionZh")} multiline />
       <Field value={profile.descriptionTa} onChangeText={(v) => change("descriptionTa", v)} placeholder={t("vendorDescriptionTa")} multiline />
       <Field value={profile.descriptionId} onChangeText={(v) => change("descriptionId", v)} placeholder={t("vendorDescriptionId")} multiline />
-      <Field value={profile.instagram} onChangeText={(v) => change("instagram", v)} placeholder="Instagram URL" autoCapitalize="none" />
-      <Field value={profile.tiktok} onChangeText={(v) => change("tiktok", v)} placeholder="TikTok URL" autoCapitalize="none" />
-      <Field value={profile.facebook} onChangeText={(v) => change("facebook", v)} placeholder="Facebook URL" autoCapitalize="none" />
+      <Field value={profile.instagram} onChangeText={(v) => change("instagram", v)} placeholder={t("instagramUrl")} autoCapitalize="none" />
+      <Field value={profile.tiktok} onChangeText={(v) => change("tiktok", v)} placeholder={t("tiktokUrl")} autoCapitalize="none" />
+      <Field value={profile.facebook} onChangeText={(v) => change("facebook", v)} placeholder={t("facebookUrl")} autoCapitalize="none" />
       <Field value={profile.website} onChangeText={(v) => change("website", v)} placeholder={t("websiteUrl")} autoCapitalize="none" />
       <Text style={styles.label}>{t("vendorCategories")}</Text>
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>

@@ -1,6 +1,7 @@
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { Alert, Linking, Pressable, Text } from "react-native";
+import { Alert, Linking, Pressable, Text, View } from "react-native";
+import { ContextHelp } from "../../../components/Guidance";
 import { languageNames, languages, setLanguage } from "../../../i18n";
 import { useAppState } from "../../../state/AppState";
 import { Button, Card, Screen, styles, Title } from "../../../ui";
@@ -70,7 +71,10 @@ export default function More() {
   };
   return (
     <Screen>
-      <Title>{t("more")}</Title>
+      <View style={styles.between}>
+        <Title>{t("more")}</Title>
+        <ContextHelp title={t("more")} body={t("moreHelp")} />
+      </View>
       <Card>
         {modules.map(([key, label]) => (
           <Pressable

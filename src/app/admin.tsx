@@ -91,7 +91,7 @@ export default function AdminPanel() {
         </Card>
         <Card>
           <Text style={styles.metric}>{data.vendors.length}</Text>
-          <Text style={styles.muted}>Vendor</Text>
+          <Text style={styles.muted}>{t("vendor")}</Text>
         </Card>
         <Card>
           <Text style={styles.metric}>{data.confirmedBookingCount}</Text>
