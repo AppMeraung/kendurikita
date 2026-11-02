@@ -1,0 +1,14 @@
+[
+  { "key": "templateSetDate", "group": "12m" },
+  { "key": "templateIndianPriest", "group": "9m" },
+  { "key": "templateIndianMehndi", "group": "6m" },
+  { "key": "templateIndianSangeet", "group": "6m" },
+  { "key": "templateBookVenue", "group": "9m" },
+  { "key": "templateGuestList", "group": "6m" },
+  { "key": "templateIndianCatering", "group": "3m" },
+  { "key": "templateIndianAttire", "group": "3m" },
+  { "key": "templateIndianCeremonyItems", "group": "1m" },
+  { "key": "templateSeating", "group": "1m" },
+  { "key": "templateRsvpFinal", "group": "1m" },
+  { "key": "templateThankGuests", "group": "after" }
+]

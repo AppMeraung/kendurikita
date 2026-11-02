@@ -1,0 +1,12 @@
+[
+ {"title":"Set your budget","body":"Open Budget, tap Edit beside the total and enter your overall limit."},
+ {"title":"Record a payment","body":"Open Budget and choose Add expense. Enter the planned and paid amounts."},
+ {"title":"Add or import guests","body":"Open Guests to add one person. Contact and CSV import are available after permission."},
+ {"title":"Send an e-card on WhatsApp","body":"Choose Invitation, design the card, publish a unique link for each guest and tap WhatsApp beside the recipient."},
+ {"title":"Read RSVP results","body":"Open Guests to see Attending, Pending or Not attending status and the confirmed pax total."},
+ {"title":"Use the seating plan","body":"Open Seating Plan, add tables and capacity, then assign guests without exceeding a table's limit."},
+ {"title":"QR check-in on the day","body":"Open QR Check-in on the team's device and scan the unique QR on the guest invitation. The attendance total updates live."},
+ {"title":"Find and book vendors","body":"Filter by category, state, date and price before sending an enquiry."},
+ {"title":"Invite your partner or family","body":"From Team, share an invite link or QR and assign their role."},
+ {"title":"Upgrade","body":"Open Packages, choose Pro or Premium and complete the store purchase."}
+]

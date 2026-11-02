@@ -1,0 +1,12 @@
+[
+  { "key": "templateSetDate", "group": "3m" },
+  { "key": "templateSetBudget", "group": "3m" },
+  { "key": "templateAqiqahAnimal", "group": "1m" },
+  { "key": "templateAqiqahButcher", "group": "1m" },
+  { "key": "templateAqiqahMenu", "group": "1m" },
+  { "key": "templateGuestList", "group": "1m" },
+  { "key": "templateInvites", "group": "1m" },
+  { "key": "templateAqiqahPrayer", "group": "1m" },
+  { "key": "templateVendorConfirm", "group": "1m" },
+  { "key": "templateThankGuests", "group": "after" }
+]

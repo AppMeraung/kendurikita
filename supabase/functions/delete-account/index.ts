@@ -1,0 +1,2 @@
+import { admin,json } from '../_shared/client.ts';
+Deno.serve(async(request)=>{const token=(request.headers.get('authorization')||'').replace('Bearer ','');if(!token)return json({error:'unauthorized'},401);const db=admin();const {data:{user},error}=await db.auth.getUser(token);if(error||!user)return json({error:'unauthorized'},401);const result=await db.auth.admin.deleteUser(user.id);return result.error?json({error:result.error.message},500):json({ok:true})});

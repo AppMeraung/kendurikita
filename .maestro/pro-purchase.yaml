@@ -1,0 +1,7 @@
+appId: com.appmeraung.kendurikita
+---
+- launchApp
+- tapOn: "More"
+- tapOn: "Basic / Pro / Premium"
+- assertVisible: "KenduriKita plans"
+# Purchase completion requires a Play internal-testing build, license tester and active RevenueCat offering.

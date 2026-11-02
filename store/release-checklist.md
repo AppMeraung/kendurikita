@@ -1,6 +1,7 @@
 # Senarai semak keluaran Google Play
 
 ## Sudah disediakan
+
 - [x] Draf aplikasi Play Console: KenduriKita
 - [x] Package ID: `com.appmeraung.kendurikita`
 - [x] Bahasa lalai: Melayu (Malaysia)
@@ -14,12 +15,13 @@
 - [x] Profil binaan AAB production
 
 ## Perlu diselesaikan dalam Play Console
+
 - [x] Tetapkan URL polisi privasi awam: https://appmeraung.github.io/kendurikita/
 - [x] Nyatakan aplikasi tidak memerlukan log masuk
 - [x] Deklarasi iklan: tiada iklan
 - [ ] Soal selidik penilaian kandungan
 - [x] Sasaran umur: dewasa / 18+ sebagai tetapan konservatif
-- [x] Data Safety: tiada data dikumpul atau dikongsi oleh versi ini
+- [ ] Data Safety: isytihar data akaun, kandungan pengguna, pembelian dan token peranti yang dikumpul untuk fungsi aplikasi; data tidak dijual
 - [x] Deklarasi bukan aplikasi kerajaan, kewangan atau kesihatan
 - [ ] Kategori Lifestyle dan butiran hubungan rasmi
 - [x] Muat naik store listing dan semua aset

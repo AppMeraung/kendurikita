@@ -1,0 +1,99 @@
+# Changelog
+
+## 2.0.0 — in progress
+
+- Replaced the single-screen tab state with Expo Router route groups.
+- Removed default demo data from the new-user experience.
+- Added a six-step, skippable local-first event setup wizard and safe legacy-data detection.
+- Replaced Unicode navigation glyphs with accessible Ionicons.
+- Added five-language UI resources and translation-key completeness tests.
+- Made budget totals derive from the user's total budget and real entries.
+- Added working expense create/edit/delete flows and guest create/edit/delete, search, RSVP filter, contact import and CSV import.
+- Corrected the Android AAB command to use EAS Build.
+- Updated versionCode to 5 and moved splash configuration to the SDK 58 plugin.
+- Corrected square/adaptive/monochrome icon configuration.
+- Added Supabase schema migrations, RLS policies, secure public RSVP RPCs, local-to-cloud sync and Edge Functions.
+- Added server-side five-language push templates, quiet hours, rate limits, Expo receipt checks and invalid-token cleanup.
+- Expanded budget entries with vendor, payment type/method, payer split, paid/due dates, notes and receipt photos.
+- Added budget filtering, sorting, over-budget warnings, delete undo and shareable PDF/CSV exports.
+- Expanded checklist tasks with edit, due date validation, priority, PIC assignment, search/filter/sorting and scheduled local reminders.
+- Added separate five-language checklist templates for Chinese, Indian and Indonesian weddings, engagements, Aqiqah, birthdays and corporate events.
+- Replaced generic Atur Cara records with dated, timed, sortable timeline items, PICs and overlap validation.
+- Replaced generic team records with structured member roles, phone numbers and invitation/join status.
+- Replaced the generic seating placeholder with draggable round/long tables, capacity enforcement, guest assignment, cloud sync and PDF export.
+- Localised the public RSVP flow in all five languages and added event details, dietary needs and guest messages.
+- Added a five-language digital invitation editor with cultural templates, cover photo, music/gift/wishlist fields, per-guest links and WhatsApp sharing.
+- Replaced the generic inventory placeholder with offline-first item quantities, categories, preparation statuses, progress and cloud sync.
+- Replaced the generic documents placeholder with foldered PDF/image selection, 10 MB validation, private storage upload, signed opening and deletion.
+- Added dedicated vendor payment tracking with due/overdue filters, balances, receipts and local due-date reminders.
+- Replaced the generic reports card with a full event summary and safely escaped shareable PDF export.
+- Replaced the generic post-event placeholder with guest photo uploads, a private shared gallery, RSVP wishes archive and per-guest WhatsApp thank-you messages.
+- Expanded vendor registration with business/owner details, coverage, languages, policies, categories, completeness tracking and private SSM/ID verification uploads.
+- Expanded vendor packages with price modes, inclusions, add-ons, minimum pax, coverage and travel charges, plus a CRUD availability calendar with database-enforced overlap prevention.
+- Added vendor image/video portfolios, approved public profiles, packages, upcoming availability, verified-booking reviews and vendor replies.
+- Added a role-protected responsive admin panel for vendor/review/report moderation, category and badge management, platform totals and subscription visibility.
+- Added five-language Basic planning tools for admin-sourced mas kahwin/hantaran rates, buffered catering/rewang quantities with sharing, and a cloud-synced wedding savings goal linked to the budget.
+- Added secure referral codes with account/device abuse controls, activity-based rewards and server-only entitlement issuance.
+- Added an Expo SDK 58 home-screen widget configuration for Android and iOS showing the event countdown and next unfinished task in the selected language.
+- Added native Apple Sign-In, PKCE OAuth callbacks, verified phone OTP, iOS build configuration and App Store/TestFlight preparation documents.
+- Added entitlement limits and server-side enforcement for user and vendor Basic, Pro and Premium plans, including subscription grace periods.
+- Added a five-language RevenueCat paywall with live offering prices, purchase restore, active expiry details and store subscription management links.
+- Hardened RevenueCat and CHIP callbacks with signed requests, validated identifiers/statuses, idempotent entitlement writes and server-only secrets.
+- Added vendor discovery filters for category, location, availability, price, rating, Halal and language, Premium sponsored ranking and three-vendor comparison.
+- Replaced placeholder vendor analytics with real profile/package views, enquiries, conversion, response time, monthly revenue and customer-location metrics.
+- Added database-driven push outbox jobs, event triggers, scheduled reminders, atomic claiming, retry handling, deep links, quiet hours, per-category preferences and an unread inbox badge.
+- Added real positive/negative RLS fixtures for cross-user events, budgets, vendor leads and moderation protection.
+- Added saved vendor favourites, Premium sponsored rotation on the user dashboard and server-enforced Pro guestbook/DuitNow QR gifts.
+- Completed five-language copy for authentication, guest import, RSVP filters, notification settings, account sync/sign-out and the admin dashboard.
+- Added a four-slide welcome tour, optional additional event dates and a real dashboard budget donut/quick payment flow.
+- Added Google Maps, Waze, add-to-calendar and live event countdown actions to public invitations.
+- Secured QR check-in against the active event token and added realtime checked-in pax totals.
+- Added persistent budget-category creation, rename, ordering and deletion, optional percentage allocations, category totals and cloud sync.
+- Added a once-only three-step first-use coach overlay and contextual help buttons on the dashboard, budget, guest, vendor and checklist screens in five languages.
+- Added a persisted offline cloud-sync queue with reconnect flushing and deletion reconciliation to prevent removed child records returning from Supabase.
+- Added privacy-preserving Premium vendor competitor benchmarks across at least three comparable vendors.
+- Added a server-side CHIP vendor checkout creator with configurable prices, pending entitlements and official RSA callback verification; checkout remains feature-flagged off until test credentials are configured.
+- Added weekly vendor performance summaries and distinct billing-issue notifications for subscriptions in grace status.
+- Added a dismissible five-item getting-started progress ring and a clearly labelled, read-only sample event that never touches user data.
+- Added a visible unique check-in QR for every published guest invitation and on each guest's public RSVP page.
+- Expanded the localised Help Centre into the ten separately searchable workflows required by the build brief.
+- Added configurable WhatsApp and email support actions for all users while retaining the Premium priority-support label.
+- Added a confirmed-booking-only vendor job sheet with event details, timeline and one-tap PIC contact actions through a restricted RPC.
+- Added server-proxied Google Places search for event and vendor locations, persisted coordinates, true distance display and relevance/rating/price/nearest vendor sorting.
+- Added user/vendor/review reporting plus database-enforced two-way chat blocking, with safety actions and moderation intake in all five languages.
+- Expanded the admin panel with portfolio moderation, category activation controls, confirmed-booking/open-report statistics and audited subscription status management.
+- Fixed QR check-in calling a nonexistent access helper, and enforced Pro/Premium for check-in, parent contributions/roles and automatic pending-RSVP reminders at the database layer.
+- Added expiring single-recipient event membership links and QR codes for partner, editor, viewer and parent roles, with authenticated acceptance and server-side plan limits.
+- Preserved pending event-invite tokens through OAuth, magic-link and phone-OTP sign-in, clearing them only after successful membership acceptance.
+- Added plan-aware creation of additional cloud events, dashboard upcoming balances/recent vendor messages, a five-step vendor onboarding and cached vendor call/WhatsApp contacts with live attendance in Day Mode.
+
+### Bugs found and fixed
+
+- Fixed notification delivery silently excluding users who had not yet saved a notification-settings row.
+- Fixed notification logs marking every registered token as sent, including suppressed and failed deliveries.
+- Fixed Expo `DeviceNotRegistered` responses leaving dead push tokens in the database.
+- Fixed push copy using the sender-supplied language instead of each recipient device's chosen language.
+- Fixed guest CSV imports with quoted commas splitting a single name into multiple columns.
+- Fixed the setup form allowing an invalid calendar-date shape to reach event creation.
+- Fixed Android manifest generation adding legacy storage, audio, contact-write and overlay permissions that the production app does not need.
+- Fixed checklist reminders remaining scheduled after their task was edited or deleted.
+- Fixed non-Malay event choices creating an empty checklist after the setup wizard.
+- Fixed checklist template domain tests importing the Expo runtime through i18n.
+- Fixed overlapping timeline entries being accepted without warning.
+- Fixed draggable tables retaining stale coordinates after their saved position changed.
+- Fixed public RSVP accepting fractional pax or more attendees than the guest was invited to bring.
+- Fixed invitation cover photos exposing an unusable device-local URI by publishing them to a dedicated public media bucket.
+- Fixed authenticated event members being unable to read RSVP messages because the RSVP table had RLS enabled without a member-read policy.
+- Hardened vendor RLS for quotations, invoices, leads and chat so only the customer, owning vendor or an authorised admin can access or mutate each workflow.
+- Added vendor discovery and booking requests, event snapshots for leads, vendor quotation creation/PDF sharing, and secure customer accept/reject responses.
+- Expanded quotations to multiple items and added idempotent invoices, validated deposit/balance recording and invoice payment status.
+- Added realtime customer-vendor chat, read receipts through a restricted RPC, and private 10 MB image/PDF attachments.
+- Fixed vendor profile upserts being able to create duplicate businesses for the same account by enforcing one profile per owner.
+- Prevented vendor owners from approving their own profiles or assigning moderation badges through direct API calls.
+- Fixed web startup crashing when the native-only notification-response API was called.
+- Fixed the vendor CHIP checkout return route colliding with the user RevenueCat paywall, and localised monthly/yearly vendor plan labels in all five languages.
+- Corrected the user paywall copy to describe Pro/Premium as one-time per-event purchases instead of auto-renewing subscriptions.
+
+### Known incomplete work
+
+- Live Supabase migration/RLS verification, live RevenueCat/CHIP product configuration, device push tests, Maestro execution, store screenshots, signed Android/iOS builds and dashboard/store submission remain dependent on configured staging credentials and devices.

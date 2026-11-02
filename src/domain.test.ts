@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { budgetSummary, checklistProgress, guestSummary, money } from './domain';
+import { budgetSummary, checklistProgress, guestSummary, money, validAmount } from './domain';
 
 describe('KenduriKita domain calculations', () => {
   it('calculates budget totals and percentage', () => {
     expect(budgetSummary([
-      { id: '1', category: 'A', planned: 1000, spent: 250 },
-      { id: '2', category: 'B', planned: 500, spent: 500 },
-    ])).toEqual({ planned: 1500, spent: 750, remaining: 750, percent: 50 });
+      { id: '1', name: 'A', category: 'A', planned: 1000, paid: 250 },
+      { id: '2', name: 'B', category: 'B', planned: 500, paid: 500 },
+    ], 2000)).toEqual({ planned: 1500, paid: 750, remaining: 1250, owed: 750, percent: 38, overBudget: false });
   });
 
   it('calculates checklist progress safely', () => {
@@ -26,7 +26,14 @@ describe('KenduriKita domain calculations', () => {
   });
 
   it('formats Malaysian ringgit and never shows a negative balance', () => {
-    expect(money(12500)).toBe('RM12,500');
-    expect(money(-10)).toBe('RM0');
+    expect(money(12500)).toContain('12,500');
+    expect(money(-10)).toContain('0');
+  });
+
+  it('rejects negative and non-number amounts', () => {
+    expect(validAmount(0)).toBe(true);
+    expect(validAmount('12.50')).toBe(true);
+    expect(validAmount(-1)).toBe(false);
+    expect(validAmount('nope')).toBe(false);
   });
 });

@@ -1,0 +1,14 @@
+[
+  { "key": "templateSetDate", "group": "12m" },
+  { "key": "templateIndonesianAdat", "group": "9m" },
+  { "key": "templateIndonesianKua", "group": "6m" },
+  { "key": "templateIndonesianPenghulu", "group": "3m" },
+  { "key": "templateBookVenue", "group": "9m" },
+  { "key": "templateGuestList", "group": "6m" },
+  { "key": "templateIndonesianCatering", "group": "3m" },
+  { "key": "templateInvites", "group": "3m" },
+  { "key": "templateSeating", "group": "1m" },
+  { "key": "templateVendorConfirm", "group": "1m" },
+  { "key": "templateRsvpFinal", "group": "1m" },
+  { "key": "templateThankGuests", "group": "after" }
+]

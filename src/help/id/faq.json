@@ -1,0 +1,12 @@
+[
+ {"title":"Atur anggaran","body":"Buka Anggaran, tekan Edit di samping total dan masukkan batas keseluruhan."},
+ {"title":"Catat pembayaran","body":"Buka Anggaran dan pilih Tambah pengeluaran. Masukkan jumlah rencana dan dibayar."},
+ {"title":"Tambah atau impor tamu","body":"Buka Tamu untuk menambah satu orang. Impor kontak dan CSV tersedia setelah izin."},
+ {"title":"Kirim e-Kartu melalui WhatsApp","body":"Pilih Undangan, desain kartu, terbitkan tautan unik setiap tamu lalu tekan WhatsApp di samping penerima."},
+ {"title":"Baca hasil RSVP","body":"Buka Tamu untuk melihat status Hadir, Menunggu atau Tidak hadir serta total pax yang dikonfirmasi."},
+ {"title":"Gunakan denah meja","body":"Buka Denah Meja, tambah meja dan kapasitas, lalu tetapkan tamu tanpa melebihi batas meja."},
+ {"title":"QR check-in pada hari acara","body":"Buka QR Check-in di perangkat petugas dan pindai QR unik pada undangan tamu; jumlah hadir diperbarui langsung."},
+ {"title":"Cari vendor","body":"Saring berdasarkan kategori, provinsi, tanggal dan harga sebelum mengirim pertanyaan."},
+ {"title":"Undang pasangan atau keluarga","body":"Dari Tim, bagikan tautan atau QR undangan dan tetapkan peran."},
+ {"title":"Tingkatkan paket","body":"Buka Paket, pilih Pro atau Premium dan selesaikan pembelian melalui toko aplikasi."}
+]

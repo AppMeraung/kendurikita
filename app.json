@@ -2,35 +2,114 @@
   "expo": {
     "name": "KenduriKita",
     "slug": "kenduri-kita",
-    "version": "1.1.0",
+    "version": "2.0.0",
     "description": "Aplikasi perancangan majlis dan kenduri untuk Malaysia.",
     "orientation": "portrait",
-    "icon": "./assets/kendurikita-rings-v2.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.appmeraung.kendurikita",
-      "buildNumber": "2"
+      "buildNumber": "5",
+      "usesAppleSignIn": true
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#FFF8EC",
-        "foregroundImage": "./assets/kendurikita-rings-v2.png"
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.appmeraung.kendurikita",
-      "versionCode": 3,
-      "permissions": []
+      "versionCode": 5,
+      "permissions": ["android.permission.POST_NOTIFICATIONS"],
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.WRITE_CONTACTS",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ]
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "output": "static"
     },
+    "scheme": "kendurikita",
     "primaryColor": "#9C123C",
     "extra": {
       "eas": {
         "projectId": "0c5fa76b-550b-431e-b31c-60afe9a5b9fc"
       }
     },
-    "owner": "meraungstudio"
+    "owner": "meraungstudio",
+    "plugins": [
+      "expo-router",
+      "expo-localization",
+      "expo-font",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow KenduriKita to scan guest QR codes and photograph receipts."
+        }
+      ],
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "Allow KenduriKita to import only the contacts you choose as guests."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow KenduriKita to select event, receipt and portfolio photos."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/android-icon-monochrome.png",
+          "color": "#9C123C",
+          "defaultChannel": "reminders"
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#FFF8EC"
+        }
+      ],
+      "expo-secure-store",
+      "expo-image",
+      "expo-sharing",
+      "expo-apple-authentication",
+      [
+        "expo-widgets",
+        {
+          "enableAndroid": true,
+          "widgets": [
+            {
+              "name": "EventCountdownWidget",
+              "displayName": "KenduriKita",
+              "description": "Hari lagi ke majlis dan tugas seterusnya.",
+              "ios": {
+                "supportedFamilies": ["systemSmall", "systemMedium"],
+                "initialLayout": "./src/widgets/EventCountdownWidget"
+              },
+              "android": {
+                "targetCellWidth": 4,
+                "targetCellHeight": 2,
+                "resizeMode": "horizontal",
+                "initialLayout": "./src/widgets/EventCountdownWidget"
+              }
+            }
+          ]
+        }
+      ],
+      "expo-web-browser"
+    ]
   }
 }

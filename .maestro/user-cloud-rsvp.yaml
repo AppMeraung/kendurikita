@@ -1,0 +1,13 @@
+appId: com.appmeraung.kendurikita
+env:
+  TEST_EMAIL: test@example.com
+---
+- launchApp
+- tapOn: "Start planning"
+- assertVisible: "Sign in"
+- tapOn:
+    text: "email@example.com"
+- inputText: "${TEST_EMAIL}"
+- tapOn: "Send magic link"
+- assertVisible: "OTP sent"
+# Authentication-link handling, public RSVP callback and Realtime assertion require the configured test Supabase project.

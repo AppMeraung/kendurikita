@@ -22,7 +22,7 @@ Urus perkara penting dalam satu tempat:
 
 KenduriKita menggunakan Bahasa Melayu dan paparan yang ringkas supaya pasangan serta keluarga boleh bekerjasama merancang majlis dari awal hingga selesai.
 
-Versi awal menyimpan data pada peranti anda. Sesetengah fungsi seperti tempahan vendor, pembayaran sebenar dan perkongsian automatik memerlukan sambungan perkhidmatan pada versi akan datang.
+Mulakan dengan majlis kosong milik anda sendiri. Data boleh disimpan setempat dalam mod tetamu atau diselaraskan melalui akaun apabila perkhidmatan awan dikonfigurasi. Bayaran perkhidmatan vendor berlaku di luar aplikasi; pembelian pakej digital menggunakan gedung aplikasi.
 
 ## Kategori cadangan
 Lifestyle

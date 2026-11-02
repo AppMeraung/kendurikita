@@ -1,0 +1,14 @@
+[
+  { "key": "templateSetDate", "group": "12m" },
+  { "key": "templateChineseTea", "group": "9m" },
+  { "key": "templateChineseGuoDaLi", "group": "6m" },
+  { "key": "templateBookBanquet", "group": "9m" },
+  { "key": "templateGuestList", "group": "6m" },
+  { "key": "templateChineseInvites", "group": "3m" },
+  { "key": "templateChineseAttire", "group": "3m" },
+  { "key": "templateSeating", "group": "1m" },
+  { "key": "templateVendorConfirm", "group": "1m" },
+  { "key": "templateChineseTeaItems", "group": "1m" },
+  { "key": "templateRsvpFinal", "group": "1m" },
+  { "key": "templateThankGuests", "group": "after" }
+]

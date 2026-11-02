@@ -1,0 +1,9 @@
+appId: com.appmeraung.kendurikita
+---
+- launchApp
+# This flow continues after a seeded vendor test session is installed.
+- assertVisible: "Profil Vendor"
+- tapOn: "Lead"
+- assertVisible: "Pertanyaan"
+- tapOn: "Pakej"
+- assertVisible: "Pakej Vendor"
