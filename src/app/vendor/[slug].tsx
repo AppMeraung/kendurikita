@@ -39,7 +39,10 @@ type Package = {
   price: number;
   price_type: string;
   inclusions: string[];
+  addons: string[];
   minimum_pax?: number;
+  coverage?: string[];
+  travel_charge?: number;
 };
 type Review = {
   id: string;
@@ -88,7 +91,7 @@ export default function VendorProfile() {
         .order("sort_order"),
       supabase
         .from("vendor_packages")
-        .select("id,name,price,price_type,inclusions,minimum_pax")
+        .select("id,name,price,price_type,inclusions,addons,minimum_pax,coverage,travel_charge")
         .eq("vendor_id", profile.data.id)
         .eq("active", true),
       supabase
@@ -229,6 +232,9 @@ export default function VendorProfile() {
             {item.name} · RM {Number(item.price).toFixed(2)}
           </Text>
           <Text style={styles.muted}>{item.inclusions?.join(" · ")}</Text>
+          {item.addons?.length ? <Text style={styles.muted}>{t("packageAddons")}: {item.addons.join(" · ")}</Text> : null}
+          {item.coverage?.length ? <Text style={styles.muted}>{t("coverageAreas")}: {item.coverage.join(" · ")}</Text> : null}
+          {item.travel_charge ? <Text style={styles.muted}>{t("travelCharge")}: RM {Number(item.travel_charge).toFixed(2)}</Text> : null}
           {item.minimum_pax ? (
             <Text style={styles.muted}>
               {t("minimumPax")}: {item.minimum_pax}

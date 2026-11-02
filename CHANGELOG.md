@@ -70,6 +70,7 @@
 - Added event/album names and storage-path cleanup to vendor portfolios so public media can be organised by the wedding or event it represents.
 - Added up to three moderated photos to verified-booking reviews, with a restricted media bucket, 10 MB limits, failed-insert cleanup and admin/vendor/public review previews.
 - Completed public vendor branding with logo/cover uploads, manual short and full descriptions in all five languages, HTTPS-validated social links, payment terms, WhatsApp and map actions.
+- Exposed package add-ons, coverage and travel charges on public vendor profiles.
 
 ### Bugs found and fixed
 
