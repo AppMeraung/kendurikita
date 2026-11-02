@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   validFoundedYear,
+  validVendorUrl,
   vendorProfileCompleteness,
   VendorProfileDraft,
 } from "./vendorProfile";
@@ -35,5 +36,14 @@ describe("vendor profile", () => {
     expect(validFoundedYear("2020", 2026)).toBe(true);
     expect(validFoundedYear("1700", 2026)).toBe(false);
     expect(validFoundedYear("2030", 2026)).toBe(false);
+  });
+});
+
+describe("vendor public links", () => {
+  it("accepts empty or HTTPS links and rejects unsafe schemes", () => {
+    expect(validVendorUrl("")).toBe(true);
+    expect(validVendorUrl("https://instagram.com/vendor")).toBe(true);
+    expect(validVendorUrl("http://example.com")).toBe(false);
+    expect(validVendorUrl("javascript:alert(1)")).toBe(false);
   });
 });

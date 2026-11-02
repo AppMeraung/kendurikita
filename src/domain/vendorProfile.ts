@@ -11,7 +11,21 @@ export type VendorProfileDraft = {
   foundedYear: string;
   languages: string;
   description: string;
+  shortDescription: string;
+  shortDescriptionEn: string;
+  shortDescriptionZh: string;
+  shortDescriptionTa: string;
+  shortDescriptionId: string;
+  descriptionEn: string;
+  descriptionZh: string;
+  descriptionTa: string;
+  descriptionId: string;
+  instagram: string;
+  tiktok: string;
+  facebook: string;
+  website: string;
   deposit: string;
+  paymentTerms: string;
   cancellation: string;
   rescheduling: string;
 };
@@ -49,4 +63,14 @@ export function validFoundedYear(
   if (!value) return true;
   const parsed = Number(value);
   return Number.isInteger(parsed) && parsed >= 1800 && parsed <= year;
+}
+
+export function validVendorUrl(value: string) {
+  if (!value.trim()) return true;
+  try {
+    const parsed = new URL(value.trim());
+    return parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
 }

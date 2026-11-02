@@ -73,9 +73,29 @@ export async function saveVendorProfile(
           .split(",")
           .map((value) => value.trim())
           .filter(Boolean),
-        description: { ms: profile.description.trim() },
+        short_description: {
+          ms: profile.shortDescription.trim(),
+          en: profile.shortDescriptionEn.trim(),
+          zh: profile.shortDescriptionZh.trim(),
+          ta: profile.shortDescriptionTa.trim(),
+          id: profile.shortDescriptionId.trim(),
+        },
+        description: {
+          ms: profile.description.trim(),
+          en: profile.descriptionEn.trim(),
+          zh: profile.descriptionZh.trim(),
+          ta: profile.descriptionTa.trim(),
+          id: profile.descriptionId.trim(),
+        },
+        social_links: {
+          instagram: profile.instagram.trim(),
+          tiktok: profile.tiktok.trim(),
+          facebook: profile.facebook.trim(),
+          website: profile.website.trim(),
+        },
         policies: {
           deposit_percentage: Number(profile.deposit) || 0,
+          payment_terms: profile.paymentTerms.trim(),
           cancellation: profile.cancellation.trim(),
           rescheduling: profile.rescheduling.trim(),
         },
@@ -97,6 +117,24 @@ export async function saveVendorProfile(
     if (inserted.error) throw inserted.error;
   }
   return data.id as string;
+}
+
+export async function uploadVendorBrandImage(
+  vendorId: string,
+  kind: "logo" | "cover",
+  file: { uri: string; name: string; mimeType?: string },
+) {
+  const source = await fetch(file.uri);
+  if (!source.ok) throw new Error("brand_image_unreadable");
+  const bytes = await source.arrayBuffer();
+  if (bytes.byteLength > 10 * 1024 * 1024) throw new Error("brand_image_too_large");
+  const path = `${vendorId}/${kind}-${file.name.replace(/[^a-zA-Z0-9._-]+/g, "-")}`;
+  const uploaded = await supabase.storage.from("vendor-media").upload(path, bytes, { contentType: file.mimeType || "image/jpeg", upsert: true });
+  if (uploaded.error) throw uploaded.error;
+  const url = supabase.storage.from("vendor-media").getPublicUrl(path).data.publicUrl;
+  const updated = await supabase.from("vendors").update({ [kind === "logo" ? "logo_url" : "cover_url"]: url }).eq("id", vendorId);
+  if (updated.error) throw updated.error;
+  return url;
 }
 
 export async function uploadVerificationDocument(

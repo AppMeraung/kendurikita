@@ -16,6 +16,9 @@ type Vendor = {
   id: string;
   company_name: string;
   description: Record<string, string>;
+  short_description: Record<string, string>;
+  social_links: Record<string, string>;
+  address: { line?: string; latitude?: number; longitude?: number };
   phone: string | null;
   coverage: string[];
   policies: Record<string, string | number>;
@@ -66,7 +69,7 @@ export default function VendorProfile() {
     const profile = await supabase
       .from("vendors")
       .select(
-        "id,company_name,description,phone,coverage,policies,badges,logo_url,cover_url",
+        "id,company_name,description,short_description,social_links,address,phone,coverage,policies,badges,logo_url,cover_url",
       )
       .eq("slug", slug)
       .eq("verification_status", "approved")
@@ -165,6 +168,9 @@ export default function VendorProfile() {
     vendor.description?.ms ||
     vendor.description?.en ||
     "";
+  const shortDescription = vendor.short_description?.[language] || vendor.short_description?.ms || vendor.short_description?.en || "";
+  const latitude = Number(vendor.address?.latitude);
+  const longitude = Number(vendor.address?.longitude);
   return (
     <Screen>
       {vendor.cover_url ? (
@@ -175,20 +181,22 @@ export default function VendorProfile() {
         />
       ) : null}
       <Title>{vendor.company_name}</Title>
+      {vendor.logo_url ? <Image source={{ uri: vendor.logo_url }} style={{ width: 88, height: 88, borderRadius: 18 }} contentFit="cover" /> : null}
       <Card>
         <Text style={styles.label}>✓ {t("reviewVerified")}</Text>
         {vendor.badges?.length ? (
           <Text style={styles.muted}>{vendor.badges.join(" · ")}</Text>
         ) : null}
+        {shortDescription ? <Text style={styles.label}>{shortDescription}</Text> : null}
         <Text style={styles.muted}>{description}</Text>
         <Text style={styles.muted}>{vendor.coverage?.join(", ")}</Text>
         {vendor.phone ? (
-          <Button
-            label={t("contactVendor")}
-            onPress={() => void Linking.openURL(`tel:${vendor.phone}`)}
-            secondary
-          />
+          <><Button label={t("contactVendor")} onPress={() => void Linking.openURL(`tel:${vendor.phone}`)} secondary />
+          <Button label="WhatsApp" onPress={() => void Linking.openURL(`https://wa.me/${vendor.phone!.replace(/\D/g, "")}`)} secondary /></>
         ) : null}
+        {Number.isFinite(latitude) && Number.isFinite(longitude) ? <Button label={t("openMap")} onPress={() => void Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`)} secondary /> : null}
+        {Object.entries(vendor.social_links || {}).filter(([, url]) => url).map(([network, url]) => <Button key={network} label={network[0].toUpperCase() + network.slice(1)} onPress={() => void Linking.openURL(url)} secondary />)}
+        {vendor.policies?.payment_terms ? <Text style={styles.muted}>{t("paymentTerms")}: {String(vendor.policies.payment_terms)}</Text> : null}
         <Button label={t("reportVendor")} onPress={() => setReportTarget({ type: "vendor", id: vendor.id })} secondary />
       </Card>
       <Title>{t("vendorPortfolio")}</Title>
