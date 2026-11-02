@@ -74,6 +74,7 @@
 - Added SDK 58 image downsampling and JPEG compression before invitation, DuitNow, guest-gallery, vendor-brand, portfolio and review-photo uploads.
 - Added accessibility labels to every custom Pressable and an AST regression test, while retaining 48 dp minimum shared controls.
 - Declared all five supported native locales and localised iOS camera, contacts and photo-library permission explanations through Expo SDK 58 locale metadata.
+- Fixed local checklist/payment reminders being ignored by the notification response handler while rejecting external deep-link URLs.
 
 ### Bugs found and fixed
 

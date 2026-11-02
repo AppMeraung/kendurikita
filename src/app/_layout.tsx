@@ -11,6 +11,7 @@ import { identifyPurchaser } from "../services/revenuecat";
 import { cloudConfigured, supabase } from "../services/supabase";
 import { configureNotificationChannels } from "../services/notifications";
 import { palette } from "../ui";
+import { notificationRoute } from "../domain/notifications";
 
 function Routes() {
   const { ready, event } = useAppState();
@@ -31,8 +32,8 @@ function Routes() {
     void configureNotificationChannels();
     const open = (response: Notifications.NotificationResponse | null) => {
       const url = response?.notification.request.content.data?.url;
-      if (typeof url === "string" && url.startsWith("kendurikita://"))
-        router.push(`/${url.slice("kendurikita://".length)}` as never);
+      const route = notificationRoute(url);
+      if (route) router.push(route as never);
     };
     void Notifications.getLastNotificationResponseAsync().then(open);
     const subscription = Notifications.addNotificationResponseReceivedListener(open);

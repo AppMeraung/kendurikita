@@ -5,7 +5,7 @@ import {
   vendorCanAdd,
   vendorFeature,
 } from "./entitlements";
-import { canSendPromotion, groupRsvp, isQuietHour } from "./notifications";
+import { canSendPromotion, groupRsvp, isQuietHour, notificationRoute } from "./notifications";
 
 describe("entitlements", () => {
   it("enforces user resource limits including bulk additions", () => {
@@ -29,6 +29,15 @@ describe("entitlements", () => {
     expect(vendorFeature("pro", "quotations")).toBe(true);
     expect(vendorFeature("pro", "video")).toBe(false);
     expect(vendorFeature("premium", "video")).toBe(true);
+  });
+});
+
+describe("notification deep links", () => {
+  it("accepts app schemes and internal routes but rejects external URLs", () => {
+    expect(notificationRoute("kendurikita://vendor/leads/1")).toBe("/vendor/leads/1");
+    expect(notificationRoute("/(user)/payments")).toBe("/(user)/payments");
+    expect(notificationRoute("https://evil.example")).toBeNull();
+    expect(notificationRoute("//evil.example")).toBeNull();
   });
 });
 
