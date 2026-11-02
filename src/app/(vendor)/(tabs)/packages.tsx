@@ -119,7 +119,7 @@ export default function Packages() {
       <Title>{t("vendorPackages")}</Title>
       {items.length ? (
         items.map((item) => (
-          <Pressable key={item.id} onPress={() => edit(item)}>
+          <Pressable key={item.id} accessibilityLabel={`${t("edit")} ${item.name}`} onPress={() => edit(item)}>
             <Card>
               <Text style={styles.label}>
                 {item.name} · RM {Number(item.price).toFixed(2)}

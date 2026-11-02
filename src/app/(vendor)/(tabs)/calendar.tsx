@@ -93,7 +93,7 @@ export default function Calendar() {
       <Title>{t("vendorCalendar")}</Title>
       {items.length ? (
         items.map((item) => (
-          <Pressable key={item.id} onPress={() => edit(item)}>
+          <Pressable key={item.id} accessibilityLabel={t("edit")} onPress={() => edit(item)}>
             <Card>
               <Text style={styles.label}>
                 {t(`availabilityStatus_${item.status}`)}

@@ -23,7 +23,7 @@ export default function VendorPaywall() {
     finally { setBusy(false); }
   };
   return <Screen>
-    <Pressable onPress={() => router.back()}><Text style={styles.label}>‹ {t("back")}</Text></Pressable>
+    <Pressable accessibilityLabel={t("back")} onPress={() => router.back()}><Text style={styles.label}>‹ {t("back")}</Text></Pressable>
     <Title>{t("vendorPlans")}</Title>
     <Card><Text style={styles.muted}>{t("chipVendorPaymentNote")}</Text></Card>
     {options.map((option) => <Card key={`${option.plan}-${option.period}`}><Text style={styles.label}>{option.plan === "vendor_pro" ? "Vendor Pro" : "Vendor Premium"} · {t(option.period === "month" ? "billingMonthly" : "billingYearly")}</Text><Text style={styles.muted}>{option.price || t("priceAtCheckout")}</Text><Button label={t("continueToSecurePayment")} onPress={() => void checkout(option.plan, option.period)} disabled={busy || !chipPaymentsEnabled} /></Card>)}

@@ -28,9 +28,9 @@ export default function Events() {
     router.push("/(auth)/setup");
   };
   return <Screen>
-    <Pressable onPress={() => router.back()}><Text style={styles.label}>‹ {t("back")}</Text></Pressable>
+    <Pressable accessibilityLabel={t("back")} onPress={() => router.back()}><Text style={styles.label}>‹ {t("back")}</Text></Pressable>
     <Title>{t("myEvents")}</Title>
     <Button label={t("createAnotherEvent")} onPress={create} />
-    {rows.length ? rows.map((item) => <Pressable key={item.id} onPress={() => void open(item.id)}><Card><Text style={styles.label}>{item.name}</Text><Text style={styles.muted}>{item.event_type} · {item.event_dates?.[0] || t("noDate")}</Text></Card></Pressable>) : <Empty icon="🗓️" text={t("emptyCloudEvents")} action={t("back")} onPress={() => router.back()} />}
+    {rows.length ? rows.map((item) => <Pressable key={item.id} accessibilityLabel={`${t("open")} ${item.name}`} onPress={() => void open(item.id)}><Card><Text style={styles.label}>{item.name}</Text><Text style={styles.muted}>{item.event_type} · {item.event_dates?.[0] || t("noDate")}</Text></Card></Pressable>) : <Empty icon="🗓️" text={t("emptyCloudEvents")} action={t("back")} onPress={() => router.back()} />}
   </Screen>;
 }

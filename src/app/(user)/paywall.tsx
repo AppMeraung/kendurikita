@@ -52,7 +52,7 @@ export default function Paywall() {
     } finally { setBusy(false); }
   };
   return <Screen>
-    <Pressable onPress={() => router.back()}><Text style={styles.label}>‹ {t("back")}</Text></Pressable>
+    <Pressable accessibilityLabel={t("back")} onPress={() => router.back()}><Text style={styles.label}>‹ {t("back")}</Text></Pressable>
     <Title>{t("kenduriKitaPlans")}</Title>
     {status.names.length ? <Card>
       <Text style={styles.label}>{t("activeSubscription")}</Text>

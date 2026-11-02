@@ -25,7 +25,7 @@ export default function Welcome() {
   const onScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => setIndex(Math.round(event.nativeEvent.contentOffset.x / width));
   return <Screen scroll={false}>
     <View style={{ flex: 1, paddingTop: 18 }}>
-      <View style={styles.between}><Text style={{ color: palette.gold, fontWeight: "900", letterSpacing: 2 }}>{t("brand")}</Text>{index < slides.length - 1 ? <Pressable onPress={() => move(slides.length - 1)}><Text style={styles.label}>{t("skip")}</Text></Pressable> : <View />}</View>
+      <View style={styles.between}><Text style={{ color: palette.gold, fontWeight: "900", letterSpacing: 2 }}>{t("brand")}</Text>{index < slides.length - 1 ? <Pressable accessibilityLabel={t("skip")} onPress={() => move(slides.length - 1)}><Text style={styles.label}>{t("skip")}</Text></Pressable> : <View />}</View>
       <ScrollView ref={scroller} horizontal pagingEnabled showsHorizontalScrollIndicator={false} onMomentumScrollEnd={onScrollEnd} style={{ flex: 1 }}>
         {slides.map((slide) => <View key={slide.title} style={{ width: Math.max(0, width - 40), alignItems: "center", justifyContent: "center", gap: 24, paddingHorizontal: 16 }}>
           <View style={{ width: 150, height: 150, borderRadius: 75, backgroundColor: palette.rose, alignItems: "center", justifyContent: "center" }}><Ionicons name={slide.icon} size={72} color={palette.maroon} /></View>

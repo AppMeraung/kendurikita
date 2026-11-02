@@ -12,7 +12,7 @@ export default function NotificationSettings() {
   if (!value) return <Screen><Title>{t("notificationSettings")}</Title><Text style={styles.muted}>{t("loading")}</Text></Screen>;
   const save = async () => { try { await saveNotificationPreferences(value); Alert.alert(t("saved")); } catch (error) { Alert.alert(t("saveFailed"), error instanceof Error ? error.message : t("unknownError")); } };
   return <Screen>
-    <Pressable onPress={() => router.back()}><Text style={styles.label}>‹ {t("back")}</Text></Pressable>
+    <Pressable accessibilityLabel={t("back")} onPress={() => router.back()}><Text style={styles.label}>‹ {t("back")}</Text></Pressable>
     <Title>{t("notificationSettings")}</Title>
     <Card><Text style={styles.label}>{t("notificationCategories")}</Text>{notificationCategories.filter((category) => category !== "promotions").map((category) => <Button key={category} label={`${t(`notificationCategory_${category}`)} · ${value.categories[category] ? t("active") : t("inactive")}`} onPress={() => setValue((current) => current ? { ...current, categories: { ...current.categories, [category]: !current.categories[category] } } : current)} secondary={!value.categories[category]} />)}</Card>
     <Card><Text style={styles.label}>{t("quietHours")}</Text><Field value={value.quietStart} onChangeText={(quietStart) => setValue({ ...value, quietStart })} placeholder="22:00" /><Field value={value.quietEnd} onChangeText={(quietEnd) => setValue({ ...value, quietEnd })} placeholder="08:00" /><Text style={styles.muted}>{value.timezone}</Text></Card>

@@ -68,7 +68,7 @@ export default function CheckIn() {
   if (!permission?.granted)
     return (
       <Screen>
-        <Pressable onPress={() => router.back()}>
+        <Pressable accessibilityLabel={t("back")} onPress={() => router.back()}>
           <Text style={styles.label}>‹ {t("back")}</Text>
         </Pressable>
         <Title>{t("qrCheckIn")}</Title>

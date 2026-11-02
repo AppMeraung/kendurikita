@@ -111,7 +111,7 @@ export default function Inventory() {
         />
       ) : (
         event.inventory.map((item) => (
-          <Pressable key={item.id} onPress={() => edit(item)}>
+          <Pressable key={item.id} accessibilityLabel={`${t("edit")} ${item.name}`} onPress={() => edit(item)}>
             <Card>
               <View style={styles.between}>
                 <View style={{ flex: 1 }}>

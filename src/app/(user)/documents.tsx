@@ -105,6 +105,7 @@ export default function Documents() {
           <Card key={document.id}>
             <View style={styles.between}>
               <Pressable
+                accessibilityLabel={`${t("documentsTitle")}: ${document.name}`}
                 style={{ flex: 1 }}
                 onPress={() => void open(document)}
               >

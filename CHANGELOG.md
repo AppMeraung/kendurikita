@@ -72,6 +72,7 @@
 - Completed public vendor branding with logo/cover uploads, manual short and full descriptions in all five languages, HTTPS-validated social links, payment terms, WhatsApp and map actions.
 - Exposed package add-ons, coverage and travel charges on public vendor profiles.
 - Added SDK 58 image downsampling and JPEG compression before invitation, DuitNow, guest-gallery, vendor-brand, portfolio and review-photo uploads.
+- Added accessibility labels to every custom Pressable and an AST regression test, while retaining 48 dp minimum shared controls.
 
 ### Bugs found and fixed
 

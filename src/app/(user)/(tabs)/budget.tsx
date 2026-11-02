@@ -606,7 +606,7 @@ export default function Budget() {
               <Text style={styles.muted}>{t("categorySplitHint")}</Text>
               {configuredCategories.map((item, index) => (
                 <Card key={item.id}>
-                  <Pressable onPress={() => editCategory(item.id)}>
+                  <Pressable accessibilityLabel={t("editCategory")} onPress={() => editCategory(item.id)}>
                     <Text style={styles.label}>{categoryLabel(item.name)}</Text>
                     <Text style={styles.muted}>{item.percent === undefined ? t("noPercentageSplit") : `${item.percent}%`}</Text>
                   </Pressable>
