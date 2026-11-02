@@ -21,8 +21,10 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.appmeraung.kendurikita",
-      "versionCode": 5,
-      "permissions": ["android.permission.POST_NOTIFICATIONS"],
+      "versionCode": 6,
+      "permissions": [
+        "android.permission.POST_NOTIFICATIONS"
+      ],
       "blockedPermissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.WRITE_CONTACTS",
@@ -96,7 +98,10 @@
               "displayName": "KenduriKita",
               "description": "Hari lagi ke majlis dan tugas seterusnya.",
               "ios": {
-                "supportedFamilies": ["systemSmall", "systemMedium"],
+                "supportedFamilies": [
+                  "systemSmall",
+                  "systemMedium"
+                ],
                 "initialLayout": "./src/widgets/EventCountdownWidget"
               },
               "android": {
