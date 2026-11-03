@@ -152,3 +152,20 @@ describe("review photo boundary", () => {
     expect(reviewPhotosMigration).toContain("owner_id=auth.uid()::text");
   });
 });
+
+describe("web admin panel boundary", () => {
+  const adminWebMigration = readFileSync(
+    resolve("supabase/migrations/202611030050_admin_web_panel.sql"),
+    "utf8",
+  );
+  it("gates every admin function on is_admin and audits each change", () => {
+    expect(adminWebMigration.match(/if not kendurikita\.is_admin\(\) then raise exception 'not_allowed'/g)).toHaveLength(5);
+    expect(adminWebMigration.match(/insert into kendurikita\.audit_log/g)).toHaveLength(4);
+    expect(adminWebMigration).toContain("from public, anon");
+  });
+  it("never lets the panel create, change or ban an admin", () => {
+    expect(adminWebMigration).toContain("if next_role not in ('user','vendor') then raise exception 'invalid_role'");
+    expect(adminWebMigration.match(/raise exception 'cannot_change_admin'/g)).toHaveLength(2);
+    expect(adminWebMigration).not.toMatch(/role\s*=\s*'admin'\s*,|set role='admin'/);
+  });
+});
