@@ -81,8 +81,9 @@ Deno.serve(async (request) => {
   // Paying before the current plan ends adds the new period after it, so early renewals lose no days.
   // The same payment id is skipped so a retried webhook does not extend twice.
   const current = await database.from("subscriptions").select("expires_at")
-    .eq("vendor_id", vendor.data.id).in("status", ["active", "grace"]).neq("provider_customer_id", paymentId)
-    .order("expires_at", { ascending: false }).limit(1).maybeSingle();
+    .eq("vendor_id", vendor.data.id).in("status", ["active", "grace"])
+    .or(`provider_customer_id.is.null,provider_customer_id.neq.${paymentId}`)
+    .order("expires_at", { ascending: false, nullsFirst: false }).limit(1).maybeSingle();
   if (current.error) return json({ error: current.error.message }, 500);
   const startsFrom = Math.max(Date.now(), current.data?.expires_at ? new Date(current.data.expires_at).getTime() : 0);
   const expiresAt = statuses[status] === "active"

@@ -11,7 +11,8 @@ describe("CHIP webhook renewals", () => {
     expect(source).toContain("startsFrom + (isYear ? 365 : 31) * 86_400_000");
   });
   it("ignores the same payment so a retried webhook does not extend twice", () => {
-    expect(source).toContain('.neq("provider_customer_id", paymentId)');
+    expect(source).toContain("provider_customer_id.is.null,provider_customer_id.neq.${paymentId}");
+    expect(source).toContain("nullsFirst: false");
     expect(source).toContain('onConflict: "provider,provider_customer_id"');
   });
 });
