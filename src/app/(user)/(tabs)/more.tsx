@@ -1,28 +1,19 @@
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { Alert, Linking, Pressable, Text, View } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Alert, Text, View } from "react-native";
 import { ContextHelp } from "../../../components/Guidance";
-import { languageNames, languages, setLanguage } from "../../../i18n";
 import { useAppState } from "../../../state/AppState";
-import { Button, Card, Screen, styles, Title } from "../../../ui";
+import { Card, ListRow, palette, Screen, serif, styles, Title } from "../../../ui";
 import { cloudConfigured, supabase } from "../../../services/supabase";
 import { syncEvent } from "../../../services/sync";
 import { unregisterCurrentPushToken } from "../../../services/notifications";
 import { logOutPurchaser } from "../../../services/revenuecat";
 import { useUserPlan } from "../../../state/usePlan";
-import { supportEmail as resolveSupportEmail } from "../../../domain/support";
 export default function More() {
   const { t } = useTranslation();
   const { event, updateEvent, reset } = useAppState();
   const { plan } = useUserPlan(event?.cloudId);
-  const supportNumber = process.env.EXPO_PUBLIC_SUPPORT_WHATSAPP?.replace(/\D/g, "");
-  const supportEmail = resolveSupportEmail(process.env.EXPO_PUBLIC_SUPPORT_EMAIL);
-  const modules = [
-    ["invite", t("invitation")], ["rsvp", "RSVP"], ["seating", t("seatingPlan")],
-    ["schedule", t("schedule")], ["team", t("team")], ["payments", t("payments")],
-    ["documents", t("documents")], ["items", t("inventory")], ["reports", t("reports")],
-    ["postevent", t("postEvent")],
-  ];
   const deleteAccount = () =>
     Alert.alert(
       t("deleteAccountConfirm"),
@@ -70,127 +61,47 @@ export default function More() {
       Alert.alert(t("signOutFailed"), error instanceof Error ? error.message : t("unknownError"));
     }
   };
+  const go = (href: string) => () => router.push(href as never);
   return (
     <Screen>
       <View style={styles.between}>
-        <Title>{t("more")}</Title>
-        <ContextHelp title={t("more")} body={t("moreHelp")} />
+        <Title subtitle={t("profileIntro")}>{t("profile")}</Title>
+        <ContextHelp title={t("profile")} body={t("moreHelp")} />
+      </View>
+      <View style={{ alignItems: "center", gap: 6 }}>
+        <View style={{ width: 88, height: 88, borderRadius: 44, backgroundColor: palette.rose, borderWidth: 2, borderColor: palette.gold, alignItems: "center", justifyContent: "center" }}>
+          <Ionicons name="people" size={40} color={palette.maroon} />
+        </View>
+        <Text style={{ fontFamily: serif, fontSize: 22, fontWeight: "700", color: palette.ink }}>{event?.name}</Text>
+        {event?.date ? <View style={styles.row}><Ionicons name="calendar-outline" size={16} color={palette.gold} /><Text style={styles.muted}>{event.type} · {event.date}</Text></View> : null}
       </View>
       <Card>
-        {modules.map(([key, label]) => (
-          <Pressable
-            key={key}
-            accessibilityRole="button"
-            accessibilityLabel={label}
-            onPress={() =>
-              router.push(
-                key === "schedule"
-                  ? "/(user)/schedule"
-                  : key === "invite"
-                    ? "/(user)/invitation"
-                    : key === "rsvp"
-                      ? "/(user)/(tabs)/guests"
-                    : key === "team"
-                      ? "/(user)/team"
-                      : key === "seating"
-                        ? "/(user)/seating"
-                        : key === "items"
-                          ? "/(user)/inventory"
-                          : key === "documents"
-                            ? "/(user)/documents"
-                            : key === "payments"
-                              ? "/(user)/payments"
-                              : key === "reports"
-                                ? "/(user)/reports"
-                                : key === "postevent"
-                                  ? "/(user)/post-event"
-                                  : `/(user)/module/${key}`,
-              )
-            }
-          >
-            <Text style={[styles.label, { paddingVertical: 10 }]}>
-              {label} ›
-            </Text>
-          </Pressable>
-        ))}
+        <ListRow icon="albums-outline" label={t("myEvents")} onPress={go("/(user)/events")} />
+        <ListRow icon="people-circle-outline" label={t("team")} onPress={go("/(user)/team")} />
+        <ListRow icon="diamond-outline" label={t("plans")} value={plan} onPress={go("/(user)/paywall")} />
+        <ListRow icon="cloud-upload-outline" label={t("syncToAccount")} onPress={() => void sync()} />
+        <ListRow icon="settings-outline" label={t("settings")} onPress={go("/(user)/settings")} />
       </Card>
+      <Text style={[styles.label, { color: palette.gold }]}>{t("moreTools")}</Text>
       <Card>
-        <Button
-          label={t("myEvents")}
-          onPress={() => router.push("/(user)/events")}
-          secondary
-        />
-        <Button label={t("syncToAccount")} onPress={() => void sync()} secondary />
-        <Button
-          label={t("qrCheckIn")}
-          onPress={() => router.push("/(user)/check-in")}
-          secondary
-        />
-        <Button
-          label={t("help")}
-          onPress={() => router.push("/(user)/help")}
-          secondary
-        />
-        <Button label={t("replayTutorial")} onPress={() => router.push("/(user)/help")} secondary />
-        <Button label={t("notificationSettings")} onPress={() => router.push("/(user)/notification-settings")} secondary />
-        <Button
-          label={t("plans")}
-          onPress={() => router.push("/(user)/paywall")}
-          secondary
-        />
-        <Button
-          label={t("planningTools")}
-          onPress={() => router.push("/(user)/extras")}
-          secondary
-        />
-        <Button
-          label={t("dayMode")}
-          onPress={() => router.push("/(user)/day-mode")}
-          secondary
-        />
-        <Button
-          label={t("parentBudget")}
-          onPress={() => router.push("/(user)/parent-budget")}
-          secondary
-        />
-        <Button
-          label={t("aiAssistant")}
-          onPress={() => router.push("/(user)/ai-assistant")}
-          secondary
-        />
-        <Button
-          label={t("referralProgramme")}
-          onPress={() => router.push("/referrals")}
-          secondary
-        />
-        {supportNumber ? <Button label={plan === "premium" ? t("prioritySupport") : t("supportWhatsApp")} onPress={() => void Linking.openURL(`https://wa.me/${supportNumber}`)} secondary /> : null}
-        {supportEmail ? <Button label={t("supportEmail")} onPress={() => void Linking.openURL(`mailto:${encodeURIComponent(supportEmail)}?subject=${encodeURIComponent("KenduriKita support")}`)} secondary /> : null}
+        <ListRow icon="card-outline" label={t("payments")} onPress={go("/(user)/payments")} />
+        <ListRow icon="folder-outline" label={t("documents")} onPress={go("/(user)/documents")} />
+        <ListRow icon="cube-outline" label={t("inventory")} onPress={go("/(user)/inventory")} />
+        <ListRow icon="bar-chart-outline" label={t("reports")} onPress={go("/(user)/reports")} />
+        <ListRow icon="qr-code-outline" label={t("qrCheckIn")} onPress={go("/(user)/check-in")} />
+        <ListRow icon="sunny-outline" label={t("dayMode")} onPress={go("/(user)/day-mode")} />
+        <ListRow icon="calculator-outline" label={t("planningTools")} onPress={go("/(user)/extras")} />
+        <ListRow icon="home-outline" label={t("parentBudget")} onPress={go("/(user)/parent-budget")} />
+        <ListRow icon="sparkles-outline" label={t("aiAssistant")} onPress={go("/(user)/ai-assistant")} />
+        <ListRow icon="ribbon-outline" label={t("postEvent")} onPress={go("/(user)/post-event")} />
+        <ListRow icon="share-social-outline" label={t("referralProgramme")} onPress={go("/referrals")} />
       </Card>
+      <Text style={[styles.label, { color: palette.gold }]}>{t("account")}</Text>
       <Card>
-        <Text style={styles.label}>{t("language")}</Text>
-        {languages.map((lang) => (
-          <Button
-            key={lang}
-            label={languageNames[lang]}
-            onPress={() => void setLanguage(lang)}
-            secondary
-          />
-        ))}
+        <ListRow icon="log-out-outline" label={t("signOut")} onPress={() => void signOut()} />
+        <ListRow icon="refresh-outline" label={t("resetLocalEvent")} onPress={() => { reset(); router.replace("/(auth)/setup"); }} />
+        <ListRow icon="trash-outline" label={t("deleteAccount")} onPress={deleteAccount} danger />
       </Card>
-      <Card>
-        <Text style={styles.label}>KenduriKita 2.0.0</Text>
-        <Text style={styles.muted}>{event?.name}</Text>
-      </Card>
-      <Button
-        label={t("resetLocalEvent")}
-        onPress={() => {
-          reset();
-          router.replace("/(auth)/setup");
-        }}
-        secondary
-      />
-      <Button label={t("deleteAccount")} onPress={deleteAccount} secondary />
-      <Button label={t("signOut")} onPress={() => void signOut()} secondary />
     </Screen>
   );
 }

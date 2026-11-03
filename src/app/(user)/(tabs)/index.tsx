@@ -4,11 +4,11 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, Modal, Pressable, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
-import { budgetSummary, guestSummary, money, validAmount } from "../../../domain";
+import { budgetSummary, checklistProgress, guestSummary, money, validAmount } from "../../../domain";
 import { cloudConfigured, supabase } from "../../../services/supabase";
 import { loadDiscoverableVendors } from "../../../services/vendorDiscovery";
 import { useAppState } from "../../../state/AppState";
-import { Button, Card, Field, palette, Screen, styles, Title } from "../../../ui";
+import { Button, Card, Field, palette, ProgressBar, Screen, serif, styles, Tile, Title } from "../../../ui";
 import { ContextHelp, FirstStepsCoach } from "../../../components/Guidance";
 import { BudgetDonut } from "../../../components/BudgetDonut";
 
@@ -33,8 +33,10 @@ export default function Dashboard() {
   if (!event) return null;
   const budget = budgetSummary(event.budget, event.totalBudget);
   const guests = guestSummary(event.guests);
-  const days = event.date ? Math.max(0, Math.ceil((new Date(`${event.date}T00:00:00`).getTime() - openedAt.getTime()) / 86400000)) : null;
-  const metrics = [[t("budget"), money(budget.paid, event.country), "wallet-outline"], [t("guests"), `${guests.confirmed}/${guests.total}`, "people-outline"], [t("checklist"), `${event.checklist.filter((item) => item.done).length}/${event.checklist.length}`, "checkbox-outline"]] as const;
+  const msLeft = event.date ? Math.max(0, new Date(`${event.date}T00:00:00`).getTime() - openedAt.getTime()) : null;
+  const countdown = msLeft === null ? null : [[Math.floor(msLeft / 86400000), t("countDays")], [Math.floor(msLeft / 3600000) % 24, t("countHours")], [Math.floor(msLeft / 60000) % 60, t("countMinutes")]] as const;
+  const progress = checklistProgress(event.checklist);
+  const shortcuts = [["calendar-outline", t("planning"), "/(user)/(tabs)/planning"], ["checkbox-outline", t("checklist"), "/(user)/checklist"], ["wallet-outline", t("budget"), "/(user)/(tabs)/budget"], ["people-outline", t("guests"), "/(user)/(tabs)/guests"]] as const;
   const firstSteps = [[!!event.date, t("eventDate")], [event.totalBudget > 0, t("totalBudget")], [event.guests.length > 0, t("firstGuest")], [Boolean(event.invitation.message || event.invitation.photoUri || event.invitation.giftLink), t("invitation")], [event.team.length > 0, t("partner")]] as const;
   const firstStepRoutes = ["/(user)/events", "/(user)/(tabs)/budget", "/(user)/(tabs)/guests", "/(user)/invitation", "/(user)/team"] as const;
   const firstStepsDone = firstSteps.filter(([done]) => done).length;
@@ -51,8 +53,17 @@ export default function Dashboard() {
     <Pressable accessibilityRole="button" accessibilityLabel={t("howToUseApp")} onPress={() => router.push("/(user)/help")}>
       <Card><View style={styles.row}><View style={{ width: 46, height: 46, borderRadius: 15, backgroundColor: palette.rose, alignItems: "center", justifyContent: "center" }}><Ionicons name="map-outline" size={25} color={palette.maroon} /></View><View style={{ flex: 1 }}><Text style={styles.label}>{t("howToUseApp")}</Text><Text style={styles.muted}>{t("howToUseAppBody")}</Text></View><Ionicons name="chevron-forward" size={22} color={palette.maroon} /></View></Card>
     </Pressable>
-    <Card><Text style={styles.label}>{event.type}</Text><Text style={styles.metric}>{days === null ? t("notSet") : `${days} ${t("daysLeft")}`}</Text><Text style={styles.muted}>{event.date || t("notSet")} · {event.venue || t("notSet")}</Text></Card>
-    <View style={{ flexDirection: "row", gap: 10, flexWrap: "wrap" }}>{metrics.map(([label, value, icon]) => <Card key={label}><Ionicons name={icon} size={22} color={palette.maroon} /><Text style={styles.metric}>{value}</Text><Text style={styles.muted}>{label}</Text></Card>)}</View>
+    <Card>
+      <View style={styles.row}><Ionicons name="calendar-outline" size={18} color={palette.maroon} /><Text style={[styles.label, { color: palette.maroon }]}>{t("eventCountdown")}</Text></View>
+      {countdown ? <View style={{ flexDirection: "row", justifyContent: "space-around" }}>{countdown.map(([value, label]) => <View key={label} style={{ alignItems: "center" }}><Text style={{ fontFamily: serif, fontSize: 30, fontWeight: "700", color: palette.maroon }}>{value}</Text><Text style={styles.muted}>{label}</Text></View>)}</View> : <Text style={styles.metric}>{t("notSet")}</Text>}
+      <Text style={styles.muted}>{event.type} · {event.date || t("notSet")} · {event.venue || t("notSet")}</Text>
+    </Card>
+    <Card>
+      <View style={styles.between}><Text style={styles.label}>{t("planningProgress")}</Text><Text style={[styles.label, { color: palette.maroon }]}>{progress}%</Text></View>
+      <ProgressBar value={progress / 100} />
+      <Text style={styles.muted}>{money(budget.paid, event.country)} · {t("guests")} {guests.confirmed}/{guests.total}</Text>
+    </Card>
+    <View style={styles.grid}>{shortcuts.map(([icon, label, href]) => <Tile key={label} icon={icon} label={label} onPress={() => router.push(href)} />)}</View>
     <Button label={t("quickAddExpense")} onPress={() => setQuickOpen(true)} />
     {featured.data ? <Pressable accessibilityLabel={t("viewVendorProfile")} onPress={() => router.push(`/vendor/${featured.data!.slug}`)}><Card><Text style={styles.label}>{t("featuredVendor")} · {t("sponsored")}</Text><Text style={styles.metric}>{featured.data.companyName}</Text><Text style={styles.muted}>{featured.data.rating.toFixed(1)}★ · {featured.data.categories.join(" · ")}</Text></Card></Pressable> : null}
     {upcomingBalances.length ? <Card><Text style={styles.label}>{t("upcomingBalances")}</Text>{upcomingBalances.map((item) => <Text key={item.id} style={styles.muted}>{item.dueAt} · {item.vendor || item.name} · {money(item.planned - item.paid, event.country)}</Text>)}</Card> : null}
