@@ -43,11 +43,20 @@ async function applyPendingRole(role?: AccountRole) {
     data: { user },
   } = await supabase.auth.getUser();
   if (user && (selected === "user" || selected === "vendor")) {
-    const { error } = await supabase
+    // Role selection on login must not overwrite privileged accounts.
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .update({ role: selected })
-      .eq("id", user.id);
-    if (error) throw error;
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+    if (profileError) throw profileError;
+    if (profile?.role !== "admin" && profile?.role !== "superadmin") {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ role: selected })
+        .eq("id", user.id);
+      if (error) throw error;
+    }
   }
   await AsyncStorage.removeItem(PENDING_ROLE);
 }

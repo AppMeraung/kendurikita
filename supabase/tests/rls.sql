@@ -1,5 +1,5 @@
 begin;
-select plan(22);
+select plan(25);
 select has_schema('kendurikita','dedicated schema exists');
 select row_security_active('kendurikita','events','events RLS active');
 select row_security_active('kendurikita','budget_items','budget RLS active');
@@ -35,7 +35,16 @@ insert into kendurikita.leads(id,event_id,vendor_id,sender_id,message) values
 
 set local role authenticated;
 select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000001',true);
-select results_eq($$select name from kendurikita.events order by name$$,$$values('Event A'::text)$$,'user A reads own event');
+select throws_ok(
+  $update kendurikita.profiles set role='admin' where id='10000000-0000-4000-8000-000000000001'$,
+  '42501', null, 'user cannot promote self to admin');
+select throws_ok(
+  $update kendurikita.profiles set role='superadmin' where id='10000000-0000-4000-8000-000000000001'$,
+  '42501', null, 'user cannot promote self to superadmin');
+select lives_ok(
+  $update kendurikita.profiles set name='Updated name' where id='10000000-0000-4000-8000-000000000001'$,
+  'user can still edit non-privileged profile fields');
+select results_eq($select name from kendurikita.events order by name$,$$values('Event A'::text)$$,'user A reads own event');
 select results_eq($$select count(*)::integer from kendurikita.events where id='20000000-0000-4000-8000-000000000002'$$,$$values(0)$$,'user A cannot read user B event');
 select results_eq($$select name from kendurikita.budget_items order by name$$,$$values('A item'::text)$$,'user A reads own budget');
 select results_eq($$select count(*)::integer from kendurikita.budget_items where event_id='20000000-0000-4000-8000-000000000002'$$,$$values(0)$$,'user A cannot read user B budget');
