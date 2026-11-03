@@ -6,13 +6,17 @@ import { useTranslation } from "react-i18next";
 import {
   AccountRole,
   sendEmailOtp,
+  sendPasswordReset,
   sendPhoneOtp,
+  signInWithPassword,
   signInWithProvider,
+  signUpWithPassword,
   verifyPhoneOtp,
 } from "../../services/supabase";
 import { Button, Field, Screen, styles, Title } from "../../ui";
 import { pendingEventInvitePath } from "../../services/eventInvites";
 import { vendorAccessAllowed } from "../../domain/vendorAccess";
+import { passwordAuthError, type PasswordMode } from "../../domain/passwordAuth";
 
 export default function SignIn() {
   const { t } = useTranslation();
@@ -21,13 +25,23 @@ export default function SignIn() {
   const [phone, setPhone] = useState("");
   const [phoneCode, setPhoneCode] = useState("");
   const [phoneOtpSent, setPhoneOtpSent] = useState(false);
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [mode, setMode] = useState<"signIn" | "signUp">("signIn");
+  const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState("");
+  // React Native Web has no Alert dialog, so the message is also shown on screen.
+  const say = (title: string, body?: string) => {
+    setNotice(body ? `${title} — ${body}` : title);
+    Alert.alert(title, body);
+  };
   const continueAfterSignIn = async () => {
     const pending = await pendingEventInvitePath();
     router.replace((pending || "/(auth)/setup") as never);
   };
   const continueAsGuest = async () => {
     if (await pendingEventInvitePath()) {
-      Alert.alert(t("inviteRequiresAccount"));
+      say(t("inviteRequiresAccount"));
       return;
     }
     router.replace("/(auth)/setup");
@@ -36,12 +50,41 @@ export default function SignIn() {
     try {
       const { error } = await action();
       if (error) throw error;
-      Alert.alert(t("otpSent"), t("checkEmailOrPhone"));
+      say(t("otpSent"), t("checkEmailOrPhone"));
     } catch (error) {
-      Alert.alert(
+      say(
         t("signInFailed"),
         error instanceof Error ? error.message : t("unknownError"),
       );
+    }
+  };
+  const withPassword = async (action: PasswordMode) => {
+    const problem = passwordAuthError(action, { email, password, confirm });
+    if (problem) return say(t("signInFailed"), t(problem));
+    setBusy(true);
+    try {
+      const address = email.trim();
+      if (action === "reset") {
+        const { error } = await sendPasswordReset(address);
+        if (error) throw error;
+        say(t("resetLinkSent"), t("resetLinkSentBody"));
+      } else if (action === "signUp") {
+        const { data, error } = await signUpWithPassword(address, password, role);
+        if (error) throw error;
+        if (data.session) await continueAfterSignIn();
+        else say(t("checkEmail"), t("confirmEmailBody"));
+      } else {
+        const { error } = await signInWithPassword(address, password, role);
+        if (error) throw error;
+        await continueAfterSignIn();
+      }
+    } catch (error) {
+      say(
+        t("signInFailed"),
+        error instanceof Error ? error.message : t("unknownError"),
+      );
+    } finally {
+      setBusy(false);
     }
   };
   const social = async (provider: "google" | "apple") => {
@@ -55,7 +98,7 @@ export default function SignIn() {
         error.message.includes("ERR_REQUEST_CANCELED")
       )
         return;
-      Alert.alert(
+      say(
         t("signInFailed"),
         error instanceof Error ? error.message : t("unknownError"),
       );
@@ -64,6 +107,7 @@ export default function SignIn() {
   return (
     <Screen>
       <Title>{t("signIn")}</Title>
+      {notice ? <Text accessibilityRole="alert" style={styles.muted}>{notice}</Text> : null}
       {vendorAccessAllowed(Platform.OS) ? <><Text style={styles.muted}>{t("chooseRoleHint")}</Text>
       <View style={styles.row}>
         <Button
@@ -84,9 +128,49 @@ export default function SignIn() {
         keyboardType="email-address"
         autoCapitalize="none"
       />
+      <Field
+        value={password}
+        onChangeText={setPassword}
+        placeholder={t("password")}
+        secureTextEntry
+        autoCapitalize="none"
+        autoComplete={mode === "signIn" ? "current-password" : "new-password"}
+        accessibilityLabel={t("password")}
+      />
+      {mode === "signUp" ? (
+        <Field
+          value={confirm}
+          onChangeText={setConfirm}
+          placeholder={t("confirmPassword")}
+          secureTextEntry
+          autoCapitalize="none"
+          autoComplete="new-password"
+          accessibilityLabel={t("confirmPassword")}
+        />
+      ) : null}
+      <Button
+        label={t(mode === "signIn" ? "signInWithPassword" : "createAccount")}
+        onPress={() => void withPassword(mode)}
+        disabled={busy}
+      />
+      <View style={styles.row}>
+        <Button
+          label={t(mode === "signIn" ? "noAccountSignUp" : "haveAccountSignIn")}
+          onPress={() => setMode(mode === "signIn" ? "signUp" : "signIn")}
+          secondary
+        />
+        <Button
+          label={t("forgotPassword")}
+          onPress={() => void withPassword("reset")}
+          secondary
+          disabled={busy}
+        />
+      </View>
+      <Text style={styles.muted}>{t("orPasswordless")}</Text>
       <Button
         label={t("sendMagicLink")}
         onPress={() => void otp(() => sendEmailOtp(email.trim(), role))}
+        secondary
       />
       <Field
         value={phone}
@@ -118,7 +202,7 @@ export default function SignIn() {
               void verifyPhoneOtp(phone.trim(), phoneCode.trim(), role).then(
                 ({ error }) =>
                   error
-                    ? Alert.alert(t("invalidOtp"), error.message)
+                    ? say(t("invalidOtp"), error.message)
                     : void continueAfterSignIn(),
               )
             }

@@ -2,6 +2,7 @@
 
 ## 2.0.0 — in progress
 
+- Added email + password sign-in, sign-up and "Forgot password?" with a new-password screen (`/auth/reset-password`); sign-in messages now also show on screen because React Native Web has no Alert dialog.
 - Replaced the single-screen tab state with Expo Router route groups.
 - Removed default demo data from the new-user experience.
 - Added a six-step, skippable local-first event setup wizard and safe legacy-data detection.

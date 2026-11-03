@@ -72,6 +72,55 @@ export async function sendEmailOtp(email: string, role: AccountRole) {
   });
 }
 
+export async function signInWithPassword(
+  email: string,
+  password: string,
+  role: AccountRole,
+) {
+  if (!cloudConfigured)
+    throw new Error("Supabase belum dikonfigurasi. Lihat SETUP.md.");
+  const result = await supabase.auth.signInWithPassword({ email, password });
+  if (!result.error) await applyPendingRole(role);
+  return result;
+}
+
+/** `session` is null when the project asks the new user to confirm their email first. */
+export async function signUpWithPassword(
+  email: string,
+  password: string,
+  role: AccountRole,
+) {
+  if (!cloudConfigured)
+    throw new Error("Supabase belum dikonfigurasi. Lihat SETUP.md.");
+  const result = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { role },
+      emailRedirectTo: Linking.createURL("auth/callback"),
+    },
+  });
+  if (!result.error && result.data.session) await applyPendingRole(role);
+  return result;
+}
+
+export async function sendPasswordReset(email: string) {
+  if (!cloudConfigured)
+    throw new Error("Supabase belum dikonfigurasi. Lihat SETUP.md.");
+  return supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: Linking.createURL("auth/reset-password"),
+  });
+}
+
+/** Signs in from the reset link's code so the new password can be saved. */
+export async function startPasswordRecovery(code: string) {
+  return supabase.auth.exchangeCodeForSession(code);
+}
+
+export async function saveNewPassword(password: string) {
+  return supabase.auth.updateUser({ password });
+}
+
 export async function sendPhoneOtp(phone: string, role: AccountRole) {
   if (!cloudConfigured)
     throw new Error("Supabase belum dikonfigurasi. Lihat SETUP.md.");

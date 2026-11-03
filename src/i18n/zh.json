@@ -788,4 +788,5 @@
 , "invalidDate":"请输入 YYYY-MM-DD 格式的有效日期。", "mainEventDate":"主要日期 (YYYY-MM-DD)", "additionalEventDate":"其他日期，可选 (YYYY-MM-DD)"
 , "quickAddExpense":"快速添加付款", "quickExpense":"快速付款"
 , "budgetUsed":"已使用"
+, "password":"密码", "confirmPassword":"确认密码", "newPassword":"新密码", "invalidEmail":"请输入有效的电子邮箱。", "passwordTooShort":"密码至少需要 8 个字符。", "passwordMismatch":"两次输入的密码不一致。", "signInWithPassword":"登录", "createAccount":"创建账户", "noAccountSignUp":"没有账户？注册", "haveAccountSignIn":"已有账户？登录", "forgotPassword":"忘记密码？", "orPasswordless":"或无需密码登录：", "resetLinkSent":"重置链接已发送", "resetLinkSentBody":"如果账户存在，请查看邮箱并打开链接设置新密码。", "checkEmail":"请查看邮箱", "confirmEmailBody":"请打开邮件中的确认链接以激活账户。如果此邮箱已用于其他 Meraung 应用，请使用相同密码登录或点击忘记密码。", "resetLinkInvalid":"重置链接无效或已过期，请重新申请。", "passwordUpdated":"密码已更新", "setNewPassword":"设置新密码", "savePassword":"保存密码"
 }
