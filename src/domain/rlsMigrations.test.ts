@@ -169,3 +169,16 @@ describe("web admin panel boundary", () => {
     expect(adminWebMigration).not.toMatch(/role\s*=\s*'admin'\s*,|set role='admin'/);
   });
 });
+
+describe("ownership checks name the outer table", () => {
+  const fix = readFileSync(resolve("supabase/migrations/202611030051_fix_self_compare_policies.sql"), "utf8");
+  it("ties each subquery to the row being written or read", () => {
+    expect(fix).toContain("l.vendor_id = vendor_reviews.vendor_id and l.event_id = vendor_reviews.event_id");
+    expect(fix).toContain("l.id = quotations.lead_id and l.vendor_id = quotations.vendor_id");
+    expect(fix).toContain("m.event_id = budget_contributions.event_id");
+    expect(fix).toContain("bm.bundle_id = vendor_bundle_requests.bundle_id");
+  });
+  it("never compares a column with itself", () => {
+    expect(fix).not.toMatch(/\b(\w+)\.(\w+)\s*=\s*\1\.\2\b/);
+  });
+});
