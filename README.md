@@ -26,7 +26,7 @@ npm run build:android:bundle
 ## Android / Google Play
 
 - Package ID: `com.appmeraung.kendurikita`
-- Version sumber semasa: `2.0.0` (`versionCode` 5)
+- Version sumber semasa: `1.1.1`
 - Release Play Console yang sedang disediakan kekal `1.0.0` (`versionCode` 2); versi 1.1 belum dihantar ke Play Store.
 - Ikon 512×512: `assets/play-store-icon.png`
 - Polisi privasi awam: https://appmeraung.github.io/kendurikita/index.html

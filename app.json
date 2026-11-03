@@ -2,7 +2,7 @@
   "expo": {
     "name": "KenduriKita",
     "slug": "kenduri-kita",
-    "version": "2.0.0",
+    "version": "1.1.1",
     "description": "Aplikasi perancangan majlis dan kenduri untuk Malaysia.",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

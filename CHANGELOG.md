@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.0 — in progress
+## 1.1.1 — in progress
 
 - Added email + password sign-in, sign-up and "Forgot password?" with a new-password screen (`/auth/reset-password`); sign-in messages now also show on screen because React Native Web has no Alert dialog.
 - Replaced the single-screen tab state with Expo Router route groups.
