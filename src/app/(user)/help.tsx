@@ -1,7 +1,7 @@
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Linking, Pressable, Text } from "react-native";
+import { Linking, Pressable, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import en from "../../help/en/faq.json";
 import id from "../../help/id/faq.json";
@@ -34,6 +34,17 @@ export default function Help() {
         <Text style={styles.label}>‹ {t("back")}</Text>
       </Pressable>
       <Title>{t("help")}</Title>
+      <Card>
+        <Text style={styles.label}>{t("quickGuide")}</Text>
+        <Text style={styles.muted}>{t("quickGuideBody")}</Text>
+        <View style={{ gap: 8 }}>
+          <Button label={`1. ${t("eventDate")}`} onPress={() => router.push("/(user)/events")} secondary />
+          <Button label={`2. ${t("totalBudget")}`} onPress={() => router.push("/(user)/(tabs)/budget")} secondary />
+          <Button label={`3. ${t("firstGuest")}`} onPress={() => router.push("/(user)/(tabs)/guests")} secondary />
+          <Button label={`4. ${t("invitation")}`} onPress={() => router.push("/(user)/invitation")} secondary />
+          <Button label={`5. ${t("vendors")}`} onPress={() => router.push("/(user)/(tabs)/vendors")} secondary />
+        </View>
+      </Card>
       <Button label={t("sampleEvent")} onPress={() => router.push("/(user)/sample-event")} secondary />
       <Field value={query} onChangeText={setQuery} placeholder={t("searchGuides")} />
       {items.map((item) => (

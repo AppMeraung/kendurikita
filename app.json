@@ -40,6 +40,9 @@
       "favicon": "./assets/favicon.png",
       "output": "static"
     },
+    "experiments": {
+      "baseUrl": "/kendurikita/app"
+    },
     "scheme": "kendurikita",
     "primaryColor": "#9C123C",
     "extra": {

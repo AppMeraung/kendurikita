@@ -131,7 +131,7 @@ export default function More() {
           onPress={() => router.push("/(user)/help")}
           secondary
         />
-        <Button label={t("replayTutorial")} onPress={() => router.push("/(auth)/welcome")} secondary />
+        <Button label={t("replayTutorial")} onPress={() => router.push("/(user)/help")} secondary />
         <Button label={t("notificationSettings")} onPress={() => router.push("/(user)/notification-settings")} secondary />
         <Button
           label={t("plans")}
