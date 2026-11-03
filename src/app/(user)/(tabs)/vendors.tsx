@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { router } from "expo-router";
-import { Alert, Modal, Text, View } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Alert, Modal, Pressable, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { DiscoverableVendor, discoverVendors, toggleVendorComparison, VendorSort, vendorDistanceKm } from "../../../domain/vendorDiscovery";
 import {
@@ -12,8 +13,18 @@ import { syncEvent } from "../../../services/sync";
 import { loadDiscoverableVendors } from "../../../services/vendorDiscovery";
 import { loadVendorFavourites, setVendorFavourite } from "../../../services/vendorFavourites";
 import { useAppState } from "../../../state/AppState";
-import { Button, Card, Empty, Field, Screen, styles, Title } from "../../../ui";
 import { ContextHelp } from "../../../components/Guidance";
+import { Button, Card, Chip, Empty, Field, palette, Screen, SearchField, styles, Title } from "../../../ui";
+
+// Stored vendor category keys (kendurikita-portal categories.js) behind the six reference rows.
+const categoryRows = [
+  ["venue", "business-outline", "venue"],
+  ["catering", "restaurant-outline", "categoryCatering"],
+  ["photo_video", "camera-outline", "categoryPhotoVideo"],
+  ["attire", "shirt-outline", "categoryAttire"],
+  ["decor", "flower-outline", "vendorCatDecor"],
+  ["entertainment", "musical-notes-outline", "vendorCatEntertainment"],
+] as const;
 
 type Vendor = DiscoverableVendor;
 type Quote = {
@@ -46,6 +57,7 @@ export default function Vendors() {
   const [paymentMethod, setPaymentMethod] = useState("bank");
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [state, setState] = useState("");
   const [date, setDate] = useState("");
   const [maximumPrice, setMaximumPrice] = useState("");
@@ -166,7 +178,7 @@ export default function Vendors() {
   };
   return (
     <Screen>
-      <View style={styles.between}><Title>{t("vendorTitle")}</Title><ContextHelp title={t("vendorTitle")} body={t("vendorsHelp")} /></View>
+      <View style={styles.between}><Title subtitle={t("vendorsIntro")}>{t("vendorTitle")}</Title><ContextHelp title={t("vendorTitle")} body={t("vendorsHelp")} /></View>
       {quotes.length ? (
         <>
           <Title>{t("myQuotations")}</Title>
@@ -230,14 +242,31 @@ export default function Vendors() {
           })}
         </>
       ) : null}
-      <Title>{t("findVendor")}</Title>
+      <SearchField value={query} onChangeText={setQuery} placeholder={t("vendorSearchPlaceholder")} accessibilityLabel={t("vendorSearchPlaceholder")} />
+      <Card>
+        {categoryRows.map(([key, icon, label], index) => (
+          <Pressable
+            key={key}
+            accessibilityRole="button"
+            accessibilityState={{ selected: category === key }}
+            accessibilityLabel={t(label)}
+            onPress={() => setCategory((current) => (current === key ? "" : key))}
+            style={[styles.row, index > 0 && { borderTopWidth: 1, borderTopColor: palette.line, paddingTop: 12 }]}
+          >
+            <Ionicons name={icon} size={22} color={palette.maroon} />
+            <Text style={[styles.label, { flex: 1, fontWeight: "600" }]}>{t(label)}</Text>
+            <Ionicons name={category === key ? "checkmark-circle" : "chevron-forward"} size={18} color={category === key ? palette.maroon : palette.muted} />
+          </Pressable>
+        ))}
+      </Card>
       <Button
+        icon="gift-outline"
         label={t("vendorBundles")}
         onPress={() => router.push("/(user)/vendor-bundles")}
         secondary
       />
-      <Card>
-        <Field value={query} onChangeText={setQuery} placeholder={t("vendorSearchPlaceholder")} />
+      <Button icon="options-outline" label={t("moreFilters")} onPress={() => setFiltersOpen((open) => !open)} secondary />
+      {filtersOpen ? <Card>
         <Field value={category} onChangeText={setCategory} placeholder={t("vendorCategoryFilter")} />
         <Field value={state} onChangeText={setState} placeholder={t("vendorStateFilter")} />
         <Field value={date} onChangeText={setDate} placeholder={t("vendorDateFilter")} />
@@ -248,10 +277,10 @@ export default function Vendors() {
         <Button label={favouritesOnly ? t("favouritesOnlyOn") : t("favouritesOnlyOff")} onPress={() => setFavouritesOnly((value) => !value)} secondary={!favouritesOnly} />
         <Text style={styles.label}>{t("sortVendors")}</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-          {(["relevance", "rating", "price", "nearest"] as VendorSort[]).map((value) => <Button key={value} label={t(`vendorSort_${value}`)} onPress={() => setSort(value)} secondary={sort !== value} disabled={value === "nearest" && !event.venueLocation} />)}
+          {(["relevance", "rating", "price", "nearest"] as VendorSort[]).map((value) => <Chip key={value} label={t(`vendorSort_${value}`)} onPress={() => (value === "nearest" && !event.venueLocation ? undefined : setSort(value))} active={sort === value} />)}
         </View>
         {sort === "nearest" && !event.venueLocation ? <Text style={styles.muted}>{t("nearestNeedsPlace")}</Text> : null}
-      </Card>
+      </Card> : null}
       {comparedVendors.length ? <Card>
         <Text style={styles.label}>{t("vendorComparison")} ({comparedVendors.length}/3)</Text>
         {comparedVendors.map((vendor) => <Text key={vendor.id} style={styles.muted}>{vendor.companyName} · {vendor.rating.toFixed(1)}★ · {vendor.minimumPrice == null ? t("priceOnRequest") : `RM ${vendor.minimumPrice.toFixed(2)}`}</Text>)}
@@ -263,9 +292,11 @@ export default function Vendors() {
             <Text style={styles.muted}>{vendor.categories.join(" · ")} · {vendor.rating.toFixed(1)}★ ({vendor.reviewCount})</Text>
             <Text style={styles.muted}>{vendor.coverage.join(", ")} · {vendor.minimumPrice == null ? t("priceOnRequest") : `${t("fromPrice")} RM ${vendor.minimumPrice.toFixed(2)}`}</Text>
             {vendorDistanceKm(vendor, event.venueLocation) != null ? <Text style={styles.muted}>{t("distanceKm", { distance: vendorDistanceKm(vendor, event.venueLocation)!.toFixed(1) })}</Text> : null}
-            <Button label={favourites.includes(vendor.id) ? t("removeFavourite") : t("saveFavourite")} onPress={() => void toggleFavourite(vendor.id)} secondary />
-            <Button label={comparison.includes(vendor.id) ? t("removeComparison") : t("addComparison")} onPress={() => setComparison((current) => toggleVendorComparison(current, vendor.id))} secondary />
-            <Button label={t("viewVendorProfile")} onPress={() => router.push(`/vendor/${vendor.slug}`)} secondary />
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+              <Chip icon={favourites.includes(vendor.id) ? "heart" : "heart-outline"} label={favourites.includes(vendor.id) ? t("removeFavourite") : t("saveFavourite")} active={favourites.includes(vendor.id)} onPress={() => void toggleFavourite(vendor.id)} />
+              <Chip icon="git-compare-outline" label={comparison.includes(vendor.id) ? t("removeComparison") : t("addComparison")} active={comparison.includes(vendor.id)} onPress={() => setComparison((current) => toggleVendorComparison(current, vendor.id))} />
+              <Chip icon="eye-outline" label={t("viewVendorProfile")} active={false} onPress={() => router.push(`/vendor/${vendor.slug}`)} />
+            </View>
             <Button
               label={t("requestBooking")}
               onPress={() => setSelected(vendor)}

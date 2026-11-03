@@ -1,7 +1,8 @@
 import * as AppleAuthentication from "expo-apple-authentication";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Alert, Platform, Text, View } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Alert, Platform, Pressable, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import {
   AccountRole,
@@ -13,7 +14,7 @@ import {
   signUpWithPassword,
   verifyPhoneOtp,
 } from "../../services/supabase";
-import { Button, Field, Screen, styles, Title } from "../../ui";
+import { Button, Divider, Field, palette, Screen, styles, Title } from "../../ui";
 import { pendingEventInvitePath } from "../../services/eventInvites";
 import { vendorAccessAllowed } from "../../domain/vendorAccess";
 import { passwordAuthError, type PasswordMode } from "../../domain/passwordAuth";
@@ -29,6 +30,7 @@ export default function SignIn() {
   const [confirm, setConfirm] = useState("");
   const [mode, setMode] = useState<"signIn" | "signUp">("signIn");
   const [busy, setBusy] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [notice, setNotice] = useState("");
   // React Native Web has no Alert dialog, so the message is also shown on screen.
   const say = (title: string, body?: string) => {
@@ -106,7 +108,7 @@ export default function SignIn() {
   };
   return (
     <Screen>
-      <Title>{t("signIn")}</Title>
+      <Title subtitle={t("signInWelcome")}>{t(mode === "signIn" ? "signIn" : "createAccount")}</Title>
       {notice ? <Text accessibilityRole="alert" style={styles.muted}>{notice}</Text> : null}
       {vendorAccessAllowed(Platform.OS) ? <><Text style={styles.muted}>{t("chooseRoleHint")}</Text>
       <View style={styles.row}>
@@ -124,7 +126,9 @@ export default function SignIn() {
       <Field
         value={email}
         onChangeText={setEmail}
-        placeholder="email@example.com"
+        placeholder={t("email")}
+        icon="mail-outline"
+        accessibilityLabel={t("email")}
         keyboardType="email-address"
         autoCapitalize="none"
       />
@@ -132,7 +136,9 @@ export default function SignIn() {
         value={password}
         onChangeText={setPassword}
         placeholder={t("password")}
-        secureTextEntry
+        icon="lock-closed-outline"
+        right={<Pressable accessibilityRole="button" accessibilityLabel={t(showPassword ? "hidePassword" : "showPassword")} onPress={() => setShowPassword((v) => !v)} hitSlop={10}><Ionicons name={showPassword ? "eye-off-outline" : "eye-outline"} size={20} color={palette.muted} /></Pressable>}
+        secureTextEntry={!showPassword}
         autoCapitalize="none"
         autoComplete={mode === "signIn" ? "current-password" : "new-password"}
         accessibilityLabel={t("password")}
@@ -142,31 +148,27 @@ export default function SignIn() {
           value={confirm}
           onChangeText={setConfirm}
           placeholder={t("confirmPassword")}
-          secureTextEntry
+          icon="lock-closed-outline"
+          secureTextEntry={!showPassword}
           autoCapitalize="none"
           autoComplete="new-password"
           accessibilityLabel={t("confirmPassword")}
         />
       ) : null}
+      {mode === "signIn" ? <Pressable accessibilityRole="button" accessibilityLabel={t("forgotPassword")} disabled={busy} onPress={() => void withPassword("reset")} style={{ alignSelf: "flex-end" }}><Text style={{ color: palette.maroon, fontWeight: "700" }}>{t("forgotPassword")}</Text></Pressable> : null}
       <Button
         label={t(mode === "signIn" ? "signInWithPassword" : "createAccount")}
         onPress={() => void withPassword(mode)}
         disabled={busy}
       />
-      <View style={styles.row}>
-        <Button
-          label={t(mode === "signIn" ? "noAccountSignUp" : "haveAccountSignIn")}
-          onPress={() => setMode(mode === "signIn" ? "signUp" : "signIn")}
-          secondary
-        />
-        <Button
-          label={t("forgotPassword")}
-          onPress={() => void withPassword("reset")}
-          secondary
-          disabled={busy}
-        />
-      </View>
-      <Text style={styles.muted}>{t("orPasswordless")}</Text>
+      <Divider label={t("or")} />
+      <Button
+        icon={mode === "signIn" ? "person-add-outline" : "log-in-outline"}
+        label={t(mode === "signIn" ? "noAccountSignUp" : "haveAccountSignIn")}
+        onPress={() => setMode(mode === "signIn" ? "signUp" : "signIn")}
+        secondary
+      />
+      <Divider label={t("orPasswordless")} />
       <Button
         label={t("sendMagicLink")}
         onPress={() => void otp(() => sendEmailOtp(email.trim(), role))}

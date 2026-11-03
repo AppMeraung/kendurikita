@@ -11,6 +11,9 @@ import { useAppState } from "../../../state/AppState";
 import { Button, Card, Field, palette, ProgressBar, Screen, serif, styles, Tile, Title } from "../../../ui";
 import { ContextHelp, FirstStepsCoach } from "../../../components/Guidance";
 import { BudgetDonut } from "../../../components/BudgetDonut";
+import { FloralCorner } from "../../../components/Floral";
+
+const greetingKey = (date: Date) => (date.getHours() < 12 ? "goodMorning" : date.getHours() < 18 ? "goodAfternoon" : "goodEvening");
 
 export default function Dashboard() {
   const { t } = useTranslation();
@@ -48,14 +51,12 @@ export default function Dashboard() {
   };
   return <Screen>
     <FirstStepsCoach />
-    <View style={styles.between}><Text style={{ color: palette.gold, fontWeight: "900" }}>{t("dashboardGreeting")}</Text><View style={styles.row}><ContextHelp title={t("dashboard")} body={t("dashboardHelp")} /><Pressable accessibilityRole="button" accessibilityLabel={t("notifications")} onPress={() => router.push("/(user)/notifications")} style={{ position: "relative" }}><Ionicons name="notifications-outline" size={26} color={palette.maroon} />{unread.data ? <View style={{ position: "absolute", right: -8, top: -8, minWidth: 18, height: 18, borderRadius: 9, backgroundColor: palette.danger, alignItems: "center", justifyContent: "center" }}><Text style={{ color: palette.white, fontSize: 11, fontWeight: "800" }}>{unread.data > 99 ? "99+" : unread.data}</Text></View> : null}</Pressable></View></View>
+    <View style={styles.between}><Text style={{ color: palette.ink, fontWeight: "600" }}>{t(greetingKey(openedAt))} ☀️</Text><View style={styles.row}><ContextHelp title={t("dashboard")} body={t("dashboardHelp")} /><Pressable accessibilityRole="button" accessibilityLabel={t("notifications")} onPress={() => router.push("/(user)/notifications")} style={{ position: "relative" }}><Ionicons name="notifications-outline" size={26} color={palette.maroon} />{unread.data ? <View style={{ position: "absolute", right: -8, top: -8, minWidth: 18, height: 18, borderRadius: 9, backgroundColor: palette.danger, alignItems: "center", justifyContent: "center" }}><Text style={{ color: palette.white, fontSize: 11, fontWeight: "800" }}>{unread.data > 99 ? "99+" : unread.data}</Text></View> : null}</Pressable></View></View>
     <Title>{event.name}</Title>
-    <Pressable accessibilityRole="button" accessibilityLabel={t("howToUseApp")} onPress={() => router.push("/(user)/help")}>
-      <Card><View style={styles.row}><View style={{ width: 46, height: 46, borderRadius: 15, backgroundColor: palette.rose, alignItems: "center", justifyContent: "center" }}><Ionicons name="map-outline" size={25} color={palette.maroon} /></View><View style={{ flex: 1 }}><Text style={styles.label}>{t("howToUseApp")}</Text><Text style={styles.muted}>{t("howToUseAppBody")}</Text></View><Ionicons name="chevron-forward" size={22} color={palette.maroon} /></View></Card>
-    </Pressable>
     <Card>
+      <View style={{ position: "absolute", right: -4, top: -6, opacity: 0.9 }} pointerEvents="none"><FloralCorner size={78} flip /></View>
       <View style={styles.row}><Ionicons name="calendar-outline" size={18} color={palette.maroon} /><Text style={[styles.label, { color: palette.maroon }]}>{t("eventCountdown")}</Text></View>
-      {countdown ? <View style={{ flexDirection: "row", justifyContent: "space-around" }}>{countdown.map(([value, label]) => <View key={label} style={{ alignItems: "center" }}><Text style={{ fontFamily: serif, fontSize: 30, fontWeight: "700", color: palette.maroon }}>{value}</Text><Text style={styles.muted}>{label}</Text></View>)}</View> : <Text style={styles.metric}>{t("notSet")}</Text>}
+      {countdown ? <View style={{ flexDirection: "row", gap: 10 }}>{countdown.map(([value, label]) => <View key={label} style={{ flex: 1, alignItems: "center", paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: palette.line, backgroundColor: palette.cream }}><Text style={{ fontFamily: serif, fontSize: 28, fontWeight: "700", color: palette.maroon }}>{value}</Text><Text style={[styles.muted, { fontSize: 12 }]}>{label}</Text></View>)}</View> : <Text style={styles.metric}>{t("notSet")}</Text>}
       <Text style={styles.muted}>{event.type} · {event.date || t("notSet")} · {event.venue || t("notSet")}</Text>
     </Card>
     <Card>
@@ -64,6 +65,9 @@ export default function Dashboard() {
       <Text style={styles.muted}>{money(budget.paid, event.country)} · {t("guests")} {guests.confirmed}/{guests.total}</Text>
     </Card>
     <View style={styles.grid}>{shortcuts.map(([icon, label, href]) => <Tile key={label} icon={icon} label={label} onPress={() => router.push(href)} />)}</View>
+    <Pressable accessibilityRole="button" accessibilityLabel={t("howToUseApp")} onPress={() => router.push("/(user)/help")}>
+      <Card><View style={styles.row}><View style={{ width: 46, height: 46, borderRadius: 15, backgroundColor: palette.rose, alignItems: "center", justifyContent: "center" }}><Ionicons name="map-outline" size={25} color={palette.maroon} /></View><View style={{ flex: 1 }}><Text style={styles.label}>{t("howToUseApp")}</Text><Text style={styles.muted}>{t("howToUseAppBody")}</Text></View><Ionicons name="chevron-forward" size={22} color={palette.maroon} /></View></Card>
+    </Pressable>
     <Button label={t("quickAddExpense")} onPress={() => setQuickOpen(true)} />
     {featured.data ? <Pressable accessibilityLabel={t("viewVendorProfile")} onPress={() => router.push(`/vendor/${featured.data!.slug}`)}><Card><Text style={styles.label}>{t("featuredVendor")} · {t("sponsored")}</Text><Text style={styles.metric}>{featured.data.companyName}</Text><Text style={styles.muted}>{featured.data.rating.toFixed(1)}★ · {featured.data.categories.join(" · ")}</Text></Card></Pressable> : null}
     {upcomingBalances.length ? <Card><Text style={styles.label}>{t("upcomingBalances")}</Text>{upcomingBalances.map((item) => <Text key={item.id} style={styles.muted}>{item.dueAt} · {item.vendor || item.name} · {money(item.planned - item.paid, event.country)}</Text>)}</Card> : null}

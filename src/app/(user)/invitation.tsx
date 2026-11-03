@@ -17,8 +17,16 @@ import {
 import { syncEvent } from "../../services/sync";
 import { useAppState } from "../../state/AppState";
 import { useUserPlan } from "../../state/usePlan";
-import { Button, Card, Field, palette, Screen, styles, Title } from "../../ui";
+import { FloralCorner, Ornament } from "../../components/Floral";
+import { Button, Card, Chip, Field, palette, Screen, serif, Stat, StatusPill, styles, Title } from "../../ui";
 
+const templateLooks: Record<InvitationSettings["template"], { bg: string; ink: string }> = {
+  malay: { bg: "#71162F", ink: "#F5D891" },
+  chinese: { bg: "#FFF3E6", ink: "#A11D2B" },
+  indian: { bg: "#F2D9D2", ink: "#71162F" },
+  indonesian: { bg: "#FFF9EC", ink: "#8A5A1E" },
+  modern: { bg: "#FFFDF8", ink: "#3A2228" },
+};
 const templates: InvitationSettings["template"][] = [
   "malay",
   "chinese",
@@ -83,31 +91,53 @@ export default function Invitation() {
       <Pressable accessibilityLabel={t("back")} onPress={() => router.back()}>
         <Ionicons name="arrow-back" size={28} color={palette.maroon} />
       </Pressable>
-      <Title>{t("inviteTitle")}</Title>
+      <Title subtitle={t("inviteIntro")}>{t("inviteTitle")}</Title>
+      <Card>
+        <View style={styles.row}>
+          <View style={{ width: 52, height: 52, borderRadius: 12, backgroundColor: palette.rose, alignItems: "center", justifyContent: "center" }}><Ionicons name="mail-open-outline" size={26} color={palette.maroon} /></View>
+          <View style={{ flex: 1, gap: 4 }}>
+            <Text style={styles.label}>{t("yourInvitation")}</Text>
+            <StatusPill label={published.length || event.cloudId ? t("invitationActive") : t("invitationDraft")} tone={published.length || event.cloudId ? "success" : "neutral"} />
+          </View>
+        </View>
+        <View style={{ flexDirection: "row" }}>
+          <Stat icon="checkmark-circle-outline" tone="success" value={event.guests.filter((g) => g.rsvp === "Hadir").length} label={t("attending")} />
+          <Stat icon="help-circle-outline" tone="warning" value={event.guests.filter((g) => g.rsvp === "Menunggu").length} label={t("pending")} />
+          <Stat icon="close-circle-outline" tone="danger" value={event.guests.filter((g) => g.rsvp === "Tidak hadir").length} label={t("notAttending")} />
+        </View>
+      </Card>
       <Text style={styles.label}>{t("inviteTemplate")}</Text>
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-        {templates.map((template, index) => (
-          <Button
-            key={template}
-            label={t(`inviteTemplate_${template}`)}
-            onPress={() => {
-              if (index >= 3 && !planAllows(plan, "pro"))
-                return Alert.alert(t("proFeatureRequired"));
-              change({ template });
-            }}
-            secondary={settings.template !== template}
-          />
-        ))}
+      <View style={styles.grid}>
+        {templates.map((template, index) => {
+          const locked = index >= 3 && !planAllows(plan, "pro");
+          const active = settings.template === template;
+          const look = templateLooks[template];
+          return (
+            <Pressable
+              key={template}
+              accessibilityRole="button"
+              accessibilityState={{ selected: active }}
+              accessibilityLabel={t(`inviteTemplate_${template}`)}
+              onPress={() => (locked ? Alert.alert(t("proFeatureRequired")) : change({ template }))}
+              style={{ flexBasis: "47%", flexGrow: 1, gap: 6 }}
+            >
+              <View style={{ aspectRatio: 0.85, borderRadius: 14, backgroundColor: look.bg, borderWidth: active ? 2 : 1, borderColor: active ? palette.gold : palette.line, alignItems: "center", justifyContent: "center", gap: 6, overflow: "hidden" }}>
+                <View style={{ position: "absolute", top: -8, left: -8, opacity: 0.85 }}><FloralCorner size={64} /></View>
+                <View style={{ position: "absolute", bottom: -8, right: -8, opacity: 0.85, transform: [{ rotate: "180deg" }] }}><FloralCorner size={64} /></View>
+                <Text style={{ fontFamily: serif, fontStyle: "italic", fontSize: 20, color: look.ink, textAlign: "center", paddingHorizontal: 12 }} numberOfLines={2}>{event.name}</Text>
+                <Ornament width={56} />
+                {active ? <View style={{ position: "absolute", top: 8, right: 8 }}><Ionicons name="checkmark-circle" size={22} color={palette.gold} /></View> : null}
+                {locked ? <View style={{ position: "absolute", top: 8, right: 8 }}><Ionicons name="lock-closed" size={18} color={look.ink} /></View> : null}
+              </View>
+              <Text style={[styles.label, { textAlign: "center", fontWeight: "600" }]}>{t(`inviteTemplate_${template}`)}</Text>
+            </Pressable>
+          );
+        })}
       </View>
       <Text style={styles.label}>{t("language")}</Text>
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
         {languages.map((language) => (
-          <Button
-            key={language}
-            label={languageNames[language]}
-            onPress={() => change({ language })}
-            secondary={settings.language !== language}
-          />
+          <Chip key={language} label={languageNames[language]} active={settings.language === language} onPress={() => change({ language })} />
         ))}
       </View>
       <Field
@@ -164,6 +194,7 @@ export default function Invitation() {
         ) : null}
       </Card>
       <Button
+        icon="share-social-outline"
         label={t("invitePublish")}
         onPress={() => void publish()}
         disabled={busy}

@@ -4,7 +4,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useMemo, useState } from "react";
 import { Alert, Modal, Pressable, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
-import { BudgetDonut } from "../../../components/BudgetDonut";
+import { LinearGradient } from "expo-linear-gradient";
 import { ContextHelp } from "../../../components/Guidance";
 import { BudgetItem, budgetSummary, money, validAmount } from "../../../domain";
 import { allocatedCategoryBudget } from "../../../domain/budgetCategories";
@@ -19,6 +19,7 @@ import {
   Empty,
   Field,
   palette,
+  ProgressBar,
   Screen,
   styles,
   Title,
@@ -33,6 +34,15 @@ const categoryKeys: Record<string, string> = {
   Hantaran: "categoryHantaran",
   "Door gift": "categoryDoorGift",
   "Lain-lain": "categoryOther",
+};
+const categoryIcons: Record<string, keyof typeof Ionicons.glyphMap> = {
+  Dewan: "business-outline",
+  Katering: "restaurant-outline",
+  Pelamin: "flower-outline",
+  Busana: "shirt-outline",
+  "Foto & Video": "camera-outline",
+  Hantaran: "gift-outline",
+  "Door gift": "bag-handle-outline",
 };
 const paymentTypeKeys = {
   deposit: "deposit",
@@ -251,35 +261,44 @@ export default function Budget() {
 
   return (
     <Screen>
-      <View style={styles.between}><Title>{t("budgetTitle")}</Title><ContextHelp title={t("budgetTitle")} body={t("budgetHelp")} /></View>
-      <Card>
-        <BudgetDonut paid={summary.paid} total={event.totalBudget} label={t("budgetUsed")} />
-        <View style={styles.between}>
-          <Text style={styles.label}>{t("budgetTotal")}</Text>
-          <Pressable
-            accessibilityLabel={t("edit")}
-            onPress={() => {
-              setTotal(`${event.totalBudget}`);
-              setTotalOpen(true);
-            }}
-          >
-            <Ionicons name="create-outline" size={24} color={palette.maroon} />
-          </Pressable>
+      <View style={styles.between}><Title subtitle={t("budgetIntro")}>{t("budgetTitle")}</Title><ContextHelp title={t("budgetTitle")} body={t("budgetHelp")} /></View>
+      <LinearGradient colors={["#8E2342", palette.maroonDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ borderRadius: 16, padding: 18, flexDirection: "row", alignItems: "center", gap: 14 }}>
+        <View style={{ width: 46, height: 46, borderRadius: 23, backgroundColor: "rgba(255,255,255,0.14)", alignItems: "center", justifyContent: "center" }}><Ionicons name="wallet-outline" size={24} color={palette.white} /></View>
+        <View style={{ flex: 1 }}>
+          <Text style={{ color: "rgba(255,253,248,0.85)", fontWeight: "600" }}>{t("budgetTotal")}</Text>
+          <Text style={{ color: palette.white, fontSize: 26, fontWeight: "800" }}>{money(event.totalBudget, event.country)}</Text>
         </View>
-        <Text style={styles.metric}>
-          {money(event.totalBudget, event.country)}
-        </Text>
-        <Text style={styles.muted}>
-          {t("planned")}: {money(summary.planned, event.country)} · {t("paid")}:{" "}
-          {money(summary.paid, event.country)}
-        </Text>
-        <Text style={summary.remaining < 0 ? styles.danger : styles.muted}>
-          {t("remaining")}: {money(Math.abs(summary.remaining), event.country)}
-          {summary.remaining < 0 ? ` · ${t("overBudget")}` : ""}
-        </Text>
-        <Text style={styles.muted}>
-          {t("owed")}: {money(summary.owed, event.country)}
-        </Text>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t("edit")}
+          hitSlop={10}
+          onPress={() => {
+            setTotal(`${event.totalBudget}`);
+            setTotalOpen(true);
+          }}
+        >
+          <Ionicons name="create-outline" size={22} color={palette.white} />
+        </Pressable>
+      </LinearGradient>
+      <View style={styles.row}>
+        <View style={[styles.card, { flex: 1, alignItems: "center", gap: 4 }]}>
+          <Ionicons name="card-outline" size={22} color={palette.maroon} />
+          <Text style={styles.muted}>{t("paid")}</Text>
+          <Text style={[styles.label, { fontSize: 17 }]}>{money(summary.paid, event.country)}</Text>
+        </View>
+        <View style={[styles.card, { flex: 1, alignItems: "center", gap: 4 }]}>
+          <Ionicons name="cash-outline" size={22} color={summary.remaining < 0 ? palette.danger : palette.maroon} />
+          <Text style={styles.muted}>{t("remaining")}</Text>
+          <Text style={[styles.label, { fontSize: 17 }, summary.remaining < 0 && { color: palette.danger }]}>{summary.remaining < 0 ? "-" : ""}{money(Math.abs(summary.remaining), event.country)}</Text>
+        </View>
+      </View>
+      <Card>
+        <ProgressBar value={event.totalBudget > 0 ? summary.paid / event.totalBudget : 0} />
+        <View style={styles.between}>
+          <Text style={[styles.muted, { fontSize: 13 }]}>{t("planned")}: {money(summary.planned, event.country)} · {t("owed")}: {money(summary.owed, event.country)}</Text>
+          <Text style={[styles.label, { color: palette.maroon }]}>{t("percentSpent", { percent: event.totalBudget > 0 ? Math.round((summary.paid / event.totalBudget) * 100) : 0 })}</Text>
+        </View>
+        {summary.remaining < 0 ? <Text style={styles.danger}>{t("overBudget")}</Text> : null}
         {summary.percent >= 90 ? (
           <Text style={styles.danger}>
             {t("budgetUsedWarning", { percent: summary.percent })}
@@ -293,28 +312,31 @@ export default function Budget() {
         <Text style={styles.label}>{t("budgetCategories")}</Text>
         <Button label={t("manageCategories")} onPress={() => editCategory()} secondary />
       </View>
-      {configuredCategories.map((budgetCategory) => {
+      <Card>
+      {configuredCategories.map((budgetCategory, index) => {
         const items = event.budget.filter((item) => item.category === budgetCategory.name);
         const itemPlanned = items.reduce((sum, item) => sum + item.planned, 0);
         const paidAmount = items.reduce((sum, item) => sum + item.paid, 0);
         const allocated = allocatedCategoryBudget(event.totalBudget, budgetCategory, itemPlanned);
         return (
-          <Card key={budgetCategory.id}>
-            <View style={styles.between}>
-              <Text style={styles.label}>{categoryLabel(budgetCategory.name)}</Text>
-              <Text style={itemPlanned > allocated ? styles.danger : styles.muted}>
-                {budgetCategory.percent === undefined ? t("noPercentageSplit") : `${budgetCategory.percent}%`}
+          <View key={budgetCategory.id} style={[styles.row, { alignItems: "flex-start" }, index > 0 && { borderTopWidth: 1, borderTopColor: palette.line, paddingTop: 12 }]}>
+            <Ionicons name={categoryIcons[budgetCategory.name] || "pricetag-outline"} size={22} color={palette.maroon} />
+            <View style={{ flex: 1, gap: 2 }}>
+              <View style={styles.between}>
+                <Text style={styles.label}>{categoryLabel(budgetCategory.name)}</Text>
+                <Text style={[styles.label, itemPlanned > allocated && { color: palette.danger }]}>{money(allocated, event.country)}</Text>
+              </View>
+              <Text style={[styles.muted, { fontSize: 13 }]}>
+                {budgetCategory.percent === undefined ? t("noPercentageSplit") : `${budgetCategory.percent}%`} · {t("planned")}: {money(itemPlanned, event.country)}
+              </Text>
+              <Text style={[paidAmount > allocated ? styles.danger : styles.muted, { fontSize: 13 }]}>
+                {t("paid")}: {money(paidAmount, event.country)} · {t("remaining")}: {money(allocated - paidAmount, event.country)}
               </Text>
             </View>
-            <Text style={styles.muted}>
-              {t("allocated")}: {money(allocated, event.country)} · {t("planned")}: {money(itemPlanned, event.country)}
-            </Text>
-            <Text style={paidAmount > allocated ? styles.danger : styles.muted}>
-              {t("paid")}: {money(paidAmount, event.country)} · {t("remaining")}: {money(allocated - paidAmount, event.country)}
-            </Text>
-          </Card>
+          </View>
         );
       })}
+      </Card>
       <Card>
         <Text style={styles.label}>{t("filtersAndSort")}</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>

@@ -1,7 +1,7 @@
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Alert, Text, View } from "react-native";
+import { Alert, Pressable, Text, View } from "react-native";
 import { ContextHelp } from "../../../components/Guidance";
 import { useAppState } from "../../../state/AppState";
 import { Card, ListRow, palette, Screen, serif, styles, Title } from "../../../ui";
@@ -69,9 +69,14 @@ export default function More() {
         <ContextHelp title={t("profile")} body={t("moreHelp")} />
       </View>
       <View style={{ alignItems: "center", gap: 6 }}>
-        <View style={{ width: 88, height: 88, borderRadius: 44, backgroundColor: palette.rose, borderWidth: 2, borderColor: palette.gold, alignItems: "center", justifyContent: "center" }}>
-          <Ionicons name="people" size={40} color={palette.maroon} />
-        </View>
+        <Pressable accessibilityRole="button" accessibilityLabel={t("edit")} onPress={go("/(user)/events")}>
+          <View style={{ width: 88, height: 88, borderRadius: 44, backgroundColor: palette.rose, borderWidth: 2, borderColor: palette.gold, alignItems: "center", justifyContent: "center" }}>
+            <Ionicons name="people" size={40} color={palette.maroon} />
+          </View>
+          <View style={{ position: "absolute", right: -2, bottom: 2, width: 28, height: 28, borderRadius: 14, backgroundColor: palette.maroon, borderWidth: 2, borderColor: palette.white, alignItems: "center", justifyContent: "center" }}>
+            <Ionicons name="pencil" size={13} color={palette.white} />
+          </View>
+        </Pressable>
         <Text style={{ fontFamily: serif, fontSize: 22, fontWeight: "700", color: palette.ink }}>{event?.name}</Text>
         {event?.date ? <View style={styles.row}><Ionicons name="calendar-outline" size={16} color={palette.gold} /><Text style={styles.muted}>{event.type} · {event.date}</Text></View> : null}
       </View>

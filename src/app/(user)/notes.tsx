@@ -5,7 +5,7 @@ import { Alert, Modal, Pressable, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { addNote, filterNotes, Note, parseNotes, removeNote } from "../../domain/notes";
 import { useAppState } from "../../state/AppState";
-import { Button, Card, Empty, Field, palette, Screen, styles, Title } from "../../ui";
+import { Button, Card, Empty, Field, palette, Screen, SearchField, styles, Title } from "../../ui";
 
 const icons = ["bulb-outline", "people-outline", "bag-handle-outline"] as const;
 
@@ -40,10 +40,7 @@ export default function Notes() {
   return (
     <Screen>
       <Title subtitle={t("notesIntro")}>{t("notes")}</Title>
-      <View style={[styles.row, styles.field, { gap: 8 }]}>
-        <Ionicons name="search" size={18} color={palette.muted} />
-        <Field value={query} onChangeText={setQuery} placeholder={t("searchNotes")} style={{ flex: 1, borderWidth: 0, paddingHorizontal: 0, minHeight: 44 }} />
-      </View>
+      <SearchField value={query} onChangeText={setQuery} placeholder={t("searchNotes")} accessibilityLabel={t("searchNotes")} />
       {loaded && !notes.length ? <Empty icon="📝" text={t("emptyNotes")} action={t("addNote")} onPress={() => setOpen(true)} /> : null}
       {shown.map((note, index) => (
         <Pressable key={note.id} accessibilityLabel={note.title} onLongPress={() => confirmDelete(note)}>
@@ -62,7 +59,7 @@ export default function Notes() {
           </Card>
         </Pressable>
       ))}
-      {notes.length ? <Button label={`+ ${t("addNote")}`} onPress={() => setOpen(true)} /> : null}
+      {notes.length ? <Button icon="add" label={t("addNote")} onPress={() => setOpen(true)} /> : null}
       <Modal visible={open} animationType="slide" onRequestClose={() => setOpen(false)}>
         <Screen>
           <Title>{t("addNote")}</Title>

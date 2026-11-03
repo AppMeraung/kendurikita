@@ -28,6 +28,7 @@ import {
   Field,
   palette,
   Screen,
+  Segmented,
   styles,
   Title,
 } from "../../ui";
@@ -88,9 +89,10 @@ function DraggableTable({
       style={{
         position: "absolute",
         transform: position.getTranslateTransform(),
-        width: table.shape === "round" ? 96 : 136,
+        width: table.shape === "round" ? 76 : 136,
+        height: table.shape === "round" ? 76 : undefined,
         minHeight: 72,
-        borderRadius: table.shape === "round" ? 48 : 12,
+        borderRadius: table.shape === "round" ? 38 : 12,
         backgroundColor: palette.white,
         borderWidth: 2,
         borderColor:
@@ -100,10 +102,22 @@ function DraggableTable({
         padding: 8,
       }}
     >
-      <Text style={styles.label} numberOfLines={1}>
+      {table.shape === "round"
+        ? Array.from({ length: Math.min(table.capacity, 12) }, (_, seat) => {
+            const angle = (seat / Math.min(table.capacity, 12)) * 2 * Math.PI - Math.PI / 2;
+            return (
+              <View
+                key={seat}
+                pointerEvents="none"
+                style={{ position: "absolute", left: 38 + Math.cos(angle) * 46 - 6, top: 38 + Math.sin(angle) * 46 - 6, width: 12, height: 12, borderRadius: 6, borderWidth: 1.5, borderColor: palette.maroon, backgroundColor: seat < occupied ? palette.gold : palette.white }}
+              />
+            );
+          })
+        : null}
+      <Text style={[styles.label, { color: palette.maroon }]} numberOfLines={1}>
         {table.name}
       </Text>
-      <Text style={styles.muted}>
+      <Text style={[styles.muted, { fontSize: 12 }]}>
         {occupied}/{table.capacity}
       </Text>
     </Animated.View>
@@ -122,6 +136,7 @@ export default function Seating() {
   const [shape, setShape] = useState<SeatingTable["shape"]>("round");
   const [capacity, setCapacity] = useState("10");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [view, setView] = useState<"plan" | "list">("plan");
   if (!event) return null;
   if (loading) return null;
   if (!userFeature(plan, "seating"))
@@ -194,9 +209,24 @@ export default function Seating() {
       <Pressable accessibilityLabel={t("back")} onPress={() => router.back()}>
         <Ionicons name="arrow-back" size={28} color={palette.maroon} />
       </Pressable>
-      <Title>{t("seatingTitle")}</Title>
-      <Text style={styles.muted}>{t("dragTables")}</Text>
-      {event.seating.length ? (
+      <Title subtitle={t("seatingIntro")}>{t("seatingTitle")}</Title>
+      <Segmented options={[["plan", t("floorPlan")], ["list", t("guestList")]] as const} value={view} onChange={setView} />
+      {view === "list" ? (
+        <Card>
+          {[...event.seating.map((table) => [table.id, table.name] as const), [undefined, t("unassigned")] as const].map(([tableId, label], index) => {
+            const seated = event.guests.filter((guest) => guest.tableId === tableId);
+            if (!tableId && !seated.length) return null;
+            return (
+              <View key={tableId || "none"} style={[{ gap: 4 }, index > 0 && { borderTopWidth: 1, borderTopColor: palette.line, paddingTop: 10 }]}>
+                <View style={styles.between}><Text style={styles.label}>{label}</Text><Text style={styles.muted}>{seated.length}</Text></View>
+                <Text style={[styles.muted, { fontSize: 13 }]}>{seated.map((guest) => guest.name).join(", ") || "—"}</Text>
+              </View>
+            );
+          })}
+        </Card>
+      ) : null}
+      {view === "plan" ? <Text style={styles.muted}>{t("dragTables")}</Text> : null}
+      {view !== "plan" ? null : event.seating.length ? (
         <View
           onLayout={(layoutEvent) =>
             setPlanWidth(layoutEvent.nativeEvent.layout.width)
@@ -206,7 +236,7 @@ export default function Seating() {
             borderWidth: 1,
             borderColor: palette.line,
             borderRadius: 18,
-            backgroundColor: "#F5EBDD",
+            backgroundColor: palette.cream,
             overflow: "hidden",
           }}
         >
@@ -229,8 +259,9 @@ export default function Seating() {
           onPress={() => setOpen(true)}
         />
       )}
-      <Button label={t("addTable")} onPress={() => setOpen(true)} />
+      <Button icon="add" label={t("addTable")} onPress={() => setOpen(true)} />
       <Button
+        icon="download-outline"
         label={t("exportSeating")}
         onPress={() => void exportPdf()}
         secondary

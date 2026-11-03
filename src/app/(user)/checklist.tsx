@@ -15,13 +15,17 @@ import {
 } from "../../services/notifications";
 import { useAppState } from "../../state/AppState";
 import { ContextHelp } from "../../components/Guidance";
+import { BudgetDonut } from "../../components/BudgetDonut";
 import {
   Button,
   Card,
   Empty,
   Field,
   palette,
+  ProgressBar,
   Screen,
+  SearchField,
+  Segmented,
   styles,
   Title,
 } from "../../ui";
@@ -51,23 +55,24 @@ export default function Checklist() {
   const [assignedTo, setAssignedTo] = useState("");
   const [reminder, setReminder] = useState(false);
   const [query, setQuery] = useState("");
-  const [incompleteOnly, setIncompleteOnly] = useState(false);
+  const [filter, setFilter] = useState<"all" | "todo" | "done">("all");
   const [sort, setSort] = useState<Sort>("due");
   const visible = useMemo(
     () =>
       sortChecklist(
         event?.checklist.filter(
           (item) =>
-            (!incompleteOnly || !item.done) &&
+            (filter === "all" || (filter === "done") === item.done) &&
             `${item.title} ${item.assignedTo || ""}`
               .toLowerCase()
               .includes(query.toLowerCase()),
         ) || [],
         sort,
       ),
-    [event?.checklist, incompleteOnly, query, sort],
+    [event?.checklist, filter, query, sort],
   );
   if (!event) return null;
+  const doneCount = event.checklist.filter((item) => item.done).length;
 
   const clear = () => {
     setEditingId(null);
@@ -131,107 +136,48 @@ export default function Checklist() {
       <Pressable accessibilityLabel={t("back")} onPress={() => router.back()}>
         <Ionicons name="arrow-back" size={28} color={palette.maroon} />
       </Pressable>
-      <View style={styles.between}><Title>{t("checklist")}</Title><ContextHelp title={t("checklist")} body={t("checklistHelp")} /></View>
-      <Field
-        value={query}
-        onChangeText={setQuery}
-        placeholder={`${t("task")} / ${t("assignee")}`}
+      <View style={styles.between}><Title subtitle={t("checklistIntro")}>{t("checklist")}</Title><ContextHelp title={t("checklist")} body={t("checklistHelp")} /></View>
+      <Card>
+        <View style={styles.row}>
+          <BudgetDonut paid={doneCount} total={event.checklist.length} label={t("yourProgress")} size={84} color={palette.gold} />
+          <View style={{ flex: 1, gap: 8 }}>
+            <Text style={styles.label}>{t("yourProgress")}</Text>
+            <Text style={styles.muted}>{t("tasksCompleted", { done: doneCount, total: event.checklist.length })}</Text>
+            <ProgressBar value={event.checklist.length ? doneCount / event.checklist.length : 0} />
+          </View>
+        </View>
+      </Card>
+      <Segmented
+        options={[["all", `${t("all")} (${event.checklist.length})`], ["todo", `${t("toDo")} (${event.checklist.length - doneCount})`], ["done", `${t("done")} (${doneCount})`]] as const}
+        value={filter}
+        onChange={setFilter}
       />
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-        <Button
-          label={t("all")}
-          onPress={() => setIncompleteOnly(false)}
-          secondary={incompleteOnly}
-        />
-        <Button
-          label={t("incomplete")}
-          onPress={() => setIncompleteOnly(true)}
-          secondary={!incompleteOnly}
-        />
-        <Button
-          label={t("sortDue")}
-          onPress={() => setSort("due")}
-          secondary={sort !== "due"}
-        />
-        <Button
-          label={t("sortPriority")}
-          onPress={() => setSort("priority")}
-          secondary={sort !== "priority"}
-        />
-        <Button
-          label={t("sortAssignee")}
-          onPress={() => setSort("assignee")}
-          secondary={sort !== "assignee"}
-        />
-      </View>
+      <SearchField value={query} onChangeText={setQuery} placeholder={`${t("task")} / ${t("assignee")}`} accessibilityLabel={t("task")} />
+      <Segmented
+        options={[["due", t("sortDue")], ["priority", t("sortPriority")], ["assignee", t("sortAssignee")]] as const}
+        value={sort}
+        onChange={setSort}
+      />
       {visible.length ? (
-        visible.map((item) => (
-          <Card key={item.id}>
-            <View style={styles.between}>
-              <Pressable
-                accessibilityLabel={item.title}
-                onPress={() => toggleChecklist(item.id)}
-                style={[styles.row, { flex: 1 }]}
-              >
-                <Ionicons
-                  name={item.done ? "checkmark-circle" : "ellipse-outline"}
-                  size={25}
-                  color={palette.maroon}
-                />
+        <Card>
+          {visible.map((item, index) => (
+            <View key={item.id} style={[styles.row, { paddingVertical: 4 }, index > 0 && { borderTopWidth: 1, borderTopColor: palette.line, paddingTop: 12 }]}>
+              <Pressable accessibilityRole="checkbox" accessibilityState={{ checked: item.done }} accessibilityLabel={item.title} onPress={() => toggleChecklist(item.id)} hitSlop={8}>
+                <Ionicons name={item.done ? "checkbox" : "square-outline"} size={24} color={palette.maroon} />
+              </Pressable>
+              <Pressable accessibilityRole="button" accessibilityLabel={`${t("edit")} ${item.title}`} onPress={() => edit(item)} style={[styles.row, { flex: 1 }]}>
                 <View style={{ flex: 1 }}>
-                  <Text
-                    style={[
-                      styles.label,
-                      item.done && { textDecorationLine: "line-through" },
-                    ]}
-                  >
-                    {item.title}
-                  </Text>
-                  <Text style={styles.muted}>
-                    {item.due || t("notSet")} · {t(priorityKeys[item.priority])}
-                  </Text>
-                  <Text style={styles.muted}>
-                    {item.assignedTo || t("unassigned")}
-                    {item.reminderAt ? ` · 🔔 ${t("reminder")}` : ""}
+                  <Text style={[styles.label, { fontWeight: "600" }, item.done && { textDecorationLine: "line-through", color: palette.muted }]}>{item.title}</Text>
+                  <Text style={[styles.muted, { fontSize: 13 }]}>
+                    {item.due || t("notSet")} · {t(priorityKeys[item.priority])} · {item.assignedTo || t("unassigned")}
+                    {item.reminderAt ? ` · 🔔` : ""}
                   </Text>
                 </View>
+                <Ionicons name="chevron-forward" size={18} color={palette.muted} />
               </Pressable>
-              <View>
-                <Pressable
-                  accessibilityLabel={`${t("edit")} ${item.title}`}
-                  onPress={() => edit(item)}
-                  style={{ padding: 10 }}
-                >
-                  <Ionicons
-                    name="create-outline"
-                    size={22}
-                    color={palette.maroon}
-                  />
-                </Pressable>
-                <Pressable
-                  accessibilityLabel={`${t("delete")} ${item.title}`}
-                  onPress={() =>
-                    Alert.alert(t("deleteConfirm"), "", [
-                      { text: t("cancel") },
-                      {
-                        text: t("delete"),
-                        style: "destructive",
-                        onPress: () => void remove(item),
-                      },
-                    ])
-                  }
-                  style={{ padding: 10 }}
-                >
-                  <Ionicons
-                    name="trash-outline"
-                    size={21}
-                    color={palette.danger}
-                  />
-                </Pressable>
-              </View>
             </View>
-          </Card>
-        ))
+          ))}
+        </Card>
       ) : (
         <Empty
           icon="✅"
@@ -239,7 +185,7 @@ export default function Checklist() {
           action={t("clearFilters")}
           onPress={() => {
             setQuery("");
-            setIncompleteOnly(false);
+            setFilter("all");
           }}
         />
       )}
@@ -278,6 +224,21 @@ export default function Checklist() {
           />
           <Button label={t("save")} onPress={() => void submit()} />
           <Button label={t("cancel")} onPress={clear} secondary />
+          {editingId ? (
+            <Button
+              icon="trash-outline"
+              label={t("delete")}
+              secondary
+              onPress={() => {
+                const item = event.checklist.find((entry) => entry.id === editingId);
+                if (!item) return;
+                Alert.alert(t("deleteConfirm"), "", [
+                  { text: t("cancel") },
+                  { text: t("delete"), style: "destructive", onPress: () => { void remove(item); clear(); } },
+                ]);
+              }}
+            />
+          ) : null}
         </Screen>
       </Modal>
     </Screen>

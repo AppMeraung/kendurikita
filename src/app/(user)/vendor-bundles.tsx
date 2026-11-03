@@ -1,10 +1,11 @@
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useEffect, useState } from "react";
-import { Alert, Modal, Text } from "react-native";
+import { Alert, Modal, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { loadPublicBundles, requestBundle } from "../../services/vendorBundles";
 import { syncEvent } from "../../services/sync";
 import { useAppState } from "../../state/AppState";
-import { Button, Card, Empty, Field, Screen, styles, Title } from "../../ui";
+import { Button, Empty, Field, palette, Screen, styles, Title } from "../../ui";
 
 type Bundle = {
   id: string;
@@ -57,28 +58,28 @@ export default function PublicBundles() {
   };
   return (
     <Screen>
-      <Title>{t("vendorBundles")}</Title>
+      <Title subtitle={t("bundlesIntro")}>{t("vendorBundles")}</Title>
       {items.length ? (
-        items.map((bundle) => (
-          <Card key={bundle.id}>
-            <Text style={styles.label}>
-              {bundle.name} · RM {Number(bundle.price).toFixed(2)}
-            </Text>
-            <Text style={styles.muted}>{bundle.description}</Text>
-            {(bundle.vendor_bundle_members || []).map((member, index) => (
-              <Text key={index} style={styles.muted}>
-                {member.vendors?.company_name}
-                {member.vendor_packages?.name
-                  ? ` · ${member.vendor_packages.name}`
-                  : ""}
-              </Text>
-            ))}
-            <Button
-              label={t("requestBundle")}
-              onPress={() => setSelected(bundle)}
-            />
-          </Card>
-        ))
+        <View style={[styles.grid, { gap: 10 }]}>
+          {items.map((bundle) => (
+            <View key={bundle.id} style={[styles.card, { flexBasis: "31%", flexGrow: 1, minWidth: 150, padding: 12, gap: 8 }]}>
+              <Text style={[styles.label, { textAlign: "center" }]} numberOfLines={2}>{bundle.name}</Text>
+              <Text style={{ textAlign: "center", fontSize: 18, fontWeight: "800", color: palette.maroon }}>RM {Number(bundle.price).toLocaleString("en-MY", { maximumFractionDigits: 0 })}</Text>
+              {bundle.description ? <Text style={[styles.muted, { fontSize: 12, textAlign: "center" }]} numberOfLines={3}>{bundle.description}</Text> : null}
+              <View style={{ gap: 4, flex: 1 }}>
+                {(bundle.vendor_bundle_members || []).map((member, index) => (
+                  <View key={index} style={{ flexDirection: "row", gap: 6, alignItems: "flex-start" }}>
+                    <Ionicons name="checkmark" size={14} color={palette.gold} style={{ marginTop: 2 }} />
+                    <Text style={[styles.muted, { fontSize: 12, flex: 1, lineHeight: 17 }]}>
+                      {member.vendor_packages?.name || member.vendors?.company_name}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+              <Button label={t("requestBundle")} onPress={() => setSelected(bundle)} />
+            </View>
+          ))}
+        </View>
       ) : (
         <Empty
           icon="🎁"

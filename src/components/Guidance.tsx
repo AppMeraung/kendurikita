@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { Modal, Pressable, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
-import { Button, Card, palette, Screen, styles, Title } from "../ui";
+import { Button, Card, palette, styles, Title } from "../ui";
 
 export function ContextHelp({ title, body }: { title: string; body: string }) {
   const { t } = useTranslation();
@@ -49,9 +49,9 @@ export function FirstStepsCoach() {
     else setStep((current) => current + 1);
   };
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={close}>
-      <Screen scroll={false}>
-        <View style={{ flex: 1, justifyContent: "flex-end", paddingBottom: 24 }}>
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={close}>
+      <View style={{ flex: 1, backgroundColor: "rgba(39,10,20,0.45)" }}>
+        <View style={{ flex: 1, justifyContent: "flex-end", padding: 20, paddingBottom: 32 }}>
           <Card>
             <View style={styles.between}>
               <Text style={styles.muted}>{t("coachProgress", { current: step + 1, total: steps.length })}</Text>
@@ -65,7 +65,7 @@ export function FirstStepsCoach() {
             <Button label={step === steps.length - 1 ? t("gotIt") : t("next")} onPress={next} />
           </Card>
         </View>
-      </Screen>
+      </View>
     </Modal>
   );
 }
@@ -85,5 +85,5 @@ export function VendorFirstStepsCoach() {
   ] as const;
   useEffect(() => { void AsyncStorage.getItem(VENDOR_COACH_KEY).then((seen) => setVisible(!seen)); }, []);
   const close = () => { void AsyncStorage.setItem(VENDOR_COACH_KEY, "seen"); setVisible(false); };
-  return <Modal visible={visible} transparent animationType="fade" onRequestClose={close}><Screen scroll={false}><View style={{ flex: 1, justifyContent: "flex-end", paddingBottom: 24 }}><Card><View style={styles.between}><Text style={styles.muted}>{t("coachProgress", { current: step + 1, total: steps.length })}</Text><Pressable accessibilityRole="button" accessibilityLabel={t("skip")} onPress={close}><Text style={styles.label}>{t("skip")}</Text></Pressable></View><Ionicons name={steps[step][0]} size={42} color={palette.maroon} /><Text style={styles.metric}>{steps[step][1]}</Text><Text style={styles.muted}>{steps[step][2]}</Text><Button label={step === steps.length - 1 ? t("gotIt") : t("next")} onPress={() => step === steps.length - 1 ? close() : setStep((current) => current + 1)} /></Card></View></Screen></Modal>;
+  return <Modal visible={visible} transparent animationType="slide" onRequestClose={close}><View style={{ flex: 1, backgroundColor: "rgba(39,10,20,0.45)" }}><View style={{ flex: 1, justifyContent: "flex-end", padding: 20, paddingBottom: 32 }}><Card><View style={styles.between}><Text style={styles.muted}>{t("coachProgress", { current: step + 1, total: steps.length })}</Text><Pressable accessibilityRole="button" accessibilityLabel={t("skip")} onPress={close}><Text style={styles.label}>{t("skip")}</Text></Pressable></View><Ionicons name={steps[step][0]} size={42} color={palette.maroon} /><Text style={styles.metric}>{steps[step][1]}</Text><Text style={styles.muted}>{steps[step][2]}</Text><Button label={step === steps.length - 1 ? t("gotIt") : t("next")} onPress={() => step === steps.length - 1 ? close() : setStep((current) => current + 1)} /></Card></View></View></Modal>;
 }

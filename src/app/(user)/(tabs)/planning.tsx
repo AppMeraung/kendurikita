@@ -10,11 +10,11 @@ export default function Planning() {
     ["storefront-outline", t("vendors"), "/(user)/(tabs)/vendors"],
     ["gift-outline", t("packages"), "/(user)/vendor-bundles"],
     ["mail-outline", t("invitation"), "/(user)/invitation"],
+    ["grid-outline", t("seatingPlan"), "/(user)/seating"],
+    ["calendar-outline", t("schedule"), "/(user)/schedule"],
     ["checkbox-outline", t("checklist"), "/(user)/checklist"],
     ["wallet-outline", t("budget"), "/(user)/(tabs)/budget"],
     ["people-outline", t("guests"), "/(user)/(tabs)/guests"],
-    ["grid-outline", t("seatingPlan"), "/(user)/seating"],
-    ["calendar-outline", t("schedule"), "/(user)/schedule"],
     ["document-text-outline", t("notes"), "/(user)/notes"],
   ] as const;
   return (

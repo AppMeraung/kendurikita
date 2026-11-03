@@ -17,6 +17,9 @@ import {
   Field,
   palette,
   Screen,
+  SearchField,
+  Stat,
+  StatusPill,
   styles,
   Title,
 } from "../../../ui";
@@ -139,24 +142,22 @@ export default function Guests() {
 
   return (
     <Screen>
-      <View style={styles.between}><Title>{t("guestTitle")}</Title><ContextHelp title={t("guestTitle")} body={t("guestsHelp")} /></View>
-      <Field
-        placeholder={t("searchGuests")}
-        value={query}
-        onChangeText={setQuery}
-      />
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-        {(["Semua", "Hadir", "Menunggu", "Tidak hadir"] as Filter[]).map(
-          (item) => (
-            <Button
-              key={item}
-              label={t(item === "Semua" ? "all" : item === "Hadir" ? "attending" : item === "Menunggu" ? "pending" : "notAttending")}
-              onPress={() => setFilter(item)}
-              secondary={filter !== item}
-            />
-          ),
-        )}
-      </View>
+      <View style={styles.between}><Title subtitle={t("guestsIntro")}>{t("guestTitle")}</Title><ContextHelp title={t("guestTitle")} body={t("guestsHelp")} /></View>
+      <Card>
+        <View style={{ flexDirection: "row" }}>
+          {([
+            ["Semua", "people-outline", event.guests.length, "all", "neutral"],
+            ["Hadir", "checkmark-circle-outline", event.guests.filter((g) => g.rsvp === "Hadir").length, "attending", "success"],
+            ["Menunggu", "help-circle-outline", event.guests.filter((g) => g.rsvp === "Menunggu").length, "pending", "warning"],
+            ["Tidak hadir", "close-circle-outline", event.guests.filter((g) => g.rsvp === "Tidak hadir").length, "notAttending", "danger"],
+          ] as const).map(([key, icon, count, label, tone]) => (
+            <Pressable key={key} accessibilityRole="tab" accessibilityState={{ selected: filter === key }} accessibilityLabel={`${t(label)} ${count}`} onPress={() => setFilter(key)} style={{ flex: 1, paddingVertical: 4, borderRadius: 10, backgroundColor: filter === key ? palette.cream : "transparent" }}>
+              <Stat icon={icon} value={count} label={t(label)} tone={tone} />
+            </Pressable>
+          ))}
+        </View>
+      </Card>
+      <SearchField placeholder={t("searchGuests")} value={query} onChangeText={setQuery} accessibilityLabel={t("searchGuests")} />
       {event.guests.length === 0 ? (
         <Empty
           icon="👥"
@@ -175,41 +176,28 @@ export default function Guests() {
           }}
         />
       ) : (
-        visible.map((guest) => (
-          <Card key={guest.id}>
-            <View style={styles.between}>
-              <Pressable
-                accessibilityLabel={`${t("edit")} ${guest.name}`}
-                onPress={() => edit(guest)}
-                style={{ flex: 1 }}
-              >
-                <Text style={styles.label}>{guest.name}</Text>
-                <Text style={styles.muted}>
-                  {guest.group || "—"} · {guest.pax} {t("pax")} · {t(guest.rsvp === "Hadir" ? "attending" : guest.rsvp === "Menunggu" ? "pending" : "notAttending")}
-                </Text>
-              </Pressable>
-              <Pressable
-                accessibilityLabel={t("delete")}
-                onPress={() =>
-                  Alert.alert(t("deleteConfirm"), "", [
-                    { text: t("cancel") },
-                    {
-                      text: t("delete"),
-                      style: "destructive",
-                      onPress: () => deleteGuest(guest.id),
-                    },
-                  ])
-                }
-              >
-                <Ionicons
-                  name="trash-outline"
-                  size={22}
-                  color={palette.danger}
-                />
-              </Pressable>
-            </View>
-          </Card>
-        ))
+        <Card>
+          {visible.map((guest, index) => (
+            <Pressable
+              key={guest.id}
+              accessibilityRole="button"
+              accessibilityLabel={`${t("edit")} ${guest.name}`}
+              onPress={() => edit(guest)}
+              style={[styles.row, index > 0 && { borderTopWidth: 1, borderTopColor: palette.line, paddingTop: 12 }]}
+            >
+              <Ionicons name="person-outline" size={20} color={palette.maroon} />
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.label, { fontWeight: "600" }]}>{guest.name}</Text>
+                <Text style={[styles.muted, { fontSize: 13 }]}>{guest.group || "—"} · {guest.pax} {t("pax")}</Text>
+              </View>
+              <StatusPill
+                label={t(guest.rsvp === "Hadir" ? "attending" : guest.rsvp === "Menunggu" ? "pending" : "notAttending")}
+                tone={guest.rsvp === "Hadir" ? "success" : guest.rsvp === "Menunggu" ? "warning" : "danger"}
+              />
+              <Ionicons name="chevron-forward" size={18} color={palette.muted} />
+            </Pressable>
+          ))}
+        </Card>
       )}
       <Button label={t("addGuest")} onPress={() => setOpen(true)} />
       <Button
@@ -249,6 +237,19 @@ export default function Guests() {
           </View>
           <Button label={t("save")} onPress={submit} />
           <Button label={t("cancel")} onPress={clear} secondary />
+          {editingId ? (
+            <Button
+              icon="trash-outline"
+              label={t("delete")}
+              secondary
+              onPress={() =>
+                Alert.alert(t("deleteConfirm"), "", [
+                  { text: t("cancel") },
+                  { text: t("delete"), style: "destructive", onPress: () => { deleteGuest(editingId); clear(); } },
+                ])
+              }
+            />
+          ) : null}
         </Screen>
       </Modal>
     </Screen>
