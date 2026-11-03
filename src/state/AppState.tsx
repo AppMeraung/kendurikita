@@ -251,8 +251,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           event: {
             ...event,
             id: `${Date.now()}`,
-            checklist: createChecklistForEvent(event.type, event.date, (key) =>
-              i18n.t(key),
+            checklist: createChecklistForEvent(
+              event.type,
+              event.date,
+              (key) => i18n.t(key),
+              { lang: i18n.language, guests: event.estimatedGuests },
             ),
             budget: [],
             budgetCategories: suggestedBudgetCategories(),

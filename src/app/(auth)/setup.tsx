@@ -11,6 +11,7 @@ import { PlaceLocation } from '../../services/places';
 const eventTypes = [
   ['Kenduri Kahwin Melayu', 'eventMalay'], ['Chinese wedding', 'eventChinese'], ['Indian wedding', 'eventIndian'], ['Indonesian wedding', 'eventIndonesian'],
   ['Pertunangan', 'eventEngagement'], ['Aqiqah', 'eventAqiqah'], ['Majlis Hari Jadi', 'eventBirthday'], ['Majlis Korporat', 'eventCorporate'],
+  ['Majlis Akad Nikah', 'eventNikah'], ['Kenduri Doa Selamat', 'eventKenduri'], ['Reunion', 'eventReunion'], ['Festival / Acara Awam', 'eventFestival'],
 ] as const;
 const totalSteps = 6;
 

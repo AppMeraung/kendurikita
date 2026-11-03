@@ -7,6 +7,7 @@ import engagement from "./engagement.json";
 import indianWedding from "./indian-wedding.json";
 import indonesianWedding from "./indonesian-wedding.json";
 import malayWedding from "./kahwin-melayu.json";
+import master from "./master.json";
 
 type Group = "12m" | "9m" | "6m" | "3m" | "1m" | "day" | "after";
 type TemplateTask = {
@@ -24,26 +25,43 @@ const offsets: Record<Group, number> = {
   day: 0,
   after: 7,
 };
-const templates: Record<string, { prefix: string; tasks: TemplateTask[] }> = {
+type MasterItem = {
+  n: number;
+  group: Group;
+  events: string;
+  minGuests?: number;
+  vendor?: string;
+  same?: string[];
+} & Record<"ms" | "en" | "zh" | "ta" | "id", string>;
+export const masterChecklist = master as MasterItem[];
+const groupOrder: Group[] = ["12m", "9m", "6m", "3m", "1m", "day", "after"];
+const templates: Record<
+  string,
+  { prefix: string; tasks: TemplateTask[]; code: string; earliest: Group }
+> = {
   "Chinese wedding": {
     prefix: "zh-wedding",
-    tasks: chineseWedding as TemplateTask[],
+    tasks: chineseWedding as TemplateTask[], code: "W", earliest: "12m",
   },
   "Indian wedding": {
     prefix: "in-wedding",
-    tasks: indianWedding as TemplateTask[],
+    tasks: indianWedding as TemplateTask[], code: "W", earliest: "12m",
   },
   "Indonesian wedding": {
     prefix: "id-wedding",
-    tasks: indonesianWedding as TemplateTask[],
+    tasks: indonesianWedding as TemplateTask[], code: "W", earliest: "12m",
   },
-  Pertunangan: { prefix: "engagement", tasks: engagement as TemplateTask[] },
-  Aqiqah: { prefix: "aqiqah", tasks: aqiqah as TemplateTask[] },
-  "Majlis Hari Jadi": { prefix: "birthday", tasks: birthday as TemplateTask[] },
+  Pertunangan: { prefix: "engagement", tasks: engagement as TemplateTask[], code: "E", earliest: "6m" },
+  Aqiqah: { prefix: "aqiqah", tasks: aqiqah as TemplateTask[], code: "A", earliest: "3m" },
+  "Majlis Hari Jadi": { prefix: "birthday", tasks: birthday as TemplateTask[], code: "B", earliest: "3m" },
   "Majlis Korporat": {
     prefix: "corporate",
-    tasks: corporate as TemplateTask[],
+    tasks: corporate as TemplateTask[], code: "C", earliest: "6m",
   },
+  "Majlis Akad Nikah": { prefix: "nikah", tasks: [], code: "N", earliest: "6m" },
+  "Kenduri Doa Selamat": { prefix: "kenduri", tasks: [], code: "K", earliest: "3m" },
+  Reunion: { prefix: "reunion", tasks: [], code: "R", earliest: "3m" },
+  "Festival / Acara Awam": { prefix: "festival", tasks: [], code: "F", earliest: "12m" },
 };
 
 function build(
@@ -82,11 +100,39 @@ export function createChecklistForEvent(
   type: string,
   eventDate: string | null,
   translate: (key: string) => string = (key) => key,
+  { lang = "ms", guests = 0 }: { lang?: string; guests?: number } = {},
 ) {
   if (type === "Kenduri Kahwin Melayu")
     return createMalayWeddingChecklist(eventDate);
   const template = templates[type];
-  return template
-    ? build(template.tasks, eventDate, template.prefix, translate)
-    : [];
+  if (!template) return [];
+  const keys = new Set(template.tasks.map((task) => task.key));
+  const earliest = groupOrder.indexOf(template.earliest);
+  const extra = masterChecklist.filter(
+    (item) =>
+      (item.events === "*" || item.events.includes(template.code)) &&
+      !item.same?.some((key) => keys.has(key)) &&
+      guests >= (item.minGuests ?? 0),
+  );
+  const tasks = [
+    ...template.tasks.map((task, index) => ({ task, id: `template-${template.prefix}-${index + 1}` })),
+    ...extra.map((item) => ({
+      task: {
+        title: item[lang as "ms"] ?? item.en,
+        group: groupOrder[Math.max(earliest, groupOrder.indexOf(item.group))],
+      },
+      id: `master-${item.n}`,
+    })),
+  ];
+  // Template tasks keep their original ids; the list is ordered by lead time.
+  const sorted = tasks
+    .map((entry, index) => ({ ...entry, index }))
+    .sort(
+      (a, b) =>
+        groupOrder.indexOf(a.task.group) - groupOrder.indexOf(b.task.group) ||
+        a.index - b.index,
+    );
+  return build(sorted.map((entry) => entry.task), eventDate, template.prefix, translate).map(
+    (item, index) => ({ ...item, id: sorted[index].id }),
+  );
 }
