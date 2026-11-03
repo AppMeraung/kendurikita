@@ -12,6 +12,7 @@ import {
 } from "../../services/supabase";
 import { Button, Field, Screen, styles, Title } from "../../ui";
 import { pendingEventInvitePath } from "../../services/eventInvites";
+import { vendorAccessAllowed } from "../../domain/vendorAccess";
 
 export default function SignIn() {
   const { t } = useTranslation();
@@ -63,7 +64,7 @@ export default function SignIn() {
   return (
     <Screen>
       <Title>{t("signIn")}</Title>
-      <Text style={styles.muted}>{t("chooseRoleHint")}</Text>
+      {vendorAccessAllowed(Platform.OS) ? <><Text style={styles.muted}>{t("chooseRoleHint")}</Text>
       <View style={styles.row}>
         <Button
           label={t("coupleOrFamily")}
@@ -75,7 +76,7 @@ export default function SignIn() {
           onPress={() => setRole("vendor")}
           secondary={role !== "vendor"}
         />
-      </View>
+      </View> </> : null}
       <Field
         value={email}
         onChangeText={setEmail}
