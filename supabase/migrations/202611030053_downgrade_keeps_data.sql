@@ -1,4 +1,3 @@
--- NOT YET APPLIED (production change approval declined 2026-11-03); run supabase/run-in-sql-editor.sql.
 -- When a paid plan lapses nothing is deleted. Vendors keep editing everything they own, but cannot add past
 -- the Basic limits, and the marketplace shows only the oldest listings and photos that fit the current plan.
 -- Upgrading again shows everything at once.

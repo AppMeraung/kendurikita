@@ -1,4 +1,3 @@
--- NOT YET APPLIED: policy changes need to be run in the Supabase SQL editor (tool approval declined).
 -- Marketplace shows only listings and photos within the vendor's current plan; owners and admins still see all.
 -- Needs package_in_quota and portfolio_in_quota from 202611030053.
 

@@ -1,4 +1,3 @@
--- NOT YET APPLIED to Supabase (approval declined 2026-11-03). Apply before relying on these checks.
 -- Four policies compared a subquery column with itself (an unqualified column bound to the subquery's
 -- own table), so their ownership check was always true. Each is recreated with the outer table named.
 -- Also adds the two foreign-key indexes the admin and vendor dashboards scan.
