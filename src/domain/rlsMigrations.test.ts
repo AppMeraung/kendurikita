@@ -183,6 +183,19 @@ describe("ownership checks name the outer table", () => {
   });
 });
 
+describe("bans take effect on the next request", () => {
+  const sql = readFileSync(resolve("supabase/migrations/202611030056_ban_takes_effect_now.sql"), "utf8");
+  it("adds one restrictive policy to every RLS table for reads and writes", () => {
+    expect(sql).toContain("c.relrowsecurity loop");
+    expect(sql).toContain("as restrictive for all to authenticated");
+    expect(sql).toContain("using (not (select kendurikita.is_banned())) with check (not (select kendurikita.is_banned()))");
+  });
+  it("treats unbanned and signed-out users as not banned and hides the helper from anon", () => {
+    expect(sql).toContain("coalesce((select banned_until > now() from auth.users where id = auth.uid()), false)");
+    expect(sql).toContain("revoke all on function kendurikita.is_banned() from public, anon");
+  });
+});
+
 describe("web enquiry log and promo counter", () => {
   const sql = readFileSync(resolve("supabase/migrations/202611030052_web_enquiries_and_promo.sql"), "utf8");
   it("lets only the owning vendor or an admin read enquiries, with no direct insert", () => {
