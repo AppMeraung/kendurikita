@@ -1,3 +1,25 @@
+create or replace function kendurikita.event_plan(target uuid)
+returns text language sql stable security definer set search_path='' as $$
+  select case
+    when exists(
+      select 1 from kendurikita.subscriptions s
+      join kendurikita.events e on e.owner_id=s.user_id
+      where e.id=target and s.status='active'
+        and (s.expires_at is null or s.expires_at>now())
+        and (s.event_id is null or s.event_id=target)
+        and lower(s.entitlement) like '%premium%'
+    ) then 'premium'
+    when exists(
+      select 1 from kendurikita.subscriptions s
+      join kendurikita.events e on e.owner_id=s.user_id
+      where e.id=target and s.status='active'
+        and (s.expires_at is null or s.expires_at>now())
+        and (s.event_id is null or s.event_id=target)
+        and lower(s.entitlement) like '%pro%'
+    ) then 'pro'
+    else 'basic' end;
+$$;
+
 drop policy if exists contributions_parent_write on kendurikita.budget_contributions;
 create policy contributions_parent_write on kendurikita.budget_contributions
   for insert with check(

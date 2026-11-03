@@ -96,16 +96,16 @@ begin
     values(auth.uid(),'moderate_review','vendor_reviews',target,jsonb_build_object('publish',publish));
 end $$;
 
-create or replace function kendurikita.set_vendor_badges(target uuid, values text[])
+create or replace function kendurikita.set_vendor_badges(target uuid, badge_values text[])
 returns void language plpgsql security definer set search_path='' as $$
 begin
   if not kendurikita.is_admin() then raise exception 'not_allowed'; end if;
-  if exists(select 1 from unnest(values) badge where badge not in ('popular','fast_response','halal','premium'))
+  if exists(select 1 from unnest(badge_values) badge where badge not in ('popular','fast_response','halal','premium'))
     then raise exception 'invalid_badge'; end if;
-  update kendurikita.vendors set badges=coalesce(values,'{}') where id=target;
+  update kendurikita.vendors set badges=coalesce(badge_values,'{}') where id=target;
   if not found then raise exception 'vendor_not_found'; end if;
   insert into kendurikita.audit_log(actor_id,action,table_name,record_id,metadata)
-    values(auth.uid(),'set_vendor_badges','vendors',target,jsonb_build_object('badges',values));
+    values(auth.uid(),'set_vendor_badges','vendors',target,jsonb_build_object('badges',badge_values));
 end $$;
 
 revoke all on function kendurikita.moderate_vendor(uuid,kendurikita.vendor_status,text) from public;

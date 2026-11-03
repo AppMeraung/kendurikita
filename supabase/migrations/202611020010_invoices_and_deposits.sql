@@ -4,23 +4,23 @@ drop policy if exists invoices_vendor_insert on kendurikita.invoices;
 drop policy if exists invoices_vendor_update on kendurikita.invoices;
 create policy invoices_vendor_insert on kendurikita.invoices
   for insert with check(
-    kendurikita.owns_vendor(vendor_id)
+    kendurikita.owns_vendor(invoices.vendor_id)
     and exists(
       select 1 from kendurikita.quotations q
       join kendurikita.leads l on l.id = q.lead_id
-      where q.id = quotation_id and q.vendor_id = vendor_id
-        and l.event_id = event_id and q.status = 'accepted'
+      where q.id = invoices.quotation_id and q.vendor_id = invoices.vendor_id
+        and l.event_id = invoices.event_id and q.status = 'accepted'
     )
   );
 create policy invoices_vendor_update on kendurikita.invoices
-  for update using(kendurikita.owns_vendor(vendor_id))
+  for update using(kendurikita.owns_vendor(invoices.vendor_id))
   with check(
-    kendurikita.owns_vendor(vendor_id)
+    kendurikita.owns_vendor(invoices.vendor_id)
     and exists(
       select 1 from kendurikita.quotations q
       join kendurikita.leads l on l.id = q.lead_id
-      where q.id = quotation_id and q.vendor_id = vendor_id
-        and l.event_id = event_id and q.status = 'accepted'
+      where q.id = invoices.quotation_id and q.vendor_id = invoices.vendor_id
+        and l.event_id = invoices.event_id and q.status = 'accepted'
     )
   );
 
