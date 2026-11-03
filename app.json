@@ -24,7 +24,7 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.appmeraung.kendurikita",
-      "versionCode": 9,
+      "versionCode": 10,
       "permissions": [
         "android.permission.POST_NOTIFICATIONS"
       ],

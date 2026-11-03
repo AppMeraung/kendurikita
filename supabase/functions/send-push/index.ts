@@ -1,4 +1,5 @@
 import { admin, json } from '../_shared/client.ts';
+import { bearerMatches } from '../_shared/auth.ts';
 import { failedToken, isWithinQuietHours, renderPush, type PushTemplate } from '../_shared/push.ts';
 
 const SEND_URL = 'https://exp.host/--/api/v2/push/send';
@@ -32,7 +33,7 @@ async function fetchWithRetry(url: string, init: RequestInit, attempts = 3) {
 
 Deno.serve(async (request) => {
   if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
-  if (request.headers.get('authorization') !== `Bearer ${Deno.env.get('PUSH_FUNCTION_SECRET')}`) return json({ error: 'unauthorized' }, 401);
+  if (!bearerMatches(request.headers.get('authorization'), Deno.env.get('PUSH_FUNCTION_SECRET'))) return json({ error: 'unauthorized' }, 401);
 
   const payload = await request.json() as Payload;
   if (!Array.isArray(payload.userIds) || !payload.userIds.length || payload.userIds.length > 1000 || !categories.includes(payload.category) || (!payload.template && (!payload.title || !payload.body))) return json({ error: 'invalid_payload' }, 400);

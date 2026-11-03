@@ -1,15 +1,13 @@
 import { admin, json } from "../_shared/client.ts";
 import { queueAdminAlert } from "../_shared/admin-alert.ts";
+import { bearerMatches } from "../_shared/auth.ts";
 
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 Deno.serve(async (request) => {
   if (request.method !== "POST")
     return json({ error: "method_not_allowed" }, 405);
-  if (
-    request.headers.get("authorization") !==
-    `Bearer ${Deno.env.get("REVENUECAT_WEBHOOK_SECRET")}`
-  )
+  if (!bearerMatches(request.headers.get("authorization"), Deno.env.get("REVENUECAT_WEBHOOK_SECRET")))
     return json({ error: "unauthorized" }, 401);
   const payload = await request.json();
   const event = payload.event;
