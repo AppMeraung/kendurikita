@@ -1,7 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, Modal, Pressable, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { budgetSummary, guestSummary, money, validAmount } from "../../../domain";
@@ -17,11 +17,19 @@ export default function Dashboard() {
   const { event, addBudget, updateEvent } = useAppState();
   const [openedAt] = useState(() => new Date());
   const [quickOpen, setQuickOpen] = useState(false);
+  // Guests can browse the dashboard; notifications/messages need a session or PostgREST returns 401.
+  const [signedIn, setSignedIn] = useState(false);
+  useEffect(() => {
+    if (!cloudConfigured) return;
+    void supabase.auth.getSession().then(({ data }) => setSignedIn(Boolean(data.session)));
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => setSignedIn(Boolean(session)));
+    return () => data.subscription.unsubscribe();
+  }, []);
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
-  const unread = useQuery({ queryKey: ["notifications", "unread-count"], enabled: cloudConfigured, queryFn: async () => { const { count, error } = await supabase.from("notifications").select("id", { count: "exact", head: true }).is("read_at", null); if (error) throw error; return count || 0; }, refetchInterval: 30000 });
+  const unread = useQuery({ queryKey: ["notifications", "unread-count"], enabled: cloudConfigured && signedIn, queryFn: async () => { const { count, error } = await supabase.from("notifications").select("id", { count: "exact", head: true }).is("read_at", null); if (error) throw error; return count || 0; }, refetchInterval: 30000 });
   const featured = useQuery({ queryKey: ["vendors", "featured"], enabled: cloudConfigured, queryFn: async () => { const rows = (await loadDiscoverableVendors()).filter((vendor) => vendor.sponsored); return rows.length ? rows[new Date().getDate() % rows.length] : null; }, staleTime: 3600000 });
-  const recentMessages = useQuery({ queryKey: ["messages", "dashboard-recent"], enabled: cloudConfigured, queryFn: async () => { const result = await supabase.from("messages").select("id,body,created_at,lead_id,leads(vendors(company_name))").order("created_at", { ascending: false }).limit(3); if (result.error) throw result.error; return result.data || []; }, refetchInterval: 30000 });
+  const recentMessages = useQuery({ queryKey: ["messages", "dashboard-recent"], enabled: cloudConfigured && signedIn, queryFn: async () => { const result = await supabase.from("messages").select("id,body,created_at,lead_id,leads(vendors(company_name))").order("created_at", { ascending: false }).limit(3); if (result.error) throw result.error; return result.data || []; }, refetchInterval: 30000 });
   if (!event) return null;
   const budget = budgetSummary(event.budget, event.totalBudget);
   const guests = guestSummary(event.guests);
