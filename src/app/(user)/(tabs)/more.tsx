@@ -10,12 +10,13 @@ import { syncEvent } from "../../../services/sync";
 import { unregisterCurrentPushToken } from "../../../services/notifications";
 import { logOutPurchaser } from "../../../services/revenuecat";
 import { useUserPlan } from "../../../state/usePlan";
+import { supportEmail as resolveSupportEmail } from "../../../domain/support";
 export default function More() {
   const { t } = useTranslation();
   const { event, updateEvent, reset } = useAppState();
   const { plan } = useUserPlan(event?.cloudId);
   const supportNumber = process.env.EXPO_PUBLIC_SUPPORT_WHATSAPP?.replace(/\D/g, "");
-  const supportEmail = process.env.EXPO_PUBLIC_SUPPORT_EMAIL?.trim();
+  const supportEmail = resolveSupportEmail(process.env.EXPO_PUBLIC_SUPPORT_EMAIL);
   const modules = [
     ["invite", t("invitation")], ["rsvp", "RSVP"], ["seating", t("seatingPlan")],
     ["schedule", t("schedule")], ["team", t("team")], ["payments", t("payments")],
