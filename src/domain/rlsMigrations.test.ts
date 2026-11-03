@@ -182,3 +182,17 @@ describe("ownership checks name the outer table", () => {
     expect(fix).not.toMatch(/\b(\w+)\.(\w+)\s*=\s*\1\.\2\b/);
   });
 });
+
+describe("web enquiry log and promo counter", () => {
+  const sql = readFileSync(resolve("supabase/migrations/202611030052_web_enquiries_and_promo.sql"), "utf8");
+  it("lets only the owning vendor or an admin read enquiries, with no direct insert", () => {
+    expect(sql).toContain("for select using (kendurikita.owns_vendor(vendor_id) or kendurikita.is_admin())");
+    expect(sql).not.toMatch(/create policy \w+ on kendurikita\.web_enquiries\s+for (insert|all)/);
+  });
+  it("logs only approved vendors, own packages and capped bursts", () => {
+    expect(sql).toContain("verification_status='approved'");
+    expect(sql).toContain("vendor_id=target_vendor) then");
+    expect(sql).toContain(">= 10 then return");
+    expect(sql).toContain("greatest(0, 50 - count(distinct vendor_id))");
+  });
+});

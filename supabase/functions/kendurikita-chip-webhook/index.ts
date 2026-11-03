@@ -78,8 +78,15 @@ Deno.serve(async (request) => {
   const vendor = await database.from("vendors").select("id").ilike("email", email).maybeSingle();
   if (vendor.error) return json({ error: vendor.error.message }, 500);
   if (!vendor.data) return json({ error: "vendor_not_found" }, 404);
+  // Paying before the current plan ends adds the new period after it, so early renewals lose no days.
+  // The same payment id is skipped so a retried webhook does not extend twice.
+  const current = await database.from("subscriptions").select("expires_at")
+    .eq("vendor_id", vendor.data.id).in("status", ["active", "grace"]).neq("provider_customer_id", paymentId)
+    .order("expires_at", { ascending: false }).limit(1).maybeSingle();
+  if (current.error) return json({ error: current.error.message }, 500);
+  const startsFrom = Math.max(Date.now(), current.data?.expires_at ? new Date(current.data.expires_at).getTime() : 0);
   const expiresAt = statuses[status] === "active"
-    ? new Date(Date.now() + (isYear ? 365 : 31) * 86_400_000).toISOString()
+    ? new Date(startsFrom + (isYear ? 365 : 31) * 86_400_000).toISOString()
     : null;
   const saved = await database.from("subscriptions").upsert({
     user_id: null,
