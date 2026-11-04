@@ -248,14 +248,13 @@ export default function Vendors() {
           <Pressable
             key={key}
             accessibilityRole="button"
-            accessibilityState={{ selected: category === key }}
             accessibilityLabel={t(label)}
-            onPress={() => setCategory((current) => (current === key ? "" : key))}
+            onPress={() => router.push(`/(user)/vendor-category/${key}`)}
             style={[styles.row, index > 0 && { borderTopWidth: 1, borderTopColor: palette.line, paddingTop: 12 }]}
           >
             <Ionicons name={icon} size={22} color={palette.maroon} />
             <Text style={[styles.label, { flex: 1, fontWeight: "600" }]}>{t(label)}</Text>
-            <Ionicons name={category === key ? "checkmark-circle" : "chevron-forward"} size={18} color={category === key ? palette.maroon : palette.muted} />
+            <Ionicons name="chevron-forward" size={18} color={palette.muted} />
           </Pressable>
         ))}
       </Card>

@@ -1,15 +1,16 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { router } from "expo-router";
 import { Contact } from "expo-contacts";
 import * as DocumentPicker from "expo-document-picker";
 import { useMemo, useState } from "react";
 import { Alert, Modal, Pressable, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
-import { Guest, validAmount } from "../../../domain";
-import { userCanAdd } from "../../../domain/entitlements";
-import { parseGuestCsv } from "../../../domain/guestCsv";
-import { useAppState } from "../../../state/AppState";
-import { useUserPlan } from "../../../state/usePlan";
-import { ContextHelp } from "../../../components/Guidance";
+import { Guest, validAmount } from "../../domain";
+import { userCanAdd } from "../../domain/entitlements";
+import { parseGuestCsv } from "../../domain/guestCsv";
+import { useAppState } from "../../state/AppState";
+import { useUserPlan } from "../../state/usePlan";
+import { ContextHelp } from "../../components/Guidance";
 import {
   Button,
   Card,
@@ -22,7 +23,7 @@ import {
   StatusPill,
   styles,
   Title,
-} from "../../../ui";
+} from "../../ui";
 
 type Filter = "Semua" | Guest["rsvp"];
 
@@ -142,6 +143,7 @@ export default function Guests() {
 
   return (
     <Screen>
+      <Pressable accessibilityRole="button" accessibilityLabel={t("back")} onPress={() => router.back()} hitSlop={10}><Ionicons name="arrow-back" size={26} color={palette.maroon} /></Pressable>
       <View style={styles.between}><Title subtitle={t("guestsIntro")}>{t("guestTitle")}</Title><ContextHelp title={t("guestTitle")} body={t("guestsHelp")} /></View>
       <Card>
         <View style={{ flexDirection: "row" }}>

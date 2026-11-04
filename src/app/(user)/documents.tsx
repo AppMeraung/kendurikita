@@ -10,10 +10,11 @@ import { userLimits } from "../../domain/entitlements";
 import {
   deleteEventDocumentFile,
   openEventDocument,
+  saveEventDocument,
 } from "../../services/documents";
 import { useAppState } from "../../state/AppState";
 import { useUserPlan } from "../../state/usePlan";
-import { Button, Card, Empty, palette, Screen, styles, Title } from "../../ui";
+import { Button, Card, Empty, ListPicker, palette, Screen, styles, Title } from "../../ui";
 
 const folders: EventDocument["folder"][] = [
   "contracts",
@@ -27,6 +28,7 @@ export default function Documents() {
   const { event, addDocument, deleteDocument } = useAppState();
   const { plan } = useUserPlan(event?.cloudId);
   const [folder, setFolder] = useState<EventDocument["folder"]>("contracts");
+  const [filter, setFilter] = useState<EventDocument["folder"] | "all">("all");
   if (!event) return null;
   const pick = async () => {
     const result = await DocumentPicker.getDocumentAsync({
@@ -62,6 +64,14 @@ export default function Documents() {
       );
     }
   };
+  const save = async (document: EventDocument) => {
+    try {
+      await saveEventDocument(document);
+    } catch (error) {
+      Alert.alert(t("documentOpenFailed"), error instanceof Error ? error.message : t("unknownError"));
+    }
+  };
+  const shown = event.documents.filter((document) => filter === "all" || document.folder === filter);
   const remove = (document: EventDocument) =>
     Alert.alert(t("deleteConfirm"), "", [
       { text: t("cancel") },
@@ -82,56 +92,36 @@ export default function Documents() {
         <Ionicons name="arrow-back" size={28} color={palette.maroon} />
       </Pressable>
       <Title>{t("documentsTitle")}</Title>
-      <Text style={styles.label}>{t("documentFolder")}</Text>
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-        {folders.map((value) => (
-          <Button
-            key={value}
-            label={t(`documentFolder_${value}`)}
-            onPress={() => setFolder(value)}
-            secondary={folder !== value}
-          />
-        ))}
-      </View>
+      {event.documents.length ? <ListPicker icon="filter-outline" label={t("documentsShow")} value={filter} options={[["all", `${t("all")} (${event.documents.length})`] as const, ...folders.map((value) => [value, `${t(`documentFolder_${value}`)} (${event.documents.filter((document) => document.folder === value).length})`] as const)]} onChange={setFilter} /> : null}
       {!event.documents.length ? (
-        <Empty
-          icon="📄"
-          text={t("documentsEmpty")}
-          action={t("documentAdd")}
-          onPress={() => void pick()}
-        />
+        <Empty icon="📄" text={t("documentsEmpty")} action={t("documentAdd")} onPress={() => void pick()} />
       ) : (
-        event.documents.map((document) => (
-          <Card key={document.id}>
-            <View style={styles.between}>
-              <Pressable
-                accessibilityLabel={`${t("documentsTitle")}: ${document.name}`}
-                style={{ flex: 1 }}
-                onPress={() => void open(document)}
-              >
-                <Text style={styles.label}>{document.name}</Text>
-                <Text style={styles.muted}>
+        <Card>
+          {shown.map((document, index) => (
+            <View key={document.id} style={[styles.row, index > 0 && { borderTopWidth: 1, borderTopColor: palette.line, paddingTop: 12 }]}>
+              <Ionicons name={document.mimeType?.startsWith("image/") ? "image-outline" : "document-text-outline"} size={24} color={palette.maroon} />
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.label, { fontWeight: "600" }]} numberOfLines={1}>{document.name}</Text>
+                <Text style={[styles.muted, { fontSize: 12 }]}>
                   {t(`documentFolder_${document.folder}`)}
-                  {document.size
-                    ? ` · ${Math.ceil(document.size / 1024)} KB`
-                    : ""}
+                  {document.size ? ` · ${Math.ceil(document.size / 1024)} KB` : ""}
                 </Text>
+              </View>
+              <Pressable accessibilityRole="button" accessibilityLabel={`${t("documentView")} ${document.name}`} onPress={() => void open(document)} hitSlop={8} style={{ padding: 6 }}>
+                <Ionicons name="eye-outline" size={22} color={palette.maroon} />
               </Pressable>
-              <Pressable
-                accessibilityLabel={t("delete")}
-                onPress={() => remove(document)}
-              >
-                <Ionicons
-                  name="trash-outline"
-                  size={22}
-                  color={palette.danger}
-                />
+              <Pressable accessibilityRole="button" accessibilityLabel={`${t("documentSave")} ${document.name}`} onPress={() => void save(document)} hitSlop={8} style={{ padding: 6 }}>
+                <Ionicons name="download-outline" size={22} color={palette.maroon} />
+              </Pressable>
+              <Pressable accessibilityRole="button" accessibilityLabel={`${t("delete")} ${document.name}`} onPress={() => remove(document)} hitSlop={8} style={{ padding: 6 }}>
+                <Ionicons name="trash-outline" size={20} color={palette.danger} />
               </Pressable>
             </View>
-          </Card>
-        ))
+          ))}
+        </Card>
       )}
-      <Button label={t("documentAdd")} onPress={() => void pick()} />
+      <ListPicker icon="folder-outline" label={t("documentFolder")} value={folder} options={folders.map((value) => [value, t(`documentFolder_${value}`)] as const)} onChange={setFolder} />
+      <Button icon="cloud-upload-outline" label={t("documentAdd")} onPress={() => void pick()} />
     </Screen>
   );
 }

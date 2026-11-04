@@ -13,8 +13,8 @@ export default function Planning() {
     ["grid-outline", t("seatingPlan"), "/(user)/seating"],
     ["calendar-outline", t("schedule"), "/(user)/schedule"],
     ["checkbox-outline", t("checklist"), "/(user)/checklist"],
-    ["wallet-outline", t("budget"), "/(user)/(tabs)/budget"],
-    ["people-outline", t("guests"), "/(user)/(tabs)/guests"],
+    ["wallet-outline", t("budget"), "/(user)/budget"],
+    ["people-outline", t("guests"), "/(user)/guests"],
     ["document-text-outline", t("notes"), "/(user)/notes"],
   ] as const;
   return (

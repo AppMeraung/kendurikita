@@ -5,13 +5,13 @@ import { useMemo, useState } from "react";
 import { Alert, Modal, Pressable, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { LinearGradient } from "expo-linear-gradient";
-import { ContextHelp } from "../../../components/Guidance";
-import { BudgetItem, budgetSummary, money, validAmount } from "../../../domain";
-import { allocatedCategoryBudget } from "../../../domain/budgetCategories";
-import { userFeature } from "../../../domain/entitlements";
-import { shareBudgetCsv, shareBudgetPdf } from "../../../services/budgetExport";
-import { useAppState } from "../../../state/AppState";
-import { useUserPlan } from "../../../state/usePlan";
+import { ContextHelp } from "../../components/Guidance";
+import { BudgetItem, budgetSummary, money, validAmount } from "../../domain";
+import { allocatedCategoryBudget } from "../../domain/budgetCategories";
+import { userFeature } from "../../domain/entitlements";
+import { shareBudgetCsv, shareBudgetPdf } from "../../services/budgetExport";
+import { useAppState } from "../../state/AppState";
+import { useUserPlan } from "../../state/usePlan";
 import { router } from "expo-router";
 import {
   Button,
@@ -23,7 +23,7 @@ import {
   Screen,
   styles,
   Title,
-} from "../../../ui";
+} from "../../ui";
 
 const categoryKeys: Record<string, string> = {
   Dewan: "categoryHall",
@@ -261,6 +261,7 @@ export default function Budget() {
 
   return (
     <Screen>
+      <Pressable accessibilityRole="button" accessibilityLabel={t("back")} onPress={() => router.back()} hitSlop={10}><Ionicons name="arrow-back" size={26} color={palette.maroon} /></Pressable>
       <View style={styles.between}><Title subtitle={t("budgetIntro")}>{t("budgetTitle")}</Title><ContextHelp title={t("budgetTitle")} body={t("budgetHelp")} /></View>
       <LinearGradient colors={["#8E2342", palette.maroonDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ borderRadius: 16, padding: 18, flexDirection: "row", alignItems: "center", gap: 14 }}>
         <View style={{ width: 46, height: 46, borderRadius: 23, backgroundColor: "rgba(255,255,255,0.14)", alignItems: "center", justifyContent: "center" }}><Ionicons name="wallet-outline" size={24} color={palette.white} /></View>

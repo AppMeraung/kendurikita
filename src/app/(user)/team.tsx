@@ -14,6 +14,7 @@ import {
   Card,
   Empty,
   Field,
+  ListPicker,
   palette,
   Screen,
   styles,
@@ -142,9 +143,7 @@ export default function Team() {
       <Card>
         <Text style={styles.label}>{t("shareEventInvite")}</Text>
         <Text style={styles.muted}>{t("shareEventInviteDetail")}</Text>
-        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-          {(["partner", "family", "viewer", "parent"] as TeamMember["role"][]).map((item) => <Button key={item} label={t(roleKeys[item])} onPress={() => setRole(item)} secondary={role !== item} />)}
-        </View>
+        <ListPicker icon="person-outline" label={t("role")} value={role} options={(["partner", "family", "viewer", "parent"] as TeamMember["role"][]).map((item) => [item, t(roleKeys[item])] as const)} onChange={setRole} />
         <Button label={inviteBusy ? t("loading") : t("createInviteLink")} onPress={() => void createInvite()} disabled={inviteBusy} />
         {inviteUrl ? <>
           <View style={{ alignItems: "center", paddingVertical: 12 }}><QRCode value={inviteUrl} size={190} /></View>
@@ -166,28 +165,8 @@ export default function Team() {
             placeholder={t("phone")}
             keyboardType="phone-pad"
           />
-          <Text style={styles.label}>{t("role")}</Text>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-            {(Object.keys(roleKeys) as TeamMember["role"][]).map((item) => (
-              <Button
-                key={item}
-                label={t(roleKeys[item])}
-                onPress={() => setRole(item)}
-                secondary={role !== item}
-              />
-            ))}
-          </View>
-          <Text style={styles.label}>{t("status")}</Text>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-            {(Object.keys(statusKeys) as TeamMember["status"][]).map((item) => (
-              <Button
-                key={item}
-                label={t(statusKeys[item])}
-                onPress={() => setStatus(item)}
-                secondary={status !== item}
-              />
-            ))}
-          </View>
+          <ListPicker icon="person-outline" label={t("role")} value={role} options={(Object.keys(roleKeys) as TeamMember["role"][]).map((item) => [item, t(roleKeys[item])] as const)} onChange={setRole} />
+          <ListPicker icon="checkmark-circle-outline" label={t("status")} value={status} options={(Object.keys(statusKeys) as TeamMember["status"][]).map((item) => [item, t(statusKeys[item])] as const)} onChange={setStatus} />
           <Button label={t("save")} onPress={submit} />
           <Button label={t("cancel")} onPress={clear} secondary />
         </Screen>

@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   Platform,
@@ -111,6 +111,29 @@ export function Field({ icon, right, ...props }: TextInputProps & { icon?: IconN
       {icon ? <Ionicons name={icon} size={18} color={palette.muted} /> : null}
       <TextInput placeholderTextColor={palette.muted} {...props} style={[{ flex: 1, minHeight: 46, color: palette.ink, fontSize: 16 }, props.style]} />
       {right}
+    </View>
+  );
+}
+/** A row showing the current choice; tapping opens a plain list of options with a check on the selected one. */
+export function ListPicker<T extends string>({ icon, label, value, options, onChange, placeholder }: { icon?: IconName; label: string; value: T | ""; options: readonly (readonly [T, string])[]; onChange: (value: T) => void; placeholder?: string }) {
+  const [open, setOpen] = useState(false);
+  const current = options.find(([key]) => key === value)?.[1];
+  return (
+    <View style={styles.card}>
+      <Pressable accessibilityRole="button" accessibilityState={{ expanded: open }} accessibilityLabel={`${label}: ${current || placeholder || ""}`} onPress={() => setOpen((v) => !v)} style={styles.row}>
+        {icon ? <Ionicons name={icon} size={20} color={palette.maroon} /> : null}
+        <Text style={[styles.label, { flex: 1 }]}>{label}</Text>
+        <Text style={styles.muted}>{current || placeholder}</Text>
+        <Ionicons name={open ? "chevron-up" : "chevron-down"} size={18} color={palette.muted} />
+      </Pressable>
+      {open
+        ? options.map(([key, text]) => (
+            <Pressable key={key} accessibilityRole="radio" accessibilityState={{ checked: key === value }} accessibilityLabel={text} onPress={() => { onChange(key); setOpen(false); }} style={[styles.row, { paddingVertical: 10, borderTopWidth: 1, borderTopColor: palette.line }]}>
+              <Text style={[styles.label, { flex: 1, fontWeight: key === value ? "800" : "500", color: key === value ? palette.maroon : palette.ink }]}>{text}</Text>
+              {key === value ? <Ionicons name="checkmark" size={20} color={palette.maroon} /> : null}
+            </Pressable>
+          ))
+        : null}
     </View>
   );
 }

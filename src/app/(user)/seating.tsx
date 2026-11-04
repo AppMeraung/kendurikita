@@ -142,6 +142,9 @@ export default function Seating() {
   if (!userFeature(plan, "seating"))
     return (
       <Screen>
+        <Pressable accessibilityRole="button" accessibilityLabel={t("back")} onPress={() => router.back()} hitSlop={10}>
+          <Ionicons name="arrow-back" size={26} color={palette.maroon} />
+        </Pressable>
         <Title>{t("seatingTitle")}</Title>
         <Card>
           <Text style={styles.muted}>{t("proFeatureRequired")}</Text>

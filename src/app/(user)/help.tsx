@@ -39,8 +39,8 @@ export default function Help() {
         <Text style={styles.muted}>{t("quickGuideBody")}</Text>
         <View style={{ gap: 8 }}>
           <Button label={`1. ${t("eventDate")}`} onPress={() => router.push("/(user)/events")} secondary />
-          <Button label={`2. ${t("totalBudget")}`} onPress={() => router.push("/(user)/(tabs)/budget")} secondary />
-          <Button label={`3. ${t("firstGuest")}`} onPress={() => router.push("/(user)/(tabs)/guests")} secondary />
+          <Button label={`2. ${t("totalBudget")}`} onPress={() => router.push("/(user)/budget")} secondary />
+          <Button label={`3. ${t("firstGuest")}`} onPress={() => router.push("/(user)/guests")} secondary />
           <Button label={`4. ${t("invitation")}`} onPress={() => router.push("/(user)/invitation")} secondary />
           <Button label={`5. ${t("vendors")}`} onPress={() => router.push("/(user)/(tabs)/vendors")} secondary />
         </View>

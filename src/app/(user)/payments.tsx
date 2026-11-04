@@ -88,7 +88,7 @@ export default function Payments() {
           icon="🧾"
           text={t("paymentsEmpty")}
           action={t("paymentManage")}
-          onPress={() => router.push("/(user)/(tabs)/budget")}
+          onPress={() => router.push("/(user)/budget")}
         />
       ) : (
         visible.map((item) => {
@@ -133,7 +133,7 @@ export default function Payments() {
       )}
       <Button
         label={t("paymentManage")}
-        onPress={() => router.push("/(user)/(tabs)/budget")}
+        onPress={() => router.push("/(user)/budget")}
       />
     </Screen>
   );

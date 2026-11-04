@@ -1,4 +1,7 @@
+import { File, Paths } from "expo-file-system";
 import * as Linking from "expo-linking";
+import * as Sharing from "expo-sharing";
+import { Platform } from "react-native";
 import { EventDocument } from "../domain";
 import { supabase } from "./supabase";
 
@@ -31,6 +34,21 @@ export async function openEventDocument(document: EventDocument) {
     .createSignedUrl(document.storagePath, 300);
   if (error) throw error;
   return Linking.openURL(data.signedUrl);
+}
+
+/** Hands the file to the system share sheet so the user can save it to Files, Drive or another app. */
+export async function saveEventDocument(document: EventDocument) {
+  if (Platform.OS === "web") return openEventDocument(document);
+  let uri = document.localUri;
+  if (!uri) {
+    if (!document.storagePath) throw new Error("Fail tidak ditemui.");
+    const { data, error } = await supabase.storage.from("event-docs").createSignedUrl(document.storagePath, 300);
+    if (error) throw error;
+    const target = new File(Paths.cache, safeName(document.name));
+    if (target.exists) target.delete();
+    uri = (await File.downloadFileAsync(data.signedUrl, target)).uri;
+  }
+  await Sharing.shareAsync(uri, { mimeType: document.mimeType, dialogTitle: document.name });
 }
 
 export async function deleteEventDocumentFile(document: EventDocument) {

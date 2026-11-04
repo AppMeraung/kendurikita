@@ -16,6 +16,7 @@ import {
 import { useAppState } from "../../state/AppState";
 import { ContextHelp } from "../../components/Guidance";
 import { BudgetDonut } from "../../components/BudgetDonut";
+import { ChecklistCategory, checklistCategories, checklistCategory } from "../../domain/checklistCategory";
 import {
   Button,
   Card,
@@ -29,6 +30,12 @@ import {
   styles,
   Title,
 } from "../../ui";
+
+const categoryIcons: Record<ChecklistCategory, keyof typeof Ionicons.glyphMap> = {
+  planning: "clipboard-outline", venue: "business-outline", guests: "people-outline", food: "restaurant-outline",
+  decor: "flower-outline", attire: "shirt-outline", ceremony: "heart-outline", media: "camera-outline",
+  transport: "car-outline", safety: "shield-checkmark-outline", after: "ribbon-outline", other: "ellipsis-horizontal-circle-outline",
+};
 
 type Sort = "due" | "priority" | "assignee";
 const priorityKeys = {
@@ -57,6 +64,7 @@ export default function Checklist() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "todo" | "done">("all");
   const [sort, setSort] = useState<Sort>("due");
+  const [openGroups, setOpenGroups] = useState<ChecklistCategory[]>([]);
   const visible = useMemo(
     () =>
       sortChecklist(
@@ -159,25 +167,57 @@ export default function Checklist() {
         onChange={setSort}
       />
       {visible.length ? (
-        <Card>
-          {visible.map((item, index) => (
-            <View key={item.id} style={[styles.row, { paddingVertical: 4 }, index > 0 && { borderTopWidth: 1, borderTopColor: palette.line, paddingTop: 12 }]}>
-              <Pressable accessibilityRole="checkbox" accessibilityState={{ checked: item.done }} accessibilityLabel={item.title} onPress={() => toggleChecklist(item.id)} hitSlop={8}>
-                <Ionicons name={item.done ? "checkbox" : "square-outline"} size={24} color={palette.maroon} />
-              </Pressable>
-              <Pressable accessibilityRole="button" accessibilityLabel={`${t("edit")} ${item.title}`} onPress={() => edit(item)} style={[styles.row, { flex: 1 }]}>
-                <View style={{ flex: 1 }}>
-                  <Text style={[styles.label, { fontWeight: "600" }, item.done && { textDecorationLine: "line-through", color: palette.muted }]}>{item.title}</Text>
-                  <Text style={[styles.muted, { fontSize: 13 }]}>
-                    {item.due || t("notSet")} · {t(priorityKeys[item.priority])} · {item.assignedTo || t("unassigned")}
-                    {item.reminderAt ? ` · 🔔` : ""}
-                  </Text>
+        checklistCategories.map((category) => {
+          const all = event.checklist.filter((item) => checklistCategory(item) === category);
+          const items = visible.filter((item) => checklistCategory(item) === category);
+          if (!items.length) return null;
+          const expanded = query.trim() !== "" || openGroups.includes(category);
+          return (
+            <Card key={category}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityState={{ expanded }}
+                accessibilityLabel={t(`checklistCat_${category}`)}
+                onPress={() => setOpenGroups((current) => (current.includes(category) ? current.filter((value) => value !== category) : [...current, category]))}
+                style={styles.row}
+              >
+                <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: palette.rose, alignItems: "center", justifyContent: "center" }}>
+                  <Ionicons name={categoryIcons[category]} size={20} color={palette.maroon} />
                 </View>
-                <Ionicons name="chevron-forward" size={18} color={palette.muted} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.label}>{t(`checklistCat_${category}`)}</Text>
+                  <Text style={[styles.muted, { fontSize: 12 }]}>{t("tasksCompleted", { done: all.filter((item) => item.done).length, total: all.length })}</Text>
+                </View>
+                <Ionicons name={expanded ? "chevron-up" : "chevron-down"} size={20} color={palette.muted} />
               </Pressable>
-            </View>
-          ))}
-        </Card>
+              {expanded ? (
+                <>
+                  <View style={{ flexDirection: "row", gap: 8, padding: 10, borderRadius: 10, backgroundColor: palette.cream }}>
+                    <Ionicons name="time-outline" size={16} color={palette.gold} style={{ marginTop: 2 }} />
+                    <Text style={[styles.muted, { flex: 1, fontSize: 13, lineHeight: 19 }]}>{t(`checklistTip_${category}`)}</Text>
+                  </View>
+                  {items.map((item) => (
+                    <View key={item.id} style={[styles.row, { borderTopWidth: 1, borderTopColor: palette.line, paddingTop: 10 }]}>
+                      <Pressable accessibilityRole="checkbox" accessibilityState={{ checked: item.done }} accessibilityLabel={item.title} onPress={() => toggleChecklist(item.id)} hitSlop={8}>
+                        <Ionicons name={item.done ? "checkbox" : "square-outline"} size={24} color={palette.maroon} />
+                      </Pressable>
+                      <Pressable accessibilityRole="button" accessibilityLabel={`${t("edit")} ${item.title}`} onPress={() => edit(item)} style={[styles.row, { flex: 1 }]}>
+                        <View style={{ flex: 1 }}>
+                          <Text style={[styles.label, { fontWeight: "600" }, item.done && { textDecorationLine: "line-through", color: palette.muted }]}>{item.title}</Text>
+                          <Text style={[styles.muted, { fontSize: 13 }]}>
+                            {item.due || t("notSet")} · {t(priorityKeys[item.priority])} · {item.assignedTo || t("unassigned")}
+                            {item.reminderAt ? ` · 🔔` : ""}
+                          </Text>
+                        </View>
+                        <Ionicons name="chevron-forward" size={18} color={palette.muted} />
+                      </Pressable>
+                    </View>
+                  ))}
+                </>
+              ) : null}
+            </Card>
+          );
+        })
       ) : (
         <Empty
           icon="✅"

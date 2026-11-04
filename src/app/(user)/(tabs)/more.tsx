@@ -85,6 +85,7 @@ export default function More() {
         <ListRow icon="people-circle-outline" label={t("team")} onPress={go("/(user)/team")} />
         <ListRow icon="diamond-outline" label={t("plans")} value={plan} onPress={go("/(user)/paywall")} />
         <ListRow icon="cloud-upload-outline" label={t("syncToAccount")} onPress={() => void sync()} />
+        <ListRow icon="map-outline" label={t("howToUseApp")} onPress={go("/(user)/help")} />
         <ListRow icon="settings-outline" label={t("settings")} onPress={go("/(user)/settings")} />
       </Card>
       <Text style={[styles.label, { color: palette.gold }]}>{t("moreTools")}</Text>

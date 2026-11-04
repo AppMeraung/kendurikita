@@ -8,8 +8,10 @@ import { Button, Card, Field, Screen, styles, Title } from "../../ui";
 export default function NotificationSettings() {
   const { t } = useTranslation();
   const [value, setValue] = useState<NotificationPreferences>();
-  useEffect(() => { void Promise.resolve().then(loadNotificationPreferences).then(setValue).catch(() => undefined); }, []);
-  if (!value) return <Screen><Title>{t("notificationSettings")}</Title><Text style={styles.muted}>{t("loading")}</Text></Screen>;
+  const [needsSignIn, setNeedsSignIn] = useState(false);
+  useEffect(() => { void Promise.resolve().then(loadNotificationPreferences).then(setValue).catch(() => setNeedsSignIn(true)); }, []);
+  // Preferences are stored per account; a guest has none to load.
+  if (!value) return <Screen><Pressable accessibilityLabel={t("back")} onPress={() => router.back()}><Text style={styles.label}>‹ {t("back")}</Text></Pressable><Title>{t("notificationSettings")}</Title>{needsSignIn ? <Card><Text style={styles.muted}>{t("notificationLoginBody")}</Text><Text style={styles.muted}>{t("guestRemindersEnabledBody")}</Text><Button label={t("signIn")} onPress={() => router.push("/(auth)/sign-in")} /></Card> : <Text style={styles.muted}>{t("loading")}</Text>}</Screen>;
   const save = async () => { try { await saveNotificationPreferences(value); Alert.alert(t("saved")); } catch (error) { Alert.alert(t("saveFailed"), error instanceof Error ? error.message : t("unknownError")); } };
   return <Screen>
     <Pressable accessibilityLabel={t("back")} onPress={() => router.back()}><Text style={styles.label}>‹ {t("back")}</Text></Pressable>
