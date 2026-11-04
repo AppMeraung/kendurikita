@@ -18,9 +18,11 @@ import {
   Card,
   Empty,
   Field,
+  ListPicker,
   palette,
   ProgressBar,
   Screen,
+  Segmented,
   styles,
   Title,
 } from "../../ui";
@@ -48,12 +50,6 @@ const paymentTypeKeys = {
   deposit: "deposit",
   balance: "balance",
   full: "fullPayment",
-} as const;
-const paymentMethodKeys = {
-  cash: "cash",
-  bank: "bankTransfer",
-  duitnow: "duitNow",
-  card: "card",
 } as const;
 const payerKeys = {
   bride: "brideSide",
@@ -311,8 +307,13 @@ export default function Budget() {
       </Card>
       <View style={styles.between}>
         <Text style={styles.label}>{t("budgetCategories")}</Text>
-        <Button label={t("manageCategories")} onPress={() => editCategory()} secondary />
+        <Pressable accessibilityRole="button" accessibilityLabel={t("manageCategories")} onPress={() => editCategory()} hitSlop={8} style={styles.row}><Ionicons name="options-outline" size={16} color={palette.maroon} /><Text style={{ color: palette.maroon, fontWeight: "700" }}>{t("manageCategories")}</Text></Pressable>
       </View>
+      <Pressable accessibilityRole="button" accessibilityLabel={t("vendorBalances")} onPress={() => router.push("/(user)/payments")} style={[styles.card, styles.row]}>
+        <Ionicons name="alarm-outline" size={20} color={palette.maroon} />
+        <View style={{ flex: 1 }}><Text style={styles.label}>{t("vendorBalances")}</Text><Text style={[styles.muted, { fontSize: 12 }]}>{t("vendorBalancesHint")}</Text></View>
+        <Ionicons name="chevron-forward" size={18} color={palette.muted} />
+      </Pressable>
       <Card>
       {configuredCategories.map((budgetCategory, index) => {
         const items = event.budget.filter((item) => item.category === budgetCategory.name);
@@ -340,38 +341,9 @@ export default function Budget() {
       </Card>
       <Card>
         <Text style={styles.label}>{t("filtersAndSort")}</Text>
-        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-          <Button
-            label={t("all")}
-            onPress={() => setStatusFilter("all")}
-            secondary={statusFilter !== "all"}
-          />
-          <Button
-            label={t("paidFilter")}
-            onPress={() => setStatusFilter("paid")}
-            secondary={statusFilter !== "paid"}
-          />
-          <Button
-            label={t("unpaidFilter")}
-            onPress={() => setStatusFilter("unpaid")}
-            secondary={statusFilter !== "unpaid"}
-          />
-          <Button
-            label={t("dueDateSort")}
-            onPress={() => setSort("due")}
-            secondary={sort !== "due"}
-          />
-          <Button
-            label={t("amountSort")}
-            onPress={() => setSort("amount")}
-            secondary={sort !== "amount"}
-          />
-        </View>
-        <Field
-          value={categoryFilter}
-          onChangeText={setCategoryFilter}
-          placeholder={t("categoryFilterHint")}
-        />
+        <Segmented options={[["all", t("all")], ["paid", t("paidFilter")], ["unpaid", t("unpaidFilter")]] as const} value={statusFilter} onChange={setStatusFilter} />
+        <Segmented options={[["due", t("dueDateSort")], ["amount", t("amountSort")]] as const} value={sort} onChange={setSort} />
+        <ListPicker icon="pricetags-outline" label={t("category")} value={categoryFilter} options={[["all", t("all")] as const, ...configuredCategories.map((item) => [item.name, categoryLabel(item.name)] as const)]} onChange={setCategoryFilter} />
       </Card>
       {deleted ? (
         <Card>
@@ -517,38 +489,9 @@ export default function Budget() {
             keyboardType="numeric"
           />
           <Text style={styles.label}>{t("paymentType")}</Text>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-            {(["deposit", "balance", "full"] as const).map((item) => (
-              <Button
-                key={item}
-                label={t(paymentTypeKeys[item])}
-                onPress={() => setPaymentType(item)}
-                secondary={paymentType !== item}
-              />
-            ))}
-          </View>
-          <Text style={styles.label}>{t("paymentMethod")}</Text>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-            {(["cash", "bank", "duitnow", "card"] as const).map((item) => (
-              <Button
-                key={item}
-                label={t(paymentMethodKeys[item])}
-                onPress={() => setPaymentMethod(item)}
-                secondary={paymentMethod !== item}
-              />
-            ))}
-          </View>
+          <Segmented options={(["deposit", "balance", "full"] as const).map((item) => [item, t(paymentTypeKeys[item])] as const)} value={paymentType || "deposit"} onChange={setPaymentType} />
           <Text style={styles.label}>{t("paidBy")}</Text>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-            {(["bride", "groom", "shared"] as const).map((item) => (
-              <Button
-                key={item}
-                label={t(payerKeys[item])}
-                onPress={() => setPayer(item)}
-                secondary={payer !== item}
-              />
-            ))}
-          </View>
+          <Segmented options={(["bride", "groom", "shared"] as const).map((item) => [item, t(payerKeys[item])] as const)} value={payer || "shared"} onChange={setPayer} />
           <Field
             placeholder={t("paidDateHint")}
             value={paidAt}

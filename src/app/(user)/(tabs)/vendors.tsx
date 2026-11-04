@@ -4,10 +4,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Alert, Modal, Pressable, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { DiscoverableVendor, discoverVendors, toggleVendorComparison, VendorSort, vendorDistanceKm } from "../../../domain/vendorDiscovery";
-import {
-  recordInvoicePayment,
-  respondToQuotation,
-} from "../../../services/quotation";
+import { respondToQuotation } from "../../../services/quotation";
 import { cloudConfigured, supabase } from "../../../services/supabase";
 import { syncEvent } from "../../../services/sync";
 import { loadDiscoverableVendors } from "../../../services/vendorDiscovery";
@@ -52,9 +49,6 @@ export default function Vendors() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [selected, setSelected] = useState<Vendor | null>(null);
   const [message, setMessage] = useState("");
-  const [invoice, setInvoice] = useState<Invoice | null>(null);
-  const [paymentAmount, setPaymentAmount] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("bank");
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -144,23 +138,6 @@ export default function Vendors() {
       );
     }
   };
-  const recordPayment = async () => {
-    const amount = Number(paymentAmount);
-    if (!invoice || !Number.isFinite(amount) || amount <= 0)
-      return Alert.alert(t("invalidNumber"));
-    try {
-      await recordInvoicePayment(invoice.id, amount, paymentMethod);
-      setInvoice(null);
-      setPaymentAmount("");
-      await load();
-      Alert.alert(t("invoicePaymentRecorded"));
-    } catch (error) {
-      Alert.alert(
-        t("invoicePaymentFailed"),
-        error instanceof Error ? error.message : t("unknownError"),
-      );
-    }
-  };
   const filteredVendors = discoverVendors(favouritesOnly ? vendors.filter((vendor) => favourites.includes(vendor.id)) : vendors, {
     query, category, state, date,
     maximumPrice: maximumPrice ? Number(maximumPrice) : undefined,
@@ -230,13 +207,7 @@ export default function Vendors() {
                   {paid.toFixed(2)} · {t("paymentOutstanding")}: RM{" "}
                   {Math.max(0, Number(item.total) - paid).toFixed(2)}
                 </Text>
-                {item.status !== "paid" ? (
-                  <Button
-                    label={t("recordInvoicePayment")}
-                    onPress={() => setInvoice(item)}
-                    secondary
-                  />
-                ) : null}
+                {item.status !== "paid" ? <Text style={[styles.muted, { fontSize: 13 }]}>{t("payVendorDirectly")}</Text> : null}
               </Card>
             );
           })}
@@ -327,35 +298,6 @@ export default function Vendors() {
           <Button
             label={t("cancel")}
             onPress={() => setSelected(null)}
-            secondary
-          />
-        </Screen>
-      </Modal>
-      <Modal
-        visible={!!invoice}
-        animationType="slide"
-        onRequestClose={() => setInvoice(null)}
-      >
-        <Screen>
-          <Title>{invoice?.number}</Title>
-          <Field
-            value={paymentAmount}
-            onChangeText={setPaymentAmount}
-            placeholder={t("paymentAmount")}
-            keyboardType="numeric"
-          />
-          <Field
-            value={paymentMethod}
-            onChangeText={setPaymentMethod}
-            placeholder={t("paymentMethod")}
-          />
-          <Button
-            label={t("recordInvoicePayment")}
-            onPress={() => void recordPayment()}
-          />
-          <Button
-            label={t("cancel")}
-            onPress={() => setInvoice(null)}
             secondary
           />
         </Screen>

@@ -867,7 +867,7 @@
   "seatingPlan": "Seating Plan",
   "schedule": "Schedule",
   "team": "Team",
-  "payments": "Payments",
+  "payments": "Vendor balance reminders",
   "documents": "Documents",
   "inventory": "Items",
   "reports": "Reports",
@@ -1104,5 +1104,17 @@
   "send": "Send",
   "share": "Share",
   "state": "State",
-  "total": "Total"
+  "total": "Total",
+  "sortShortDate": "Date",
+  "sortShortPriority": "Priority",
+  "sortShortPic": "PIC",
+  "payVendorDirectly": "Pay the vendor directly. The vendor updates the status.",
+  "plansAndBilling": "Plan & subscription",
+  "vendorBalances": "Vendor balance reminders",
+  "vendorBalancesHint": "Track deposits and balances you pay vendors directly",
+  "langName_ms": "Malay",
+  "langName_en": "English",
+  "langName_zh": "Chinese",
+  "langName_ta": "Tamil",
+  "langName_id": "Indonesian"
 }

@@ -867,7 +867,7 @@
   "seatingPlan": "座位图",
   "schedule": "流程",
   "team": "团队",
-  "payments": "付款",
+  "payments": "供应商尾款提醒",
   "documents": "文件",
   "inventory": "物品",
   "reports": "报告",
@@ -1104,5 +1104,17 @@
   "send": "发送",
   "share": "分享",
   "state": "州属",
-  "total": "总计"
+  "total": "总计",
+  "sortShortDate": "日期",
+  "sortShortPriority": "优先级",
+  "sortShortPic": "负责人",
+  "payVendorDirectly": "请直接付款给供应商，状态由供应商更新。",
+  "plansAndBilling": "方案与订阅",
+  "vendorBalances": "供应商尾款提醒",
+  "vendorBalancesHint": "记录您直接支付给供应商的订金和尾款",
+  "langName_ms": "马来文",
+  "langName_en": "英文",
+  "langName_zh": "中文",
+  "langName_ta": "泰米尔文",
+  "langName_id": "印尼文"
 }

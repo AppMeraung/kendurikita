@@ -28,7 +28,7 @@ export default function Settings() {
         {supportEmail ? <ListRow icon="mail-outline" label={t("supportEmail")} onPress={() => void Linking.openURL(`mailto:${encodeURIComponent(supportEmail)}?subject=${encodeURIComponent("KenduriKita support")}`)} /> : null}
         <ListRow icon="information-circle-outline" label={t("aboutApp")} value={Application.nativeApplicationVersion ?? ""} onPress={() => router.push("/(user)/about")} />
       </Card>
-      <ListPicker icon="language-outline" label={t("language")} value={i18n.language as Language} options={languages.map((lang) => [lang, languageNames[lang]] as const)} onChange={(lang) => void setLanguage(lang)} />
+      <ListPicker icon="language-outline" label={t("language")} value={i18n.language as Language} options={languages.map((lang) => [lang, languageNames[lang] === t(`langName_${lang}`) ? languageNames[lang] : `${languageNames[lang]} · ${t(`langName_${lang}`)}`] as const)} onChange={(lang) => void setLanguage(lang)} />
     </Screen>
   );
 }

@@ -162,12 +162,13 @@ export default function Checklist() {
       />
       <SearchField value={query} onChangeText={setQuery} placeholder={`${t("task")} / ${t("assignee")}`} accessibilityLabel={t("task")} />
       <Segmented
-        options={[["due", t("sortDue")], ["priority", t("sortPriority")], ["assignee", t("sortAssignee")]] as const}
+        options={[["due", t("sortShortDate")], ["priority", t("sortShortPriority")], ["assignee", t("sortShortPic")]] as const}
         value={sort}
         onChange={setSort}
       />
       {visible.length ? (
-        checklistCategories.map((category) => {
+        <View style={{ gap: 8 }}>
+        {checklistCategories.map((category) => {
           const all = event.checklist.filter((item) => checklistCategory(item) === category);
           const items = visible.filter((item) => checklistCategory(item) === category);
           if (!items.length) return null;
@@ -217,7 +218,8 @@ export default function Checklist() {
               ) : null}
             </Card>
           );
-        })
+        })}
+        </View>
       ) : (
         <Empty
           icon="✅"

@@ -210,9 +210,9 @@ export function Segmented<T extends string>({ options, value, onChange }: { opti
         return (
           <Pressable key={key} accessibilityRole="tab" accessibilityState={{ selected: active }} accessibilityLabel={label} onPress={() => onChange(key)} style={{ flex: 1 }}>
             {active ? (
-              <LinearGradient colors={buttonGradient} style={styles.segment}><Text style={[styles.segmentText, { color: palette.white }]}>{label}</Text></LinearGradient>
+              <LinearGradient colors={buttonGradient} style={styles.segment}><Text numberOfLines={1} style={[styles.segmentText, { color: palette.white }]}>{label}</Text></LinearGradient>
             ) : (
-              <View style={styles.segment}><Text style={styles.segmentText}>{label}</Text></View>
+              <View style={styles.segment}><Text numberOfLines={1} style={styles.segmentText}>{label}</Text></View>
             )}
           </Pressable>
         );
