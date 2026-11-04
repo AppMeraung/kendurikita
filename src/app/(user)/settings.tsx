@@ -23,7 +23,6 @@ export default function Settings() {
         <ListRow icon="shield-checkmark-outline" label={t("privacyPolicy")} onPress={() => router.push("/legal/privacy")} />
         <ListRow icon="document-text-outline" label={t("terms")} onPress={() => router.push("/legal/terms")} />
         <ListRow icon="help-circle-outline" label={t("help")} onPress={() => router.push("/(user)/help")} />
-        <ListRow icon="play-circle-outline" label={t("replayTutorial")} onPress={() => router.push("/(user)/help")} />
         {supportNumber ? <ListRow icon="logo-whatsapp" label={plan === "premium" ? t("prioritySupport") : t("supportWhatsApp")} onPress={() => void Linking.openURL(`https://wa.me/${supportNumber}`)} /> : null}
         {supportEmail ? <ListRow icon="mail-outline" label={t("supportEmail")} onPress={() => void Linking.openURL(`mailto:${encodeURIComponent(supportEmail)}?subject=${encodeURIComponent("KenduriKita support")}`)} /> : null}
         <ListRow icon="information-circle-outline" label={t("aboutApp")} value={Application.nativeApplicationVersion ?? ""} onPress={() => router.push("/(user)/about")} />

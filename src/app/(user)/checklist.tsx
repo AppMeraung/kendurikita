@@ -1,7 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
 import { useMemo, useState } from "react";
-import { Alert, Modal, Pressable, Text, View } from "react-native";
+import { Alert, LayoutAnimation, Modal, Pressable, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { ChecklistItem } from "../../domain";
 import {
@@ -179,7 +179,7 @@ export default function Checklist() {
                 accessibilityRole="button"
                 accessibilityState={{ expanded }}
                 accessibilityLabel={t(`checklistCat_${category}`)}
-                onPress={() => setOpenGroups((current) => (current.includes(category) ? current.filter((value) => value !== category) : [...current, category]))}
+                onPress={() => { LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); setOpenGroups((current) => (current.includes(category) ? current.filter((value) => value !== category) : [...current, category])); }}
                 style={styles.row}
               >
                 <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: palette.rose, alignItems: "center", justifyContent: "center" }}>

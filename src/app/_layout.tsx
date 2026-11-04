@@ -55,7 +55,7 @@ function Routes() {
         <ActivityIndicator color={palette.maroon} />
       </View>
     );
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return <Stack screenOptions={{ headerShown: false, animation: 'fade', animationDuration: 220 }} />;
 }
 export default function RootLayout() {
   return (

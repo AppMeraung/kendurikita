@@ -1,6 +1,8 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
+  Animated,
+  LayoutAnimation,
   Platform,
   Pressable,
   ScrollView,
@@ -56,10 +58,16 @@ export function Screen({
   /** Pinned below the scrolling content, e.g. step navigation. */
   footer?: ReactNode;
 }) {
+  // Every screen eases in: a short fade with a small upward drift, so navigation never feels abrupt.
+  const [enter] = useState(() => new Animated.Value(0));
+  useEffect(() => {
+    Animated.timing(enter, { toValue: 1, duration: 280, useNativeDriver: Platform.OS !== "web" }).start();
+  }, [enter]);
+  const motion = { opacity: enter, transform: [{ translateY: enter.interpolate({ inputRange: [0, 1], outputRange: [14, 0] }) }] };
   const body = scroll ? (
-    <ScrollView contentContainerStyle={styles.content}>{brand ? <BrandHeader /> : null}{children}</ScrollView>
+    <ScrollView contentContainerStyle={styles.content}>{brand ? <BrandHeader /> : null}<Animated.View style={[{ gap: 16 }, motion]}>{children}</Animated.View></ScrollView>
   ) : (
-    <View style={[styles.content, { flex: 1 }]}>{brand ? <BrandHeader /> : null}{children}</View>
+    <View style={[styles.content, { flex: 1 }]}>{brand ? <BrandHeader /> : null}<Animated.View style={[{ gap: 16, flex: 1 }, motion]}>{children}</Animated.View></View>
   );
   return <SafeAreaView style={styles.safe}>{body}{footer ? <View style={styles.footer}>{footer}</View> : null}</SafeAreaView>;
 }
@@ -76,7 +84,7 @@ type IconName = keyof typeof Ionicons.glyphMap;
 export function ListRow({ icon, label, value, onPress, danger = false }: { icon: IconName; label: string; value?: string; onPress: () => void; danger?: boolean }) {
   const color = danger ? palette.danger : palette.maroon;
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} style={({ pressed }) => [styles.listRow, pressed && { opacity: 0.6 }]}>
+    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} style={({ pressed }) => [styles.listRow, pressed && { opacity: 0.6, transform: [{ scale: 0.98 }] }]}>
       <Ionicons name={icon} size={20} color={color} />
       <Text style={[styles.label, { flex: 1 }, danger && { color }]}>{label}</Text>
       {value ? <Text style={styles.muted}>{value}</Text> : null}
@@ -87,7 +95,7 @@ export function ListRow({ icon, label, value, onPress, danger = false }: { icon:
 /** Square shortcut tile for icon grids (Planning hub, Home). */
 export function Tile({ icon, label, onPress }: { icon: IconName; label: string; onPress: () => void }) {
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} style={({ pressed }) => [styles.tile, pressed && { opacity: 0.6 }]}>
+    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} style={({ pressed }) => [styles.tile, pressed && { opacity: 0.75, transform: [{ scale: 0.96 }] }]}>
       <Ionicons name={icon} size={30} color={palette.maroon} />
       <Text style={[styles.label, { textAlign: "center", fontWeight: "600" }]}>{label}</Text>
     </Pressable>
@@ -120,7 +128,7 @@ export function ListPicker<T extends string>({ icon, label, value, options, onCh
   const current = options.find(([key]) => key === value)?.[1];
   return (
     <View style={styles.card}>
-      <Pressable accessibilityRole="button" accessibilityState={{ expanded: open }} accessibilityLabel={`${label}: ${current || placeholder || ""}`} onPress={() => setOpen((v) => !v)} style={styles.row}>
+      <Pressable accessibilityRole="button" accessibilityState={{ expanded: open }} accessibilityLabel={`${label}: ${current || placeholder || ""}`} onPress={() => { LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); setOpen((v) => !v); }} style={styles.row}>
         {icon ? <Ionicons name={icon} size={20} color={palette.maroon} /> : null}
         <Text style={[styles.label, { flex: 1 }]}>{label}</Text>
         <Text style={styles.muted}>{current || placeholder}</Text>
@@ -128,7 +136,7 @@ export function ListPicker<T extends string>({ icon, label, value, options, onCh
       </Pressable>
       {open
         ? options.map(([key, text]) => (
-            <Pressable key={key} accessibilityRole="radio" accessibilityState={{ checked: key === value }} accessibilityLabel={text} onPress={() => { onChange(key); setOpen(false); }} style={[styles.row, { paddingVertical: 10, borderTopWidth: 1, borderTopColor: palette.line }]}>
+            <Pressable key={key} accessibilityRole="radio" accessibilityState={{ checked: key === value }} accessibilityLabel={text} onPress={() => { LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); onChange(key); setOpen(false); }} style={[styles.row, { paddingVertical: 10, borderTopWidth: 1, borderTopColor: palette.line }]}>
               <Text style={[styles.label, { flex: 1, fontWeight: key === value ? "800" : "500", color: key === value ? palette.maroon : palette.ink }]}>{text}</Text>
               {key === value ? <Ionicons name="checkmark" size={20} color={palette.maroon} /> : null}
             </Pressable>
@@ -182,7 +190,7 @@ export function Button({
       accessibilityState={{ disabled }}
       disabled={disabled}
       onPress={onPress}
-      style={({ pressed }) => [(pressed || disabled) && { opacity: 0.55 }]}
+      style={({ pressed }) => [(pressed || disabled) && { opacity: 0.6 }, pressed && { transform: [{ scale: 0.97 }] }]}
     >
       {secondary ? (
         <View style={[styles.button, styles.buttonSecondary]}>{content}</View>
