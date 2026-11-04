@@ -48,17 +48,20 @@ export function Screen({
   children,
   scroll = true,
   brand = true,
+  footer,
 }: {
   children: ReactNode;
   scroll?: boolean;
   brand?: boolean;
+  /** Pinned below the scrolling content, e.g. step navigation. */
+  footer?: ReactNode;
 }) {
   const body = scroll ? (
     <ScrollView contentContainerStyle={styles.content}>{brand ? <BrandHeader /> : null}{children}</ScrollView>
   ) : (
     <View style={[styles.content, { flex: 1 }]}>{brand ? <BrandHeader /> : null}{children}</View>
   );
-  return <SafeAreaView style={styles.safe}>{body}</SafeAreaView>;
+  return <SafeAreaView style={styles.safe}>{body}{footer ? <View style={styles.footer}>{footer}</View> : null}</SafeAreaView>;
 }
 export function Title({ children, subtitle }: { children: ReactNode; subtitle?: string }) {
   return (
@@ -241,6 +244,7 @@ export function Empty({
 export const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: palette.cream },
   content: { padding: 20, paddingTop: 8, paddingBottom: 110, gap: 16 },
+  footer: { paddingHorizontal: 20, paddingTop: 10, paddingBottom: 14, borderTopWidth: 1, borderTopColor: palette.line, backgroundColor: palette.cream },
   brandWrap: { alignItems: "center", gap: 4, paddingTop: 14, paddingBottom: 4, marginHorizontal: -20 },
   cornerLeft: { position: "absolute", left: -6, top: -14 },
   cornerRight: { position: "absolute", right: -6, top: -14 },

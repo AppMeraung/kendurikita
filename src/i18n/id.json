@@ -1048,5 +1048,7 @@
   "guestList": "Daftar tamu",
   "scheduleIntro": "Rencanakan susunan acara dari awal hingga akhir.",
   "accountExistsTitle": "Akun sudah ada",
-  "accountExistsBody": "Email ini sudah terdaftar di aplikasi Meraung, jadi email konfirmasi tidak dikirim. Masuk dengan kata sandi yang sama, atau ketuk Lupa kata sandi."
+  "accountExistsBody": "Email ini sudah terdaftar di aplikasi Meraung, jadi email konfirmasi tidak dikirim. Masuk dengan kata sandi yang sama, atau ketuk Lupa kata sandi.",
+  "orChooseState": "Atau pilih negara bagian",
+  "guestRemindersEnabledBody": "Pengingat tugas dan pembayaran akan muncul di ponsel ini. Masuk nanti untuk notifikasi RSVP dan pesan vendor."
 }

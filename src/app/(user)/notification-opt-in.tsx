@@ -1,3 +1,4 @@
+import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
 import { Alert, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +12,10 @@ export default function NotificationOptIn() {
   const enable = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      Alert.alert(t('loginRequired'), t('notificationLoginBody'));
+      // Guests still get on-device reminders (checklist, payments); server push needs an account.
+      const current = await Notifications.getPermissionsAsync();
+      const granted = current.granted || (await Notifications.requestPermissionsAsync()).granted;
+      Alert.alert(t(granted ? 'notificationsEnabled' : 'notificationsDenied'), t(granted ? 'guestRemindersEnabledBody' : 'notificationsDeniedBody'));
       router.replace('/(user)/(tabs)');
       return;
     }

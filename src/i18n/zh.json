@@ -1048,5 +1048,7 @@
   "guestList": "宾客名单",
   "scheduleIntro": "从头到尾规划活动当天的流程。",
   "accountExistsTitle": "账户已存在",
-  "accountExistsBody": "此电子邮件已在 Meraung 应用注册，因此不会发送确认邮件。请使用相同密码登录，或点击忘记密码。"
+  "accountExistsBody": "此电子邮件已在 Meraung 应用注册，因此不会发送确认邮件。请使用相同密码登录，或点击忘记密码。",
+  "orChooseState": "或选择州属",
+  "guestRemindersEnabledBody": "任务和付款提醒将显示在此手机上。稍后登录以接收回复和供应商消息通知。"
 }

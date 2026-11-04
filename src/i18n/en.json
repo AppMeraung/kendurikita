@@ -1048,5 +1048,7 @@
   "guestList": "Guest list",
   "scheduleIntro": "Plan your event-day timeline from start to finish.",
   "accountExistsTitle": "Account already exists",
-  "accountExistsBody": "This email is already registered with a Meraung app, so no confirmation email was sent. Sign in with the same password, or tap Forgot password."
+  "accountExistsBody": "This email is already registered with a Meraung app, so no confirmation email was sent. Sign in with the same password, or tap Forgot password.",
+  "orChooseState": "Or choose a state",
+  "guestRemindersEnabledBody": "Task and payment reminders will appear on this phone. Sign in later for RSVP and vendor message notifications."
 }

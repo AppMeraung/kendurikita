@@ -1048,5 +1048,7 @@
   "guestList": "Senarai tetamu",
   "scheduleIntro": "Rancang atur cara hari majlis dari mula hingga tamat.",
   "accountExistsTitle": "Akaun sudah wujud",
-  "accountExistsBody": "E-mel ini sudah berdaftar dengan app Meraung, jadi tiada e-mel pengesahan dihantar. Log masuk dengan kata laluan yang sama, atau tekan Lupa kata laluan."
+  "accountExistsBody": "E-mel ini sudah berdaftar dengan app Meraung, jadi tiada e-mel pengesahan dihantar. Log masuk dengan kata laluan yang sama, atau tekan Lupa kata laluan.",
+  "orChooseState": "Atau pilih negeri",
+  "guestRemindersEnabledBody": "Peringatan tugasan dan bayaran akan muncul dalam telefon ini. Log masuk kemudian untuk notifikasi RSVP dan mesej vendor."
 }
