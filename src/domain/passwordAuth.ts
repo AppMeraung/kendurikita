@@ -12,3 +12,10 @@ export function passwordAuthError(
   if ((mode === "signUp" || mode === "newPassword") && form.password !== form.confirm) return "passwordMismatch";
   return null;
 }
+
+/** What a password sign-up result means. Supabase answers an already-registered email with a user that has no identities and sends no email. */
+export function signUpOutcome(data: { session: unknown; user: { identities?: unknown[] | null } | null }): "signedIn" | "existingAccount" | "checkEmail" {
+  if (data.session) return "signedIn";
+  if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) return "existingAccount";
+  return "checkEmail";
+}

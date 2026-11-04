@@ -964,7 +964,7 @@
   "resetLinkSent": "Reset link sent",
   "resetLinkSentBody": "If the account exists, check your email and open the link to set a new password.",
   "checkEmail": "Check your email",
-  "confirmEmailBody": "Open the confirmation link in your email to activate the account. If this email is already used for another Meraung app, sign in with that same password or tap Forgot password.",
+  "confirmEmailBody": "We sent a confirmation link to your email. Open it to activate the account, then sign in. Check your Spam folder if it is not in your inbox.",
   "resetLinkInvalid": "The reset link is invalid or has expired. Request a new one.",
   "passwordUpdated": "Password updated",
   "setNewPassword": "Set a new password",
@@ -1046,5 +1046,7 @@
   "seatingIntro": "Plan your seating arrangement with ease.",
   "floorPlan": "Floor plan",
   "guestList": "Guest list",
-  "scheduleIntro": "Plan your event-day timeline from start to finish."
+  "scheduleIntro": "Plan your event-day timeline from start to finish.",
+  "accountExistsTitle": "Account already exists",
+  "accountExistsBody": "This email is already registered with a Meraung app, so no confirmation email was sent. Sign in with the same password, or tap Forgot password."
 }

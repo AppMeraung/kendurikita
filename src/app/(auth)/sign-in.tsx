@@ -1,4 +1,3 @@
-import * as AppleAuthentication from "expo-apple-authentication";
 import { router } from "expo-router";
 import { useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -6,26 +5,19 @@ import { Alert, Platform, Pressable, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import {
   AccountRole,
-  sendEmailOtp,
   sendPasswordReset,
-  sendPhoneOtp,
   signInWithPassword,
-  signInWithProvider,
   signUpWithPassword,
-  verifyPhoneOtp,
 } from "../../services/supabase";
 import { Button, Divider, Field, palette, Screen, styles, Title } from "../../ui";
 import { pendingEventInvitePath } from "../../services/eventInvites";
 import { vendorAccessAllowed } from "../../domain/vendorAccess";
-import { passwordAuthError, type PasswordMode } from "../../domain/passwordAuth";
+import { passwordAuthError, signUpOutcome, type PasswordMode } from "../../domain/passwordAuth";
 
 export default function SignIn() {
   const { t } = useTranslation();
   const [role, setRole] = useState<AccountRole>("user");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [phoneCode, setPhoneCode] = useState("");
-  const [phoneOtpSent, setPhoneOtpSent] = useState(false);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [mode, setMode] = useState<"signIn" | "signUp">("signIn");
@@ -48,18 +40,6 @@ export default function SignIn() {
     }
     router.replace("/(auth)/setup");
   };
-  const otp = async (action: () => Promise<{ error: Error | null }>) => {
-    try {
-      const { error } = await action();
-      if (error) throw error;
-      say(t("otpSent"), t("checkEmailOrPhone"));
-    } catch (error) {
-      say(
-        t("signInFailed"),
-        error instanceof Error ? error.message : t("unknownError"),
-      );
-    }
-  };
   const withPassword = async (action: PasswordMode) => {
     const problem = passwordAuthError(action, { email, password, confirm });
     if (problem) return say(t("signInFailed"), t(problem));
@@ -73,8 +53,12 @@ export default function SignIn() {
       } else if (action === "signUp") {
         const { data, error } = await signUpWithPassword(address, password, role);
         if (error) throw error;
-        if (data.session) await continueAfterSignIn();
-        else say(t("checkEmail"), t("confirmEmailBody"));
+        const outcome = signUpOutcome(data);
+        if (outcome === "signedIn") await continueAfterSignIn();
+        else if (outcome === "existingAccount") {
+          setMode("signIn");
+          say(t("accountExistsTitle"), t("accountExistsBody"));
+        } else say(t("checkEmail"), t("confirmEmailBody"));
       } else {
         const { error } = await signInWithPassword(address, password, role);
         if (error) throw error;
@@ -87,23 +71,6 @@ export default function SignIn() {
       );
     } finally {
       setBusy(false);
-    }
-  };
-  const social = async (provider: "google" | "apple") => {
-    try {
-      const { error } = await signInWithProvider(provider, role);
-      if (error) throw error;
-      await continueAfterSignIn();
-    } catch (error) {
-      if (
-        error instanceof Error &&
-        error.message.includes("ERR_REQUEST_CANCELED")
-      )
-        return;
-      say(
-        t("signInFailed"),
-        error instanceof Error ? error.message : t("unknownError"),
-      );
     }
   };
   return (
@@ -168,61 +135,7 @@ export default function SignIn() {
         onPress={() => setMode(mode === "signIn" ? "signUp" : "signIn")}
         secondary
       />
-      <Divider label={t("orPasswordless")} />
-      <Button
-        label={t("sendMagicLink")}
-        onPress={() => void otp(() => sendEmailOtp(email.trim(), role))}
-        secondary
-      />
-      <Field
-        value={phone}
-        onChangeText={setPhone}
-        placeholder="+60123456789"
-        keyboardType="phone-pad"
-      />
-      <Button
-        label={t("sendPhoneOtp")}
-        onPress={() =>
-          void otp(async () => {
-            const result = await sendPhoneOtp(phone.trim(), role);
-            if (!result.error) setPhoneOtpSent(true);
-            return result;
-          })
-        }
-      />
-      {phoneOtpSent ? (
-        <>
-          <Field
-            value={phoneCode}
-            onChangeText={setPhoneCode}
-            placeholder={t("otpCode")}
-            keyboardType="number-pad"
-          />
-          <Button
-            label={t("verifyOtp")}
-            onPress={() =>
-              void verifyPhoneOtp(phone.trim(), phoneCode.trim(), role).then(
-                ({ error }) =>
-                  error
-                    ? say(t("invalidOtp"), error.message)
-                    : void continueAfterSignIn(),
-              )
-            }
-          />
-        </>
-      ) : null}
-      <Button label="Google" onPress={() => void social("google")} secondary />
-      {Platform.OS === "ios" ? (
-        <AppleAuthentication.AppleAuthenticationButton
-          buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-          buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-          cornerRadius={12}
-          style={{ width: "100%", height: 48 }}
-          onPress={() => void social("apple")}
-        />
-      ) : (
-        <Button label="Apple" onPress={() => void social("apple")} secondary />
-      )}
+      <Divider label={t("or")} />
       <Button
         label={t("guestMode")}
         onPress={() => void continueAsGuest()}

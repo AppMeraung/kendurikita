@@ -964,7 +964,7 @@
   "resetLinkSent": "Tautan reset terkirim",
   "resetLinkSentBody": "Jika akun ada, periksa email Anda dan buka tautan untuk membuat kata sandi baru.",
   "checkEmail": "Periksa email Anda",
-  "confirmEmailBody": "Buka tautan konfirmasi di email untuk mengaktifkan akun. Jika email ini sudah dipakai untuk aplikasi Meraung lain, masuk dengan kata sandi yang sama atau ketuk Lupa kata sandi.",
+  "confirmEmailBody": "Kami telah mengirim tautan konfirmasi ke email Anda. Buka tautan itu untuk mengaktifkan akun, lalu masuk. Periksa folder Spam jika tidak ada di kotak masuk.",
   "resetLinkInvalid": "Tautan reset tidak valid atau sudah kedaluwarsa. Minta tautan baru.",
   "passwordUpdated": "Kata sandi diperbarui",
   "setNewPassword": "Buat kata sandi baru",
@@ -1046,5 +1046,7 @@
   "seatingIntro": "Rencanakan susunan tempat duduk dengan mudah.",
   "floorPlan": "Denah",
   "guestList": "Daftar tamu",
-  "scheduleIntro": "Rencanakan susunan acara dari awal hingga akhir."
+  "scheduleIntro": "Rencanakan susunan acara dari awal hingga akhir.",
+  "accountExistsTitle": "Akun sudah ada",
+  "accountExistsBody": "Email ini sudah terdaftar di aplikasi Meraung, jadi email konfirmasi tidak dikirim. Masuk dengan kata sandi yang sama, atau ketuk Lupa kata sandi."
 }

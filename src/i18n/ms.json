@@ -964,7 +964,7 @@
   "resetLinkSent": "Pautan reset dihantar",
   "resetLinkSentBody": "Jika akaun wujud, semak e-mel anda dan buka pautan untuk menetapkan kata laluan baharu.",
   "checkEmail": "Semak e-mel anda",
-  "confirmEmailBody": "Buka pautan pengesahan dalam e-mel untuk mengaktifkan akaun. Jika e-mel ini sudah digunakan untuk app Meraung lain, log masuk dengan kata laluan yang sama atau tekan Lupa kata laluan.",
+  "confirmEmailBody": "Kami telah menghantar pautan pengesahan ke e-mel anda. Buka pautan itu untuk mengaktifkan akaun, kemudian log masuk. Semak folder Spam jika tiada dalam peti masuk.",
   "resetLinkInvalid": "Pautan reset tidak sah atau telah tamat. Minta pautan baharu.",
   "passwordUpdated": "Kata laluan dikemas kini",
   "setNewPassword": "Tetapkan kata laluan baharu",
@@ -1046,5 +1046,7 @@
   "seatingIntro": "Rancang susunan tempat duduk dengan mudah.",
   "floorPlan": "Pelan lantai",
   "guestList": "Senarai tetamu",
-  "scheduleIntro": "Rancang atur cara hari majlis dari mula hingga tamat."
+  "scheduleIntro": "Rancang atur cara hari majlis dari mula hingga tamat.",
+  "accountExistsTitle": "Akaun sudah wujud",
+  "accountExistsBody": "E-mel ini sudah berdaftar dengan app Meraung, jadi tiada e-mel pengesahan dihantar. Log masuk dengan kata laluan yang sama, atau tekan Lupa kata laluan."
 }

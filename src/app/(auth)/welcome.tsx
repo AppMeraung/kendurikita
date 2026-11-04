@@ -33,7 +33,7 @@ export default function Welcome() {
             <Image source={require("../../../assets/icon.png")} style={{ width: 42, height: 42, borderRadius: 12 }} />
             <Text style={{ color: palette.white, fontSize: 18, fontWeight: "900", letterSpacing: 1.2 }}>{t("brand")}</Text>
           </View>
-          {index < slides.length - 1 ? <Pressable accessibilityRole="button" accessibilityLabel={t("skip")} onPress={() => move(slides.length - 1)} style={{ paddingVertical: 8, paddingHorizontal: 14, backgroundColor: "rgba(255,255,255,0.88)", borderRadius: 999 }}><Text style={{ color: palette.ink, fontWeight: "500" }}>{t("skip")}</Text></Pressable> : <View />}
+          {index < slides.length - 1 ? <Pressable accessibilityRole="button" accessibilityLabel={t("skip")} onPress={() => move(slides.length - 1)} hitSlop={12} style={{ paddingVertical: 8, paddingHorizontal: 4 }}><Text style={{ color: palette.white, fontWeight: "500", fontSize: 16, textShadowColor: "rgba(0,0,0,0.45)", textShadowRadius: 6, textShadowOffset: { width: 0, height: 1 } }}>{t("skip")}</Text></Pressable> : <View />}
         </View>
         <View style={{ flex: 1, justifyContent: "center" }}>
         <Animated.ScrollView
