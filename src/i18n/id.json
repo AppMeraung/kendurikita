@@ -467,6 +467,8 @@
   "sendRequest": "Kirim ke vendor",
   "vendorRequestSent": "Permintaan telah dikirim.",
   "vendorRequestFailed": "Permintaan tidak dapat dikirim",
+  "invalidVendorCategory": "Kategori vendor tidak ditemukan.",
+  "emptyVendorCategory": "Tidak ada vendor yang cocok dalam kategori ini.",
   "vendorLoadFailed": "Vendor tidak dapat dimuat",
   "cloudRequired": "Hubungkan akun cloud untuk mencari vendor.",
   "signInRequired": "Harus masuk akun.",

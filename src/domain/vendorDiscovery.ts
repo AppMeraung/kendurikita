@@ -21,6 +21,7 @@ export type VendorSort = "relevance" | "rating" | "price" | "nearest";
 export type VendorFilters = {
   query?: string;
   category?: string;
+  categoryKey?: string;
   state?: string;
   date?: string;
   minimumPrice?: number;
@@ -51,6 +52,7 @@ export function discoverVendors(vendors: DiscoverableVendor[], filters: VendorFi
   return vendors.filter((vendor) => {
     if (query && !`${vendor.companyName} ${vendor.categories.join(" ")}`.toLowerCase().includes(query)) return false;
     if (!contains(vendor.categories, filters.category)) return false;
+    if (filters.categoryKey && !vendor.categories.some((key) => key.toLowerCase() === filters.categoryKey)) return false;
     if (!contains(vendor.coverage, filters.state)) return false;
     if (filters.date && vendor.unavailableDates.includes(filters.date)) return false;
     if (filters.minimumPrice != null && (vendor.minimumPrice == null || vendor.minimumPrice < filters.minimumPrice)) return false;
@@ -70,4 +72,18 @@ export function discoverVendors(vendors: DiscoverableVendor[], filters: VendorFi
 export function toggleVendorComparison(current: string[], id: string) {
   if (current.includes(id)) return current.filter((value) => value !== id);
   return current.length < 3 ? [...current, id] : current;
+}
+
+export function vendorCategoryNotice(input: {
+  knownCategory: boolean;
+  configured: boolean;
+  loading: boolean;
+  unavailable: boolean;
+  hasMatches: boolean;
+}) {
+  if (!input.knownCategory) return "invalidVendorCategory";
+  if (!input.configured) return "cloudRequired";
+  if (input.unavailable) return "vendorLoadFailed";
+  if (input.loading) return "loading";
+  return input.hasMatches ? null : "emptyVendorCategory";
 }

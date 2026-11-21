@@ -467,6 +467,8 @@
   "sendRequest": "发送给供应商",
   "vendorRequestSent": "请求已发送。",
   "vendorRequestFailed": "无法发送请求",
+  "invalidVendorCategory": "找不到此商家类别。",
+  "emptyVendorCategory": "此类别中没有符合条件的商家。",
   "vendorLoadFailed": "无法加载供应商",
   "cloudRequired": "连接云端账户以寻找供应商。",
   "signInRequired": "需要登录。",

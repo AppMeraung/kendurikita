@@ -467,6 +467,8 @@
   "sendRequest": "விற்பனையாளருக்கு அனுப்பு",
   "vendorRequestSent": "கோரிக்கை அனுப்பப்பட்டது.",
   "vendorRequestFailed": "கோரிக்கையை அனுப்ப முடியவில்லை",
+  "invalidVendorCategory": "சேவை வழங்குநர் வகை கிடைக்கவில்லை.",
+  "emptyVendorCategory": "இந்த வகையில் பொருந்தும் சேவை வழங்குநர்கள் இல்லை.",
   "vendorLoadFailed": "விற்பனையாளர்களை ஏற்ற முடியவில்லை",
   "cloudRequired": "விற்பனையாளர்களைக் காண மேகக் கணக்கை இணைக்கவும்.",
   "signInRequired": "உள்நுழைவு தேவை.",

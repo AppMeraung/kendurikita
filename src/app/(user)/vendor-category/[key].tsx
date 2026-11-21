@@ -4,11 +4,11 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
-import { discoverVendors } from "../../../domain/vendorDiscovery";
+import { discoverVendors, vendorCategoryNotice } from "../../../domain/vendorDiscovery";
 import { cloudConfigured } from "../../../services/supabase";
 import { loadDiscoverableVendors } from "../../../services/vendorDiscovery";
 import { useAppState } from "../../../state/AppState";
-import { Button, Card, Empty, palette, Screen, SearchField, styles, Title } from "../../../ui";
+import { Button, Card, palette, Screen, SearchField, styles, Title } from "../../../ui";
 
 // Same keys and labels as the category rows on the Vendors tab.
 const labels: Record<string, string> = {
@@ -25,18 +25,39 @@ export default function VendorCategory() {
   const { key = "" } = useLocalSearchParams<{ key: string }>();
   const { event } = useAppState();
   const [query, setQuery] = useState("");
-  const vendors = useQuery({ queryKey: ["vendors", "discoverable"], enabled: cloudConfigured, queryFn: loadDiscoverableVendors, staleTime: 300000 });
-  const shown = discoverVendors(vendors.data || [], { query, category: key, origin: event?.venueLocation });
+  const knownCategory = typeof key === "string" && Object.prototype.hasOwnProperty.call(labels, key);
+  const vendors = useQuery({
+    queryKey: ["vendors", "discoverable"],
+    enabled: cloudConfigured && knownCategory,
+    queryFn: loadDiscoverableVendors,
+    staleTime: 300000,
+  });
+  const shown = knownCategory && cloudConfigured
+    ? discoverVendors(vendors.data || [], { query, categoryKey: key, origin: event?.venueLocation })
+    : [];
+  const notice = vendorCategoryNotice({
+    knownCategory,
+    configured: cloudConfigured,
+    loading: vendors.isLoading,
+    unavailable: vendors.isError || vendors.isPaused,
+    hasMatches: shown.length > 0,
+  });
   return (
     <Screen>
       <Pressable accessibilityRole="button" accessibilityLabel={t("back")} onPress={() => router.back()} hitSlop={10}>
         <Ionicons name="arrow-back" size={26} color={palette.maroon} />
       </Pressable>
-      <Title subtitle={t("vendorsIntro")}>{t(labels[key] || "vendors")}</Title>
-      <SearchField value={query} onChangeText={setQuery} placeholder={t("vendorSearchPlaceholder")} accessibilityLabel={t("vendorSearchPlaceholder")} />
-      {vendors.isLoading ? <Text style={styles.muted}>{t("loading")}</Text> : null}
-      {!vendors.isLoading && !shown.length ? (
-        <Empty icon="🏪" text={cloudConfigured ? t("emptyVendors") : t("cloudRequired")} action={t("refresh")} onPress={() => void vendors.refetch()} />
+      <Title subtitle={t("vendorsIntro")}>{t(knownCategory ? labels[key] : "vendors")}</Title>
+      {knownCategory && cloudConfigured ? (
+        <SearchField value={query} onChangeText={setQuery} placeholder={t("vendorSearchPlaceholder")} accessibilityLabel={t("vendorSearchPlaceholder")} />
+      ) : null}
+      {notice ? (
+        <Card>
+          <Text accessibilityLiveRegion="polite" style={styles.muted}>{t(notice)}</Text>
+          {notice === "vendorLoadFailed" ? (
+            <Button label={t("refresh")} disabled={vendors.isFetching} onPress={() => void vendors.refetch()} secondary />
+          ) : null}
+        </Card>
       ) : null}
       {shown.map((vendor) => (
         <Pressable key={vendor.id} accessibilityRole="button" accessibilityLabel={vendor.companyName} onPress={() => router.push(`/vendor/${vendor.slug}`)}>

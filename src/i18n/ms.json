@@ -467,6 +467,8 @@
   "sendRequest": "Hantar kepada vendor",
   "vendorRequestSent": "Permintaan telah dihantar.",
   "vendorRequestFailed": "Permintaan tidak dapat dihantar",
+  "invalidVendorCategory": "Kategori vendor tidak dijumpai.",
+  "emptyVendorCategory": "Tiada vendor yang sepadan dalam kategori ini.",
   "vendorLoadFailed": "Vendor tidak dapat dimuatkan",
   "cloudRequired": "Sambungkan akaun awan untuk mencari vendor.",
   "signInRequired": "Log masuk diperlukan.",

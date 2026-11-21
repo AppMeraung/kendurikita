@@ -467,6 +467,8 @@
   "sendRequest": "Send to vendor",
   "vendorRequestSent": "Request sent.",
   "vendorRequestFailed": "Request could not be sent",
+  "invalidVendorCategory": "Vendor category not found.",
+  "emptyVendorCategory": "No matching vendors in this category.",
   "vendorLoadFailed": "Vendors could not be loaded",
   "cloudRequired": "Connect your cloud account to find vendors.",
   "signInRequired": "Sign in is required.",
