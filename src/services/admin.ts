@@ -10,7 +10,7 @@ export async function loadAdminDashboard() {
     .select("role")
     .eq("id", user.id)
     .single();
-  if (profile.error || profile.data.role !== "admin")
+  if (profile.error || !["admin", "superadmin"].includes(profile.data?.role))
     throw new Error("Akses admin diperlukan.");
   const [vendors, reviews, portfolio, reports, subscriptions, categories, users, events, leads] =
     await Promise.all([
